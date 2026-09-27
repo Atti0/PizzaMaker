@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teglia Coach — Pizza in teglia</title>
-  <meta name="description" content="Calcolatore pratico per pizza in teglia fatta in casa: dosi, idratazione, sale, lievito, timeline e cottura.">
+  <title>PizzaMaker — Teglia Coach</title>
+  <meta name="description" content="Assistente pratico per pizza in teglia fatta in casa: dosi, timeline, gestione impasto, cottura e problemi comuni.">
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
@@ -14,8 +14,8 @@
   <div id="privacyOverlay" class="privacyOverlay" role="dialog" aria-modal="true" aria-labelledby="privacyTitle" tabindex="-1">
     <div class="privacyModal">
       <h2 id="privacyTitle">Privacy essenziale</h2>
-      <p><strong>Teglia Coach</strong> non usa account, pubblicità, analytics o cookie di profilazione.</p>
-      <p>Salva solo preferenze tecniche nel tuo browser, come teglia, idratazione, sale e orari. I dati restano sul tuo dispositivo.</p>
+      <p><strong>PizzaMaker</strong> non usa account, pubblicità, analytics o cookie di profilazione.</p>
+      <p>Salva solo preferenze tecniche nel tuo browser, come teglia, farina, sale e orari. I dati restano sul tuo dispositivo.</p>
       <p>Puoi cancellarli quando vuoi con <strong>Reset app</strong>.</p>
       <div class="privacyActions">
         <button type="button" id="acceptPrivacy">Ho capito</button>
@@ -24,98 +24,224 @@
     </div>
   </div>
 
-  <div class="app">
-    <header>
+  <div class="appShell">
+    <header class="hero">
+      <p class="eyebrow">PizzaMaker</p>
       <h1>Teglia Coach</h1>
-      <div class="subtitle">Manuale interattivo pizza in teglia</div>
-      <div class="motto">Farina · Tempo · Passione · Pizza <span class="heart">♡</span></div>
+      <p class="subtitle">Dosi, tempi e correzioni pratiche per la pizza in teglia nel forno di casa.</p>
+      <div class="heroActions">
+        <button type="button" data-open="calc">Calcola impasto</button>
+        <button type="button" class="secondary" data-open="impasto">Ho già un impasto</button>
+      </div>
     </header>
 
-    <nav class="tabs" aria-label="Sezioni principali">
-      <button type="button" class="active" data-tab="calc">Calcolatore</button>
-      <button type="button" data-tab="manuale">Manuale</button>
-      <button type="button" data-tab="diagnosi">Diagnosi</button>
-      <button type="button" data-tab="cottura">Cottura</button>
-    </nav>
+    <main>
+      <section id="home" class="view active" aria-labelledby="homeTitle">
+        <div class="sectionTitle">
+          <p class="eyebrow">Da dove parti?</p>
+          <h2 id="homeTitle">Scegli cosa devi fare adesso</h2>
+        </div>
 
-    <section id="calc" class="section active">
-      <div class="grid">
-        <div class="card">
-          <h2>Calcolatore impasto</h2>
-          <div class="content">
-            <div class="row3">
-              <div><label for="w">Larghezza teglia cm</label><input id="w" type="number" value="37" min="10" max="80" step="0.5"></div>
-              <div><label for="h">Altezza teglia cm</label><input id="h" type="number" value="26" min="10" max="80" step="0.5"></div>
-              <div><label for="n">Numero teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1"></div>
-            </div>
+        <div class="actionGrid">
+          <button type="button" class="actionCard" data-open="calc">
+            <span class="cardIcon">①</span>
+            <span class="cardTitle">Calcola un nuovo impasto</span>
+            <span class="cardText">Teglia, farina, orario di cottura e dosi complete.</span>
+          </button>
+          <button type="button" class="actionCard" data-open="impasto">
+            <span class="cardIcon">②</span>
+            <span class="cardTitle">Ho già un impasto</span>
+            <span class="cardText">Capisci se aspettare, stendere, salvare o rimettere in frigo.</span>
+          </button>
+          <button type="button" class="actionCard" data-open="cottura">
+            <span class="cardIcon">③</span>
+            <span class="cardTitle">Guida stesura e cottura</span>
+            <span class="cardText">Stesura, condimenti, forno, ripiano e uscita su griglia.</span>
+          </button>
+          <button type="button" class="actionCard" data-open="problemi">
+            <span class="cardIcon">④</span>
+            <span class="cardTitle">Risolvi un problema</span>
+            <span class="cardText">Pizza troppo alta, fondo pallido, sopra bagnata, impasto collassato.</span>
+          </button>
+        </div>
 
-            <div class="row">
-              <div>
-                <label for="style">Risultato</label>
-                <select id="style">
-                  <option value="0.48">Molto bassa/croccante — 0,48 g/cm²</option>
-                  <option value="0.50">Bassa croccante — 0,50 g/cm²</option>
-                  <option value="0.54" selected>Bassa-media — 0,54 g/cm²</option>
-                  <option value="0.58">Media alveolata — 0,58 g/cm²</option>
-                  <option value="0.65">Alta soffice — 0,65 g/cm²</option>
-                </select>
-              </div>
-              <div><label for="methodPreview">Metodo</label><input id="methodPreview" type="text" value="automatico da data e ora" readonly></div>
-            </div>
+        <div class="card productNote">
+          <h3>Obiettivo</h3>
+          <p>La teglia riuscita non nasce solo da una percentuale: conta il carico impasto, il tempo, la farina, il frigo e soprattutto il forno. L’app ti dà un punto di partenza prudente e ti guida nelle correzioni.</p>
+        </div>
+      </section>
 
-            <div class="miniTitle">Farina</div>
-            <div class="row3">
-              <div><label for="flourType">Tipo farina</label><select id="flourType"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option></select></div>
-              <div><label for="protein">Proteine in etichetta</label><input id="protein" type="number" value="12.5" min="8" max="17" step="0.1"></div>
-              <div><label for="lmMix">Lievito madre in farina/mix?</label><select id="lmMix"><option value="no" selected>No</option><option value="yes">Sì, parte della farina</option></select></div>
-            </div>
-
-            <div class="row">
-              <div><label for="hydration">Idratazione</label><select id="hydration"><option value="auto" selected>Automatica consigliata</option><option value="65">65%</option><option value="68">68%</option><option value="70">70%</option><option value="72">72%</option><option value="75">75%</option><option value="custom">Personalizzata</option></select></div>
-              <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5"></div>
-            </div>
-
-            <div class="miniTitle">Sale</div>
-            <div class="row">
-              <div><label for="saltProfile">Profilo sale</label><select id="saltProfile"><option value="2.0">Delicato / condimento sapido — 2,0%</option><option value="2.2">Equilibrato — 2,2%</option><option value="2.3" selected>Standard teglia — 2,3%</option><option value="2.5">Strutturato / 24h frigo / caldo — 2,5%</option><option value="custom">Personalizzato</option></select></div>
-              <div id="customSaltWrap" class="hidden"><label for="customSalt">Sale personalizzato % farina</label><input id="customSalt" type="number" value="2.3" min="1.5" max="3.0" step="0.1"></div>
-            </div>
-
-            <div class="row">
-              <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
-              <div><label for="bake">Inizio cottura desiderata</label><input id="bake" type="datetime-local"></div>
-            </div>
-            <div class="small">Il tempo totale viene calcolato automaticamente: non serve scegliere “in giornata” o “24h frigo”.</div>
-            <button type="button" id="calculateBtn">Calcola dosi e timeline</button>
+      <section id="calc" class="view" aria-labelledby="calcTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Nuovo impasto</p>
+            <h2 id="calcTitle">Calcola dosi e prossimi step</h2>
           </div>
         </div>
 
-        <div class="card">
-          <h2>Risultato</h2>
-          <div class="content" id="result" aria-live="polite"></div>
+        <div class="twoColumns">
+          <form class="card formCard" id="recipeForm" novalidate>
+            <h3>1. Teglia</h3>
+            <div class="row3">
+              <div><label for="w">Larghezza cm</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
+              <div><label for="h">Altezza cm</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
+              <div><label for="n">Numero teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
+            </div>
+
+            <h3>2. Risultato</h3>
+            <div class="choiceGrid" role="radiogroup" aria-label="Risultato desiderato">
+              <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra croccante<small>più bassa</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.50"><span>Romana classica<small>bassa e croccante</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.54" checked><span>Equilibrata<small>bassa-media</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>più alveolata</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.65"><span>Più soffice<small>quasi focaccia</small></span></label>
+            </div>
+
+            <h3>3. Quando cuoci</h3>
+            <div class="row">
+              <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
+              <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
+            </div>
+
+            <h3>4. Farina e sale</h3>
+            <div class="row">
+              <div>
+                <label for="flourProfile">Farina</label>
+                <select id="flourProfile">
+                  <option value="standard" selected>Farina per pizza/focaccia</option>
+                  <option value="common">Farina comune da supermercato</option>
+                  <option value="strong">Farina forte/lunga lievitazione</option>
+                  <option value="whole">Tipo 1/2/integrale o mix speciale</option>
+                </select>
+              </div>
+              <div>
+                <label for="saltProfile">Sale</label>
+                <select id="saltProfile">
+                  <option value="2.0">Condimento sapido — 2,0%</option>
+                  <option value="2.2">Equilibrato — 2,2%</option>
+                  <option value="2.3" selected>Standard teglia — 2,3%</option>
+                  <option value="2.5">Lunga lievitazione/caldo — 2,5%</option>
+                  <option value="custom">Personalizzato</option>
+                </select>
+              </div>
+            </div>
+
+            <details class="advancedPanel">
+              <summary>Impostazioni avanzate</summary>
+              <div class="row3">
+                <div><label for="flourType">Tipo farina</label><select id="flourType"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option></select></div>
+                <div><label for="protein">Proteine per 100 g</label><input id="protein" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                <div><label for="lmMix">Lievito madre/farine speciali?</label><select id="lmMix"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
+              </div>
+              <div class="row">
+                <div><label for="hydration">Idratazione</label><select id="hydration"><option value="auto" selected>Automatica consigliata</option><option value="65">65%</option><option value="68">68%</option><option value="70">70%</option><option value="72">72%</option><option value="75">75%</option><option value="custom">Personalizzata</option></select></div>
+                <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
+              </div>
+              <div id="customSaltWrap" class="hidden"><label for="customSalt">Sale personalizzato % farina</label><input id="customSalt" type="number" value="2.3" min="1.5" max="3.0" step="0.1" inputmode="decimal"></div>
+            </details>
+
+            <div class="formActions">
+              <button type="button" id="calculateBtn">Calcola</button>
+              <button type="button" class="secondary" id="saveBtn">Salva preferenze</button>
+            </div>
+          </form>
+
+          <div class="resultStack" id="result" aria-live="polite"></div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="manuale" class="section">
-      <div class="grid">
-        <div class="card"><h2>Metodo unico</h2><div class="content"><table class="table"><tr><th>Tempo</th><th>Lievito fresco</th><th>Gestione</th></tr><tr><td>6–10 ore</td><td>0,70–0,90%</td><td>In giornata, frigo solo se fa caldo.</td></tr><tr><td>10–18 ore</td><td>0,30–0,50%</td><td>Intermedio: breve frigo consigliato.</td></tr><tr><td>18–30 ore</td><td>0,18–0,25%</td><td>Giorno dopo: frigo dopo le pieghe.</td></tr><tr><td>30–48 ore</td><td>0,08–0,15%</td><td>Lunga maturazione: controllo volume obbligatorio.</td></tr></table><div class="note ok"><b>Anti-disastro:</b> tieni 5–10 g d’acqua da parte e aggiungila solo se dopo 20 minuti l’impasto resta rigido.</div></div></div>
-        <div class="card"><h2>Procedura</h2><div class="content steps"><div class="step"><b>Impasto grezzo:</b> farina + lievito + 85–90% acqua. Mescola solo finché non resta farina secca.</div><div class="step"><b>Riposo 20 min coperto:</b> la farina assorbe, l’impasto si rilassa e lavori meno.</div><div class="step"><b>Sale + olio:</b> sale sciolto nell’acqua restante, poi olio. Poco lavoro, niente pieghe aggressive.</div><div class="step"><b>Pieghe leggere:</b> 2 pieghe ogni 20–25 min. La terza solo se l’impasto resta debole.</div><div class="step"><b>Frigo:</b> se il tempo è lungo, frigo dopo le pieghe. Se è già triplicato, niente pieghe fuori frigo.</div><div class="step"><b>Stesura:</b> semola sul banco, polpastrelli dal centro verso l’esterno. Se si ritira, pausa 5–10 min.</div></div></div>
-      </div>
-    </section>
+      <section id="impasto" class="view" aria-labelledby="impastoTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Gestione impasto</p>
+            <h2 id="impastoTitle">Dimmi com’è adesso</h2>
+          </div>
+        </div>
 
-    <section id="diagnosi" class="section">
-      <div class="card"><h2>Diagnosi impasto</h2><div class="content"><div class="row"><div><label for="state">Com’è adesso?</label><select id="state"><option value="triplicato">Triplicato ma bello</option><option value="perfetto">Gonfio e stabile</option><option value="collasso">Collassante</option><option value="rigido">Rigido / si ritira</option><option value="strappa">Si strappa dopo olio</option><option value="molle">Molle e appiccicoso</option></select></div><div><label for="timeLeft">Ore alla cottura</label><input id="timeLeft" type="number" value="2" min="0" max="72" step="0.5"></div></div><button type="button" id="diagnoseBtn">Dimmi cosa fare</button><div id="diagnosis" class="note" aria-live="polite"></div><div class="debugGrid"><div class="debug"><b>Triplicato:</b> non ristrutturare. Stendi delicato e accorcia il riposo in teglia.</div><div class="debug"><b>Rigido:</b> non forzare. Copri e aspetta 10–20 min.</div><div class="debug"><b>Bagnato sopra:</b> meno mozzarella, pomodoro più denso, verdure asciutte.</div></div></div></div>
-    </section>
+        <div class="twoColumns">
+          <div class="card formCard">
+            <div class="row">
+              <div><label for="doughPlace">Dove si trova?</label><select id="doughPlace"><option value="frigo">In frigo</option><option value="ta">A temperatura ambiente</option><option value="teglia">Già in teglia</option></select></div>
+              <div><label for="doughTime">Quanto manca?</label><select id="doughTime"><option value="less1">Meno di 1 ora</option><option value="1to3" selected>1–3 ore</option><option value="3to6">3–6 ore</option><option value="over6">Più di 6 ore</option></select></div>
+            </div>
+            <label for="doughState">Com’è l’impasto?</label>
+            <select id="doughState">
+              <option value="indietro">Poco cresciuto</option>
+              <option value="giusto" selected>Gonfio e stabile</option>
+              <option value="triplicato">Triplicato ma bello</option>
+              <option value="collasso">Collassante</option>
+              <option value="rigido">Rigido / si ritira</option>
+              <option value="molle">Molle e appiccicoso</option>
+              <option value="strappa">Si strappa</option>
+            </select>
+            <button type="button" id="doughAdviceBtn">Dimmi cosa fare</button>
+          </div>
 
-    <section id="cottura" class="section">
-      <div class="grid"><div class="card"><h2>Cottura forno di casa</h2><div class="content"><div class="row"><div><label for="pizzaType">Pizza</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="bianca">Bianca patate e lardo</option></select></div><div><label for="panType">Teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div></div><button type="button" id="cookBtn">Guida cottura</button><div id="cook" class="note" aria-live="polite"></div></div></div><div class="card"><h2>Regole fondo croccante</h2><div class="content"><ul><li>Preriscalda davvero: 40–45 min a 250 °C.</li><li>Prima fase: ripiano basso, statico o funzione pizza.</li><li>Mozzarella solo alla fine: 2–4 min medio-alto.</li><li>Ventilato/grill solo 30–90 sec se serve asciugare.</li><li>Fuori forno: pizza su griglia, non lasciarla in teglia.</li></ul></div></div></div>
-    </section>
+          <div class="resultStack" id="doughAdvice" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="cottura" class="view" aria-labelledby="cotturaTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Stesura e forno</p>
+            <h2 id="cotturaTitle">Guida rapida per cuocere bene</h2>
+          </div>
+        </div>
+
+        <div class="twoColumns">
+          <div class="card formCard">
+            <div class="row">
+              <div><label for="pizzaType">Pizza</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
+              <div><label for="panType">Teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
+            </div>
+            <button type="button" id="cookBtn">Prepara guida</button>
+          </div>
+
+          <div class="resultStack" id="cook" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="problemi" class="view" aria-labelledby="problemiTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Diagnosi</p>
+            <h2 id="problemiTitle">Risolvi un problema</h2>
+          </div>
+        </div>
+
+        <div class="twoColumns">
+          <div class="card formCard">
+            <label for="problemType">Cosa è successo?</label>
+            <select id="problemType">
+              <option value="alta">Pizza troppo alta</option>
+              <option value="bassaDura">Pizza bassa e dura</option>
+              <option value="fondoPallido">Fondo pallido</option>
+              <option value="fondoBruciato">Fondo bruciato</option>
+              <option value="sopraBagnata">Sopra bagnata</option>
+              <option value="mozzarellaAcqua">Mozzarella acquosa</option>
+              <option value="patateCrude">Patate crude</option>
+              <option value="noAlveoli">Alveolatura assente</option>
+              <option value="collassato">Impasto collassato</option>
+              <option value="siRitira">Impasto si ritira</option>
+              <option value="siStrappa">Impasto si strappa</option>
+            </select>
+            <button type="button" id="problemBtn">Analizza</button>
+          </div>
+
+          <div class="resultStack" id="problemAdvice" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <div class="footerBar">
+    <button type="button" class="secondary" data-open="home">Home</button>
     <button type="button" class="secondary" id="printBtn">Stampa / PDF</button>
-    <button type="button" id="saveBtn">Salva preferenze</button>
     <a class="footerPrivacy" href="privacy.html">Privacy</a>
     <button type="button" class="secondary" id="resetBtn">Reset app</button>
   </div>
