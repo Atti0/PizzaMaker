@@ -1,7 +1,6 @@
 :root{
   --cream:#fff8e8;
   --paper:#fffdf4;
-  --paper-2:#fffaf0;
   --red:#a92b25;
   --green:#526b2d;
   --gold:#d99a34;
@@ -20,31 +19,27 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
-  background:
-    radial-gradient(circle at top left, rgba(217,154,52,.24), transparent 34rem),
-    linear-gradient(180deg,var(--cream),#f4e8d2);
+  background:radial-gradient(circle at top left, rgba(217,154,52,.22), transparent 32rem),linear-gradient(180deg,var(--cream),#f4e8d2);
   color:var(--ink);
   font-family:Georgia,'Times New Roman',serif;
 }
 button,input,select{font:inherit}
 button,a,input,select{touch-action:manipulation}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid rgba(169,43,37,.35);outline-offset:3px}
-.appShell{max-width:1160px;margin:auto;padding:16px 14px 92px}
+.appShell{max-width:1160px;margin:auto;padding:16px 14px 70px}
 .hero,.card{
   background:rgba(255,253,244,.96);
   border:1px solid var(--line);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
 }
-.hero{padding:26px 20px;margin:8px 0 18px;position:relative;overflow:hidden}
+.hero{padding:26px 20px;margin:8px 0 20px;position:relative;overflow:hidden}
 .hero:before{content:"";position:absolute;inset:-72px auto auto -48px;width:190px;height:190px;border-radius:50%;background:var(--gold);opacity:.16}
 .eyebrow{margin:0 0 6px;color:var(--green);font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
 h1,h2,h3{line-height:1.03}
 h1{margin:0;color:var(--red);font-size:clamp(40px,7vw,76px);letter-spacing:.3px;text-transform:uppercase}
 h2{margin:0;color:var(--red);font-size:clamp(30px,4.6vw,48px)}
 h3{margin:0 0 12px;color:var(--red);font-size:24px}
-.subtitle{max-width:720px;margin:10px 0 0;color:#19345a;font-size:clamp(18px,2.4vw,24px);line-height:1.35;font-weight:700}
-.heroActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 button,.buttonLike{
   border:0;
   border-radius:16px;
@@ -57,7 +52,7 @@ button,.buttonLike{
   box-shadow:0 8px 18px rgba(0,0,0,.1);
   text-decoration:none;
 }
-button.secondary,.footerPrivacy,.ghost{
+button.secondary,.ghost{
   background:var(--soft);
   color:var(--ink);
   border:1px solid var(--line);
@@ -66,11 +61,11 @@ button.secondary,.footerPrivacy,.ghost{
 button:active{transform:translateY(1px)}
 .view{display:none}
 .view.active{display:block}
-.sectionTitle,.viewHeader{margin:20px 0 14px}
+.sectionTitle,.viewHeader{margin:18px 0 14px}
 .viewHeader{display:flex;align-items:center;gap:14px}
-.actionGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.actionGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .actionCard{
-  min-height:205px;
+  min-height:190px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -82,12 +77,20 @@ button:active{transform:translateY(1px)}
   box-shadow:var(--shadow);
   padding:18px;
 }
-.actionCard:hover{transform:translateY(-1px)}
 .cardIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--red);color:white;font-size:22px;font-weight:900}
 .cardTitle{display:block;color:var(--red);font-size:24px;font-weight:900;line-height:1.05}
 .cardText{font-size:16px;line-height:1.35;color:#22314c}
-.productNote{margin-top:16px;padding:18px}
-.productNote p{margin:0;line-height:1.45;color:#27334a;font-size:17px}
+.siteLinks{display:flex;gap:12px;flex-wrap:wrap;margin:18px 4px 0;color:var(--muted);align-items:center}
+.siteLinks a,.siteLinks button{
+  color:var(--muted);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:4px 0;
+  font-size:14px;
+  font-weight:800;
+  text-decoration:underline;
+}
 .twoColumns{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:16px;align-items:start}
 .card{overflow:hidden}
 .formCard{padding:18px}
@@ -108,7 +111,6 @@ input,select{
   font-family:Arial,sans-serif;
   font-size:16px;
 }
-.small{font-size:13px;color:var(--muted);line-height:1.35;margin:8px 0 12px}
 .choiceGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
 .choice{cursor:pointer}
 .choice input{position:absolute;opacity:0;pointer-events:none}
@@ -132,6 +134,7 @@ input,select{
 .advancedPanel[open] summary{margin-bottom:12px}
 .formActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .resultStack{display:grid;gap:12px}
+.singleColumn{margin-top:16px}
 .resultCard{
   background:var(--paper);
   border:1px solid var(--line);
@@ -158,35 +161,20 @@ input,select{
 }
 .recipeList li:last-child,.timelineList li:last-child,.adviceList li:last-child{border-bottom:0}
 .recipeList b,.timelineList b{color:var(--red)}
-.note{background:var(--warn);border-left:6px solid var(--gold);border-radius:16px;padding:12px 14px;margin:10px 0;line-height:1.4}
-.note.ok{background:var(--ok);border-left-color:var(--green)}
-.note.bad{background:var(--bad);border-left-color:var(--red)}
-.stepGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stepBox{background:white;border:1px solid var(--line);border-radius:18px;padding:12px}
-.stepBox b{color:var(--red)}
+.emptyState{color:var(--muted);line-height:1.45}
 .hidden{display:none!important}
 .footerBar{
   position:fixed;
   left:0;right:0;bottom:0;
   display:flex;
-  gap:10px;
   justify-content:center;
-  padding:10px 14px;
-  background:rgba(255,253,244,.96);
+  padding:8px 14px;
+  background:rgba(255,253,244,.92);
   border-top:1px solid var(--line);
   backdrop-filter:blur(8px);
   z-index:30;
 }
-.footerPrivacy{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:16px;
-  padding:13px 15px;
-  font-weight:900;
-  text-decoration:none;
-  box-shadow:0 8px 18px rgba(0,0,0,.1);
-}
+.footerBar button{min-width:180px}
 .privacyOverlay{position:fixed;inset:0;background:rgba(23,32,54,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;backdrop-filter:blur(6px)}
 .privacyOverlay.show{display:flex}
 .privacyModal{width:min(560px,100%);background:var(--paper);border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:20px}
@@ -195,25 +183,25 @@ input,select{
 .privacyActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .privacyActions a{display:inline-block;border-radius:16px;background:#f5ead6;color:var(--ink);border:1px solid var(--line);padding:13px 12px;font-weight:900;text-decoration:none}
 @media(max-width:980px){
-  .actionGrid{grid-template-columns:1fr 1fr}
+  .actionGrid{grid-template-columns:1fr}
   .twoColumns{grid-template-columns:1fr}
   .choiceGrid{grid-template-columns:1fr 1fr}
   .kpi{grid-template-columns:1fr 1fr}
 }
 @media(max-width:640px){
-  .appShell{padding:12px 10px 112px}
+  .appShell{padding:12px 10px 76px}
   .hero{padding:22px 16px}
-  .heroActions button{width:100%}
-  .actionGrid,.row,.row3,.stepGrid{grid-template-columns:1fr}
-  .actionCard{min-height:148px}
+  h1{font-size:clamp(42px,13vw,66px)}
+  h2{font-size:clamp(30px,10vw,44px)}
+  .actionCard{min-height:138px}
+  .row,.row3{grid-template-columns:1fr}
   .choiceGrid{grid-template-columns:1fr}
   .viewHeader{align-items:flex-start;flex-direction:column}
-  .footerBar{flex-wrap:wrap}
-  .footerBar button,.footerBar a{flex:1;min-width:42%}
+  .footerBar button{min-width:min(220px,90vw)}
 }
 @media print{
   body{background:white}
-  .privacyOverlay,.footerBar,.heroActions,.viewHeader button,button{display:none!important}
+  .privacyOverlay,.footerBar,.viewHeader button,button{display:none!important}
   .appShell{max-width:100%;padding:0}
   .view{display:block;break-inside:avoid}
   .view:not(.active){display:none}
