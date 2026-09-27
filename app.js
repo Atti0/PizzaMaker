@@ -5,6 +5,7 @@
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const PREF_PREFIX = 'tc7_';
   const PRIVACY_KEY = 'tc_privacy_notice_ok';
+  const LAST_PLAN_KEY = 'tc7_last_plan';
   const PREF_IDS = [
     'w','h','n','start','bake','flourProfile','saltProfile',
     'flourType','protein','lmMix','hydration','customHyd','customSalt'
@@ -47,7 +48,6 @@
     Object.entries(attrs).forEach(([key, value]) => {
       if (key === 'class') node.className = value;
       else if (key === 'text') node.textContent = value;
-      else if (key === 'htmlFor') node.htmlFor = value;
       else node.setAttribute(key, value);
     });
     children.forEach((child) => {
@@ -58,7 +58,7 @@
   }
 
   function clear(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
+    while (node?.firstChild) node.removeChild(node.firstChild);
   }
 
   function card(title, className = '') {
@@ -67,8 +67,8 @@
     return node;
   }
 
-  function addParagraph(parent, text) {
-    const p = create('p', { text });
+  function addParagraph(parent, text, className = '') {
+    const p = create('p', { text, class: className });
     parent.append(p);
     return p;
   }
@@ -98,6 +98,7 @@
     const next = $(id);
     if (next) {
       next.classList.add('active');
+      if (id === 'impasto') renderSavedTimeline();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
@@ -105,6 +106,13 @@
   function toggleCustoms() {
     $('customHydWrap')?.classList.toggle('hidden', $('hydration').value !== 'custom');
     $('customSaltWrap')?.classList.toggle('hidden', $('saltProfile').value !== 'custom');
+  }
+
+  function toggleCheckMode() {
+    const isDough = $('checkMode').value === 'dough';
+    $('doughFields').classList.toggle('hidden', !isDough);
+    $('resultFields').classList.toggle('hidden', isDough);
+    clear($('adviceOutput'));
   }
 
   function applyFlourProfileDefaults() {
@@ -197,25 +205,25 @@
 
   function buildTimeline(start, bake, hours) {
     const timeline = [
-      { label: 'Impasto grezzo', date: start, kind: 'now' },
-      { label: 'Riposo 20 min coperto', date: addMinutes(start, 20) },
-      { label: 'Sale + olio', date: addMinutes(start, 40) },
-      { label: '1ª piega leggera', date: addMinutes(start, 60) },
-      { label: '2ª piega leggera', date: addMinutes(start, 85) }
+      { label: 'Impasto grezzo', date: start.toISOString() },
+      { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
+      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
+      { label: '1ª piega leggera', date: addMinutes(start, 60).toISOString() },
+      { label: '2ª piega leggera', date: addMinutes(start, 85).toISOString() }
     ];
 
     if (hours <= 12) {
       timeline.push(
-        { label: 'Stesura', date: addMinutes(bake, -75) },
-        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60) },
-        { label: 'Cottura', date: bake }
+        { label: 'Stesura', date: addMinutes(bake, -75).toISOString() },
+        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
+        { label: 'Cottura', date: bake.toISOString() }
       );
     } else {
       timeline.push(
-        { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115) },
-        { label: 'Controllo volume', date: addMinutes(bake, -120) },
-        { label: 'Fuori frigo o stesura secondo stato impasto', date: addMinutes(bake, -90) },
-        { label: 'Cottura', date: bake }
+        { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115).toISOString() },
+        { label: 'Controllo volume', date: addMinutes(bake, -120).toISOString() },
+        { label: 'Fuori frigo o stesura secondo stato impasto', date: addMinutes(bake, -90).toISOString() },
+        { label: 'Cottura', date: bake.toISOString() }
       );
     }
 
@@ -223,8 +231,29 @@
   }
 
   function nextTimelineStep(timeline) {
-    const now = new Date();
-    return timeline.find((item) => item.date > now) ?? timeline[timeline.length - 1];
+    const now = Date.now();
+    return timeline.find((item) => new Date(item.date).getTime() > now) ?? timeline[timeline.length - 1];
+  }
+
+  function emptyResult() {
+    const target = $('result');
+    clear(target);
+    const empty = card('Pronto quando vuoi', 'warn');
+    addParagraph(empty, 'Compila i dati essenziali e premi Calcola. I risultati compariranno qui e la timeline verrà salvata nel browser.');
+    target.append(empty);
+  }
+
+  function saveLastPlan(plan) {
+    localStorage.setItem(LAST_PLAN_KEY, JSON.stringify(plan));
+  }
+
+  function getLastPlan() {
+    try {
+      const raw = localStorage.getItem(LAST_PLAN_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
   }
 
   function renderRecipeResult(data) {
@@ -238,10 +267,31 @@
       return;
     }
 
+    const plan = {
+      createdAt: new Date().toISOString(),
+      pizza: resultName(data.load),
+      method: methodLabel(data.hours),
+      doughPer: data.doughPer,
+      total: data.total,
+      bake: data.bake.toISOString(),
+      timeline: data.timeline,
+      ingredients: {
+        flour: data.flour,
+        water: data.water,
+        saltG: data.saltG,
+        oilG: data.oilG,
+        yeastG: data.yeastG,
+        honeyG: data.honeyG,
+        hydration: data.hydration,
+        salt: data.salt
+      }
+    };
+    saveLastPlan(plan);
+
     const next = nextTimelineStep(data.timeline);
 
     const nextCard = card('Prossimo step', 'primary');
-    nextCard.append(create('span', { class: 'bigStep', text: fmtShortDate(next.date) }));
+    nextCard.append(create('span', { class: 'bigStep', text: fmtShortDate(new Date(next.date)) }));
     addParagraph(nextCard, next.label);
     target.append(nextCard);
 
@@ -287,18 +337,59 @@
     nowCard.append(actions);
     target.append(nowCard);
 
-    const timelineCard = card('Timeline');
-    const timelineList = create('ul', { class: 'timelineList' });
-    data.timeline.forEach((item) => {
-      timelineList.append(create('li', {}, [create('span', { text: item.label }), create('b', { text: fmtShortDate(item.date) })]));
-    });
-    timelineCard.append(timelineList);
+    const timelineCard = card('Timeline salvata');
+    timelineCard.append(renderTimelineList(data.timeline));
     target.append(timelineCard);
 
-    const notes = card('Note pratiche', 'warn');
-    addParagraph(notes, data.salt <= 2.2 ? 'Sale basso: scelta giusta per condimenti sapidi come lardo, salumi, acciughe, capperi o formaggi molto sapidi.' : 'Sale standard: va bene per margherita e impasti lunghi. Con condimenti molto sapidi puoi scendere a 2,0–2,2%.');
-    addParagraph(notes, 'L’idratazione è un consiglio iniziale: la farina decide davvero dopo il primo riposo.');
-    target.append(notes);
+    renderSavedTimeline();
+  }
+
+  function renderTimelineList(timeline) {
+    const timelineList = create('ul', { class: 'timelineList' });
+    timeline.forEach((item) => {
+      timelineList.append(create('li', {}, [
+        create('span', { text: item.label }),
+        create('b', { text: fmtShortDate(new Date(item.date)) })
+      ]));
+    });
+    return timelineList;
+  }
+
+  function renderSavedTimeline() {
+    const target = $('savedTimeline');
+    if (!target) return;
+    clear(target);
+
+    const plan = getLastPlan();
+    if (!plan) {
+      const empty = card('Timeline salvata');
+      addParagraph(empty, 'Non c’è ancora una timeline salvata. Calcola un nuovo impasto e poi torna qui per rivederla.');
+      target.append(empty);
+      return;
+    }
+
+    const next = nextTimelineStep(plan.timeline);
+    const main = card('Timeline salvata', 'primary');
+    addParagraph(main, `${plan.pizza} · ${plan.method} · cottura ${fmtShortDate(new Date(plan.bake))}`);
+    main.append(create('span', { class: 'bigStep', text: fmtShortDate(new Date(next.date)) }));
+    addParagraph(main, next.label);
+    target.append(main);
+
+    const listCard = card('Tutti gli step');
+    listCard.append(renderTimelineList(plan.timeline));
+    target.append(listCard);
+
+    const ingredients = card('Dosi salvate', 'ok');
+    const list = create('ul', { class: 'recipeList' });
+    [
+      ['Farina', `${round(plan.ingredients.flour)} g`],
+      ['Acqua', `${round(plan.ingredients.water)} g`],
+      ['Sale', `${round(plan.ingredients.saltG)} g`],
+      ['Olio', `${round(plan.ingredients.oilG)} g`],
+      ['Lievito fresco', `${round(plan.ingredients.yeastG, 1)} g`]
+    ].forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
+    ingredients.append(list);
+    target.append(ingredients);
   }
 
   function calculate() {
@@ -337,65 +428,67 @@
     const context = place === 'frigo' ? 'dal frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
 
     const rules = {
-      indietro: {
-        do: time === 'over6' ? 'Lascialo maturare ancora coperto. Se è in frigo e manca molto, non stressarlo.' : 'Portalo a temperatura ambiente e aspetta finché diventa più gonfio e rilassato.',
-        dont: 'Non forzare stesura o pieghe aggressive se è duro e poco sviluppato.',
-        next: 'Ricontrolla tra 45–60 minuti.'
-      },
-      giusto: {
-        do: 'Non toccarlo troppo. Stendi quando è rilassato, poi riposo in teglia coperto.',
-        dont: 'Non aggiungere pieghe “per sicurezza”: rischi di sgonfiarlo o irrigidirlo.',
-        next: time === 'less1' ? 'Stendi ora e fai un riposo breve.' : 'Prepara banco, semola e teglia.'
-      },
-      triplicato: {
-        do: 'Niente pieghe. Stendi delicato e accorcia il riposo in teglia.',
-        dont: 'Non ristrutturare: se è bello e gonfio, va accompagnato, non rifatto.',
-        next: time === 'over6' ? 'Se manca molto, rimettilo al fresco dopo una gestione minima.' : 'Fuori frigo 20–30 minuti, poi stesura delicata.'
-      },
-      collasso: {
-        do: time === 'over6' || time === '3to6' ? 'Fai una sola piega di salvataggio molto morbida e rimettilo in frigo.' : 'Stendi quasi subito, riposo breve in teglia e cuoci.',
-        dont: 'Non fare tre pieghe forti: peggiori strappi e perdita di gas.',
-        next: time === 'less1' ? 'Teglia e forno subito.' : 'Controlla dopo 30 minuti.'
-      },
-      rigido: {
-        do: 'Copri e aspetta. Se si ritira, è tensione: serve riposo, non forza.',
-        dont: 'Non tirarlo fino a strapparlo e non aggiungere farina sul banco a caso.',
-        next: 'Riprova tra 10–20 minuti.'
-      },
-      molle: {
-        do: time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Una piega morbida può ridare struttura, poi riposo coperto.',
-        dont: 'Non sommergerlo di farina: rischi una crosta secca e irregolare.',
-        next: 'Valuta consistenza dopo il riposo.'
-      },
-      strappa: {
-        do: 'Stop. Copri e lascia rilassare. Poi riprendi con tocchi leggeri.',
-        dont: 'Non insistere con pieghe aggressive: l’impasto sta dicendo che è in tensione o indebolito.',
-        next: 'Aspetta 15–20 minuti.'
-      }
+      indietro: ['Portalo a temperatura ambiente e aspetta finché diventa più gonfio e rilassato.', 'Non forzare stesura o pieghe aggressive se è duro e poco sviluppato.', 'Ricontrolla tra 45–60 minuti.'],
+      giusto: ['Non toccarlo troppo. Stendi quando è rilassato, poi riposo in teglia coperto.', 'Non aggiungere pieghe “per sicurezza”.', time === 'less1' ? 'Stendi ora e fai un riposo breve.' : 'Prepara banco, semola e teglia.'],
+      triplicato: ['Niente pieghe. Stendi delicato e accorcia il riposo in teglia.', 'Non ristrutturare: se è bello e gonfio, va accompagnato.', time === 'over6' ? 'Se manca molto, rimettilo al fresco dopo una gestione minima.' : 'Fuori frigo 20–30 minuti, poi stesura delicata.'],
+      collasso: [time === 'over6' || time === '3to6' ? 'Fai una sola piega di salvataggio molto morbida e rimettilo in frigo.' : 'Stendi quasi subito, riposo breve in teglia e cuoci.', 'Non fare tre pieghe forti: peggiori strappi e perdita di gas.', time === 'less1' ? 'Teglia e forno subito.' : 'Controlla dopo 30 minuti.'],
+      rigido: ['Copri e aspetta. Se si ritira, è tensione: serve riposo, non forza.', 'Non tirarlo fino a strapparlo e non aggiungere farina sul banco a caso.', 'Riprova tra 10–20 minuti.'],
+      molle: [time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Una piega morbida può ridare struttura, poi riposo coperto.', 'Non sommergerlo di farina: rischi una crosta secca e irregolare.', 'Valuta consistenza dopo il riposo.'],
+      strappa: ['Stop. Copri e lascia rilassare. Poi riprendi con tocchi leggeri.', 'Non insistere con pieghe aggressive: l’impasto è in tensione o indebolito.', 'Aspetta 15–20 minuti.']
     };
 
-    return { context, ...rules[state] };
+    const [doNow, avoid, next] = rules[state] ?? rules.giusto;
+    return { context, doNow, avoid, next };
   }
 
-  function renderDoughAdvice() {
-    const place = $('doughPlace').value;
-    const state = $('doughState').value;
-    const time = $('doughTime').value;
-    const advice = doughAdviceText(place, state, time);
-    const target = $('doughAdvice');
+  const problemRules = {
+    alta: ['Troppo impasto per la teglia, riposo in teglia lungo o impasto già molto avanti.', 'Cuoci bene sotto e taglia porzioni più piccole.', 'Scendi a 0,48–0,54 g/cm² o accorcia il riposo in teglia.'],
+    bassaDura: ['Troppo poco impasto, poca fermentazione, stesura aggressiva o cottura troppo lunga.', 'Evita altra cottura; usa condimento umido o olio a crudo.', 'Aumenta leggermente carico impasto e non schiacciare tutta l’aria.'],
+    fondoPallido: ['Forno non abbastanza preriscaldato, ripiano troppo alto, teglia poco conduttiva o troppa umidità.', 'Sposta in basso e prolunga la prima fase.', 'Preriscalda 40–45 minuti e limita acqua dei condimenti.'],
+    fondoBruciato: ['Teglia molto conduttiva, ripiano troppo basso troppo a lungo o forno aggressivo sotto.', 'Sposta medio-alto e completa sopra.', 'Riduci minuti in basso o usa teglia meno aggressiva.'],
+    sopraBagnata: ['Pomodoro/mozzarella troppo acquosi, verdure non asciutte o mozzarella messa troppo presto.', 'Rifinisci brevemente ventilato/grill controllando a vista.', 'Scola mozzarella, usa pomodoro denso e aggiungi latticini alla fine.'],
+    mozzarellaAcqua: ['Mozzarella non scolata o messa troppo presto.', 'Rifinitura breve medio-alta; non prolungare troppo o secchi la base.', 'Taglia e scola 3–6 ore prima, usane meno.'],
+    patateCrude: ['Taglio troppo spesso o patate non asciugate/pretrattate.', 'Prolunga medio-alto se la base lo permette.', 'Taglio 1–1,5 mm, asciuga bene; se spesse, sbollenta 2 minuti.'],
+    noAlveoli: ['Impasto schiacciato in stesura, fermentazione scarsa, farina debole o troppa manipolazione.', 'Non puoi creare alveoli in cottura, ma puoi salvare croccantezza.', 'Meno pressione, più riposo, pieghe leggere e farina adatta.'],
+    collassato: ['Lievitazione troppo avanti o gestione troppo aggressiva.', 'Se manca poco, stendi delicato e cuoci. Se manca molto, piega morbida e frigo.', 'Riduci lievito o tempo a temperatura ambiente.'],
+    siRitira: ['Impasto in tensione, freddo o lavorato troppo.', 'Copri e aspetta 10–20 minuti.', 'Non forzare: stendi in due tempi.'],
+    siStrappa: ['Maglia indebolita, olio incorporato male, troppa forza o idratazione non gestita.', 'Stop, copri, riposo. Riprendi con mani unte e tocchi minimi.', 'Olio dopo sale ma prima delle pieghe strutturali, poco lavoro e riposo.']
+  };
+
+  function renderAdvice() {
+    const target = $('adviceOutput');
     clear(target);
 
-    const main = card('Cosa fare ora', 'primary');
-    addParagraph(main, `${advice.do} Situazione: impasto ${advice.context}.`);
-    target.append(main);
+    if ($('checkMode').value === 'dough') {
+      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
 
-    const dont = card('Cosa evitare', 'bad');
-    addParagraph(dont, advice.dont);
-    target.append(dont);
+      const main = card('Cosa fare ora', 'primary');
+      addParagraph(main, `${advice.doNow} Situazione: impasto ${advice.context}.`);
+      target.append(main);
 
-    const next = card('Prossimo controllo', 'ok');
-    addParagraph(next, advice.next);
-    target.append(next);
+      const avoid = card('Cosa evitare', 'bad');
+      addParagraph(avoid, advice.avoid);
+      target.append(avoid);
+
+      const next = card('Prossimo controllo', 'ok');
+      addParagraph(next, advice.next);
+      target.append(next);
+      return;
+    }
+
+    const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
+
+    const causeCard = card('Cause probabili', 'warn');
+    addParagraph(causeCard, cause);
+    target.append(causeCard);
+
+    const nowCard = card('Cosa fare ora', 'primary');
+    addParagraph(nowCard, now);
+    target.append(nowCard);
+
+    const nextCard = card('Prossima volta', 'ok');
+    addParagraph(nextCard, next);
+    target.append(nextCard);
   }
 
   function renderCookGuide() {
@@ -409,7 +502,7 @@
     [
       'Banco con poca semola, lato liscio sopra.',
       'Polpastrelli dal centro verso l’esterno, senza schiacciare tutto.',
-      'Se si ritira, pausa 5–10 minuti. La pausa lavora meglio della forza.',
+      'Se si ritira, pausa 5–10 minuti.',
       'Completa in teglia con mani leggere.'
     ].forEach((text) => stretchList.append(create('li', {}, [create('span', { text })])));
     stretch.append(stretchList);
@@ -430,46 +523,13 @@
       addParagraph(topping, 'Pomodoro denso, olio moderato, ripiano basso nella prima fase. È la più adatta se vuoi fondo asciutto e croccante.');
     } else {
       addParagraph(topping, 'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima. Lardo fuori forno o negli ultimi secondi.');
-      addParagraph(topping, 'Se le patate sono più spesse, pretrattale o tagliale più sottili: la pizza cuoce più in fretta delle patate grosse.');
+      addParagraph(topping, 'Se le patate sono più spesse, pretrattale o tagliale più sottili.');
     }
     target.append(topping);
 
     const finish = card('Uscita forno', 'warn');
     addParagraph(finish, 'Appena cotta, togli la pizza dalla teglia e mettila su griglia. Se resta nella teglia, il vapore ammorbidisce il fondo.');
     target.append(finish);
-  }
-
-  const problemRules = {
-    alta: ['Troppo impasto per la teglia, riposo in teglia lungo o impasto già molto avanti.', 'Cuoci bene sotto e taglia porzioni più piccole.', 'Scendi a 0,48–0,54 g/cm² o accorcia il riposo in teglia.'],
-    bassaDura: ['Troppo poco impasto, poca fermentazione, stesura aggressiva o cottura troppo lunga.', 'Evita altra cottura; usa condimento umido o olio a crudo.', 'Aumenta leggermente carico impasto e non schiacciare tutta l’aria.'],
-    fondoPallido: ['Forno non abbastanza preriscaldato, ripiano troppo alto, teglia poco conduttiva o troppa umidità.', 'Sposta in basso e prolunga la prima fase.', 'Preriscalda 40–45 minuti e limita acqua dei condimenti.'],
-    fondoBruciato: ['Teglia molto conduttiva, ripiano troppo basso troppo a lungo o forno aggressivo sotto.', 'Sposta medio-alto e completa sopra.', 'Riduci minuti in basso o usa teglia meno aggressiva.'],
-    sopraBagnata: ['Pomodoro/mozzarella troppo acquosi, verdure non asciutte o mozzarella messa troppo presto.', 'Rifinisci brevemente ventilato/grill controllando a vista.', 'Scola mozzarella, usa pomodoro denso e aggiungi latticini alla fine.'],
-    mozzarellaAcqua: ['Mozzarella non scolata o messa troppo presto.', 'Rifinitura breve medio-alta; non prolungare troppo o secchi la base.', 'Taglia e scola 3–6 ore prima, usane meno.'],
-    patateCrude: ['Taglio troppo spesso o patate non asciugate/pretrattate.', 'Prolunga medio-alto se la base lo permette.', 'Taglio 1–1,5 mm, asciuga bene; se spesse, sbollenta 2 minuti.'],
-    noAlveoli: ['Impasto schiacciato in stesura, fermentazione scarsa, farina debole o troppa manipolazione.', 'Non puoi creare alveoli in cottura, ma puoi salvare croccantezza.', 'Meno pressione, più riposo, pieghe leggere e farina adatta.'],
-    collassato: ['Lievitazione troppo avanti o gestione troppo aggressiva.', 'Se manca poco, stendi delicato e cuoci. Se manca molto, piega morbida e frigo.', 'Riduci lievito o tempo a temperatura ambiente.'],
-    siRitira: ['Impasto in tensione, freddo o lavorato troppo.', 'Copri e aspetta 10–20 minuti.', 'Non forzare: stendi in due tempi.'],
-    siStrappa: ['Maglia indebolita, olio incorporato male, troppa forza o idratazione non gestita.', 'Stop, copri, riposo. Riprendi con mani unte e tocchi minimi.', 'Olio dopo sale ma prima delle pieghe strutturali, poco lavoro e riposo.']
-  };
-
-  function renderProblemAdvice() {
-    const key = $('problemType').value;
-    const [cause, now, next] = problemRules[key] ?? problemRules.alta;
-    const target = $('problemAdvice');
-    clear(target);
-
-    const causeCard = card('Cause probabili', 'warn');
-    addParagraph(causeCard, cause);
-    target.append(causeCard);
-
-    const nowCard = card('Cosa fare ora', 'primary');
-    addParagraph(nowCard, now);
-    target.append(nowCard);
-
-    const nextCard = card('Prossima volta', 'ok');
-    addParagraph(nextCard, next);
-    target.append(nextCard);
   }
 
   function savePrefs() {
@@ -491,7 +551,7 @@
     });
     const savedStyle = localStorage.getItem(PREF_PREFIX + 'style');
     if (savedStyle) {
-      const styleNode = document.querySelector(`input[name="style"][value="${CSS.escape(savedStyle)}"]`);
+      const styleNode = $$('input[name="style"]').find((node) => node.value === savedStyle);
       if (styleNode) styleNode.checked = true;
     }
     toggleCustoms();
@@ -499,8 +559,10 @@
 
   function resetApp() {
     [...PREF_IDS, 'style'].forEach((id) => localStorage.removeItem(PREF_PREFIX + id));
-    localStorage.removeItem(PRIVACY_KEY);
-    window.location.reload();
+    localStorage.removeItem(LAST_PLAN_KEY);
+    clear($('result'));
+    emptyResult();
+    renderSavedTimeline();
   }
 
   function showPrivacyNotice() {
@@ -524,30 +586,15 @@
     $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
     $('calculateBtn')?.addEventListener('click', calculate);
     $('saveBtn')?.addEventListener('click', savePrefs);
-    $('resetBtn')?.addEventListener('click', resetApp);
-    $('printBtn')?.addEventListener('click', () => window.print());
-    $('doughAdviceBtn')?.addEventListener('click', renderDoughAdvice);
+    $('homeResetBtn')?.addEventListener('click', resetApp);
+    $('homePrintBtn')?.addEventListener('click', () => window.print());
+    $('adviceBtn')?.addEventListener('click', renderAdvice);
     $('cookBtn')?.addEventListener('click', renderCookGuide);
-    $('problemBtn')?.addEventListener('click', renderProblemAdvice);
+    $('checkMode')?.addEventListener('change', toggleCheckMode);
 
-    $('flourProfile')?.addEventListener('change', () => {
-      applyFlourProfileDefaults();
-      calculate();
-    });
-    $('saltProfile')?.addEventListener('change', () => {
-      toggleCustoms();
-      calculate();
-    });
-    $('hydration')?.addEventListener('change', () => {
-      toggleCustoms();
-      calculate();
-    });
-
-    ['w','h','n','start','bake','flourType','protein','lmMix','customHyd','customSalt'].forEach((id) => {
-      $(id)?.addEventListener('input', calculate);
-      $(id)?.addEventListener('change', calculate);
-    });
-    $$('input[name="style"]').forEach((node) => node.addEventListener('change', calculate));
+    $('flourProfile')?.addEventListener('change', applyFlourProfileDefaults);
+    $('saltProfile')?.addEventListener('change', toggleCustoms);
+    $('hydration')?.addEventListener('change', toggleCustoms);
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && $('privacyOverlay')?.classList.contains('show')) {
@@ -559,10 +606,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     loadPrefs();
     bindEvents();
-    calculate();
-    renderDoughAdvice();
+    emptyResult();
+    renderSavedTimeline();
     renderCookGuide();
-    renderProblemAdvice();
+    toggleCheckMode();
     showPrivacyNotice();
   });
 })();
