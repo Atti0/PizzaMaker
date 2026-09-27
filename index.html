@@ -36,6 +36,8 @@
           <h2 id="homeTitle">Scegli cosa devi fare</h2>
         </div>
 
+        <div id="homeSavedStep" class="homeSavedStep hidden" aria-live="polite"></div>
+
         <div class="actionGrid compact">
           <button type="button" class="actionCard" data-open="calc">
             <span class="cardIcon">①</span>
@@ -73,19 +75,21 @@
         <div class="twoColumns">
           <form class="card formCard" id="recipeForm" novalidate>
             <h3>1. Teglia</h3>
-            <div class="row3">
-              <div><label for="w">Larghezza cm</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
-              <div><label for="h">Altezza cm</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
-              <div><label for="n">Numero teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
+            <div class="panLine">
+              <div class="compactField"><label for="w">Larg.</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
+              <span class="fieldJoin">×</span>
+              <div class="compactField"><label for="h">Alt.</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
+              <span class="fieldUnit">cm</span>
+              <div class="compactField pans"><label for="n">Teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
             </div>
 
             <h3>2. Risultato</h3>
-            <div class="choiceGrid" role="radiogroup" aria-label="Risultato desiderato">
-              <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra croccante<small>più bassa</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.50"><span>Romana classica<small>bassa e croccante</small></span></label>
+            <div class="choiceGrid compactChoices" role="radiogroup" aria-label="Risultato desiderato">
+              <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra<small>croccante</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.50"><span>Classica<small>bassa</small></span></label>
               <label class="choice"><input type="radio" name="style" value="0.54" checked><span>Equilibrata<small>bassa-media</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>più alveolata</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.65"><span>Più soffice<small>quasi focaccia</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>alveolata</small></span></label>
+              <label class="choice"><input type="radio" name="style" value="0.65"><span>Soffice<small>alta</small></span></label>
             </div>
 
             <h3>3. Quando cuoci</h3>
@@ -135,6 +139,7 @@
               <button type="button" id="calculateBtn">Calcola</button>
               <button type="button" class="secondary" id="saveBtn">Salva preferenze</button>
             </div>
+            <p class="inlineHint">Dopo il calcolo compariranno dosi, prossimo step e timeline salvata.</p>
           </form>
 
           <div class="resultStack" id="result" aria-live="polite"></div>
