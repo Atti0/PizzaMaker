@@ -236,11 +236,7 @@
   }
 
   function emptyResult() {
-    const target = $('result');
-    clear(target);
-    const empty = card('Pronto quando vuoi', 'warn');
-    addParagraph(empty, 'Compila i dati essenziali e premi Calcola. I risultati compariranno qui e la timeline verrà salvata nel browser.');
-    target.append(empty);
+    clear($('result'));
   }
 
   function saveLastPlan(plan) {
@@ -342,6 +338,7 @@
     target.append(timelineCard);
 
     renderSavedTimeline();
+    renderHomeSavedStep();
   }
 
   function renderTimelineList(timeline) {
@@ -390,6 +387,28 @@
     ].forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
     ingredients.append(list);
     target.append(ingredients);
+  }
+
+  function renderHomeSavedStep() {
+    const target = $('homeSavedStep');
+    if (!target) return;
+    clear(target);
+
+    const plan = getLastPlan();
+    if (!plan) {
+      target.classList.add('hidden');
+      return;
+    }
+
+    const next = nextTimelineStep(plan.timeline);
+    target.classList.remove('hidden');
+    target.append(
+      create('b', { text: `Prossimo step · ${fmtShortDate(new Date(next.date))}` }),
+      create('span', { text: next.label })
+    );
+    const button = create('button', { type: 'button', class: 'secondary', text: 'Apri timeline' });
+    button.addEventListener('click', () => openView('impasto'));
+    target.append(button);
   }
 
   function calculate() {
@@ -563,6 +582,7 @@
     clear($('result'));
     emptyResult();
     renderSavedTimeline();
+    renderHomeSavedStep();
   }
 
   function showPrivacyNotice() {
@@ -608,7 +628,8 @@
     bindEvents();
     emptyResult();
     renderSavedTimeline();
-    renderCookGuide();
+    renderHomeSavedStep();
+    clear($('cook'));
     toggleCheckMode();
     showPrivacyNotice();
   });
