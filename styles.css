@@ -207,3 +207,43 @@ input,select{
   .view:not(.active){display:none}
   .hero,.card,.resultCard{box-shadow:none}
 }
+
+/* v2.2 compattazione mobile */
+.homeSavedStep{
+  margin:0 0 14px;
+  background:#fff7e7;
+  border:1px solid var(--line);
+  border-left:7px solid var(--gold);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:12px 14px;
+}
+.homeSavedStep b{display:block;color:var(--red);font-size:22px;line-height:1.05}
+.homeSavedStep span{display:block;color:var(--ink);font-weight:800;margin-top:2px}
+.homeSavedStep button{margin-top:10px;padding:10px 12px;box-shadow:none}
+.panLine{
+  display:grid;
+  grid-template-columns:minmax(78px,1fr) auto minmax(78px,1fr) auto minmax(92px,.9fr);
+  gap:8px;
+  align-items:end;
+  margin-bottom:12px;
+}
+.compactField label{font-size:15px;margin-bottom:4px}
+.compactField input{min-height:46px;text-align:center;font-weight:800}
+.fieldJoin,.fieldUnit{align-self:center;color:var(--muted);font-weight:900;padding-top:20px}
+.choiceGrid.compactChoices{grid-template-columns:repeat(5,1fr);gap:7px}
+.compactChoices .choice span{min-height:64px;padding:9px 8px;font-size:15px}
+.compactChoices .choice small{font-size:12px}
+.inlineHint{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.35}
+.resultStack:empty{display:none}
+#cook:empty,#result:empty,#adviceOutput:empty{display:none}
+@media(max-width:640px){
+  .formCard{padding:16px}
+  .formCard h3{font-size:22px;margin-top:16px;margin-bottom:10px}
+  .panLine{grid-template-columns:1fr auto 1fr auto .8fr;gap:6px}
+  .compactField input{min-height:44px;padding:8px}
+  .choiceGrid.compactChoices{grid-template-columns:1fr 1fr}
+  .compactChoices .choice span{min-height:58px}
+  .sectionTitle,.viewHeader{margin:12px 0 12px}
+  .siteLinks{margin-top:12px}
+}
