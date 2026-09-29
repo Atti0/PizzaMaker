@@ -409,9 +409,9 @@
     nowCard.append(actions);
     target.append(nowCard);
 
-    const timelineCard = card('Timeline salvata');
-    timelineCard.append(renderTimelineList(data.timeline));
-    target.append(timelineCard);
+    const timelineLink = create('button', { class: 'compactLink', type: 'button', text: 'Vedi timeline completa' });
+    timelineLink.addEventListener('click', () => openView('impasto'));
+    nowCard.append(timelineLink);
 
     renderSavedTimeline();
     renderHomeSavedStep();
@@ -435,24 +435,28 @@
 
     const plan = getLastPlan();
     if (!plan) {
-      const empty = card('Timeline salvata');
-      addParagraph(empty, 'Non c’è ancora una timeline salvata. Calcola un nuovo impasto e poi torna qui per rivederla.');
+      const empty = card('Dati salvati');
+      addParagraph(empty, 'Non c’è ancora un impasto salvato. Calcola un nuovo impasto per ritrovare qui timeline e dosi.');
       target.append(empty);
       return;
     }
 
     const next = nextTimelineStep(plan.timeline);
-    const main = card('Timeline salvata', 'primary');
-    addParagraph(main, `${plan.pizza} · ${plan.method} · cottura ${fmtShortDate(new Date(plan.bake))}`);
+    const main = card('Prossimo step', 'primary compactResult');
     main.append(create('span', { class: 'bigStep', text: fmtShortDate(new Date(next.date)) }));
     addParagraph(main, next.label);
+    addParagraph(main, `${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`, 'mutedLine');
     target.append(main);
 
-    const listCard = card('Tutti gli step');
-    listCard.append(renderTimelineList(plan.timeline));
-    target.append(listCard);
+    const details = create('details', { class: 'savedDetails' });
+    details.append(create('summary', { text: 'Timeline e dosi salvate' }));
 
-    const ingredients = card('Dosi salvate', 'ok');
+    const timelineSection = create('div', { class: 'savedSection' });
+    timelineSection.append(create('h3', { text: 'Timeline completa' }), renderTimelineList(plan.timeline));
+    details.append(timelineSection);
+
+    const ingredientsSection = create('div', { class: 'savedSection' });
+    ingredientsSection.append(create('h3', { text: 'Dosi' }));
     const list = create('ul', { class: 'recipeList' });
     const savedRows = [];
     if (Array.isArray(plan.ingredients.flourBlend) && plan.ingredients.flourBlend.length > 1) {
@@ -470,8 +474,9 @@
       ['Lievito fresco', `${round(plan.ingredients.yeastG, 1)} g`]
     );
     savedRows.forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
-    ingredients.append(list);
-    target.append(ingredients);
+    ingredientsSection.append(list);
+    details.append(ingredientsSection);
+    target.append(details);
   }
 
   function renderHomeSavedStep() {
@@ -571,40 +576,42 @@
     siStrappa: ['Maglia indebolita, olio incorporato male, troppa forza o idratazione non gestita.', 'Stop, copri, riposo. Riprendi con mani unte e tocchi minimi.', 'Olio dopo sale ma prima delle pieghe strutturali, poco lavoro e riposo.']
   };
 
+  function adviceRow(label, text, tone = '') {
+    const row = create('div', { class: `adviceRow ${tone}`.trim() });
+    row.append(create('strong', { text: label }), create('p', { text }));
+    return row;
+  }
+
   function renderAdvice() {
     const target = $('adviceOutput');
     clear(target);
+    const panel = card('Indicazioni', 'compactResult');
 
     if ($('checkMode').value === 'dough') {
       const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
-
-      const main = card('Cosa fare ora', 'primary');
-      addParagraph(main, `${advice.doNow} Situazione: impasto ${advice.context}.`);
-      target.append(main);
-
-      const avoid = card('Cosa evitare', 'bad');
-      addParagraph(avoid, advice.avoid);
-      target.append(avoid);
-
-      const next = card('Prossimo controllo', 'ok');
-      addParagraph(next, advice.next);
-      target.append(next);
-      return;
+      panel.append(
+        adviceRow('Adesso', `${advice.doNow} Situazione: impasto ${advice.context}.`, 'primaryRow'),
+        adviceRow('Evita', advice.avoid, 'badRow'),
+        adviceRow('Poi', advice.next, 'okRow')
+      );
+    } else {
+      const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
+      panel.append(
+        adviceRow('Possibile causa', cause, 'warnRow'),
+        adviceRow('Adesso', now, 'primaryRow'),
+        adviceRow('Prossima volta', next, 'okRow')
+      );
     }
+    target.append(panel);
+  }
 
-    const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
-
-    const causeCard = card('Cause probabili', 'warn');
-    addParagraph(causeCard, cause);
-    target.append(causeCard);
-
-    const nowCard = card('Cosa fare ora', 'primary');
-    addParagraph(nowCard, now);
-    target.append(nowCard);
-
-    const nextCard = card('Prossima volta', 'ok');
-    addParagraph(nextCard, next);
-    target.append(nextCard);
+  function guideStep(number, title, texts) {
+    const step = create('div', { class: 'guideStep' });
+    const head = create('div', { class: 'guideStepHead' });
+    head.append(create('span', { class: 'stepNumber', text: String(number) }), create('strong', { text: title }));
+    step.append(head);
+    texts.forEach((text) => step.append(create('p', { text })));
+    return step;
   }
 
   function renderCookGuide() {
@@ -613,39 +620,36 @@
     const target = $('cook');
     clear(target);
 
-    const stretch = card('Stesura', 'ok');
-    const stretchList = create('ul', { class: 'adviceList' });
-    [
-      'Banco con poca semola, lato liscio sopra.',
-      'Polpastrelli dal centro verso l’esterno, senza schiacciare tutto.',
-      'Se si ritira, pausa 5–10 minuti.',
-      'Completa in teglia con mani leggere.'
-    ].forEach((text) => stretchList.append(create('li', {}, [create('span', { text })])));
-    stretch.append(stretchList);
-    target.append(stretch);
+    const panel = card('Guida operativa', 'cookGuide');
+    panel.append(guideStep(1, 'Stesura', [
+      'Banco con poca semola, lato liscio sopra. Polpastrelli dal centro verso l’esterno senza schiacciare tutto.',
+      'Se si ritira, pausa 5–10 minuti. Completa in teglia con mani leggere.'
+    ]));
 
-    const oven = card('Forno e teglia', 'primary');
     const panText = pan === 'leccarda'
-      ? 'Con leccarda serve spingere bene la prima fase in basso: è meno conduttiva di ferro/alluminio.'
-      : 'Con teglia più conduttiva controlla prima il fondo: può colorire più velocemente.';
-    addParagraph(oven, `${panText} Preriscalda davvero 40–45 minuti a 250 °C.`);
-    target.append(oven);
+      ? 'Con la leccarda spingi bene la prima fase in basso: è meno conduttiva di ferro e alluminio.'
+      : 'Con una teglia più conduttiva controlla prima il fondo: può colorire più velocemente.';
+    panel.append(guideStep(2, 'Forno e teglia', [`${panText} Preriscalda 40–45 minuti a 250 °C.`]));
 
-    const topping = card('Condimento e cottura');
+    let toppingTexts;
     if (pizza === 'margherita') {
-      addParagraph(topping, 'Pomodoro denso 110–130 g per una 37×26. Prima fase in basso con pomodoro, poi mozzarella scolata solo negli ultimi 2–4 minuti.');
-      addParagraph(topping, 'Ventilato o grill solo come rifinitura breve se resta umida sopra.');
+      toppingTexts = [
+        'Pomodoro denso 110–130 g per una 37×26. Prima fase in basso con pomodoro; mozzarella scolata solo negli ultimi 2–4 minuti.',
+        'Ventilato o grill solo come rifinitura breve se resta umida sopra.'
+      ];
     } else if (pizza === 'rossa') {
-      addParagraph(topping, 'Pomodoro denso, olio moderato, ripiano basso nella prima fase. È la più adatta se vuoi fondo asciutto e croccante.');
+      toppingTexts = ['Pomodoro denso, olio moderato, ripiano basso nella prima fase per mantenere il fondo asciutto e croccante.'];
     } else {
-      addParagraph(topping, 'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima. Lardo fuori forno o negli ultimi secondi.');
-      addParagraph(topping, 'Se le patate sono più spesse, pretrattale o tagliale più sottili.');
+      toppingTexts = [
+        'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima. Lardo fuori forno o negli ultimi secondi.',
+        'Se le patate sono più spesse, pretrattale o tagliale più sottili.'
+      ];
     }
-    target.append(topping);
-
-    const finish = card('Uscita forno', 'warn');
-    addParagraph(finish, 'Appena cotta, togli la pizza dalla teglia e mettila su griglia. Se resta nella teglia, il vapore ammorbidisce il fondo.');
-    target.append(finish);
+    panel.append(guideStep(3, 'Condimento e cottura', toppingTexts));
+    panel.append(guideStep(4, 'Uscita forno', [
+      'Appena cotta, togli la pizza dalla teglia e mettila su griglia: il vapore nella teglia ammorbidisce il fondo.'
+    ]));
+    target.append(panel);
   }
 
   function savePrefs() {
@@ -719,7 +723,11 @@
     $('.removeFlour').forEach((button) => button.addEventListener('click', () => removeFlour(button.dataset.removeFlour)));
     $('resetAdvancedBtn')?.addEventListener('click', resetAdvanced);
     ['flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2','flour3Pct','flourType3','protein3','lmMix3']
-      .forEach((id) => $(id)?.addEventListener('input', updateFlourUI));
+      .forEach((id) => {
+        const node = $(id);
+        node?.addEventListener('input', updateFlourUI);
+        node?.addEventListener('change', updateFlourUI);
+      });
     $('hydration')?.addEventListener('change', toggleCustoms);
 
     document.addEventListener('keydown', (event) => {
