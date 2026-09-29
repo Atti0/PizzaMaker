@@ -357,6 +357,27 @@
     }
   }
 
+  function renderPremiumTimeline(timeline) {
+    const now = Date.now();
+    const nextIndex = timeline.findIndex((item) => new Date(item.date).getTime() > now);
+    const activeIndex = nextIndex >= 0 ? nextIndex : timeline.length - 1;
+    const list = create('ol', { class: 'premiumTimeline' });
+
+    timeline.forEach((item, index) => {
+      const state = index < activeIndex ? 'done' : index === activeIndex ? 'current' : 'future';
+      const row = create('li', { class: `timelineStep ${state}` });
+      const marker = create('span', { class: 'timelineMarker', 'aria-hidden': 'true', text: index < activeIndex ? '✓' : '' });
+      const copy = create('div', { class: 'timelineCopy' });
+      copy.append(
+        create('strong', { text: item.label }),
+        create('span', { text: fmtShortDate(new Date(item.date)) })
+      );
+      row.append(marker, copy);
+      list.append(row);
+    });
+    return list;
+  }
+
   function renderRecipeResult(data) {
     const target = $('result');
     clear(target);
@@ -377,79 +398,88 @@
       bake: data.bake.toISOString(),
       timeline: data.timeline,
       ingredients: {
-        flour: data.flour,
-        water: data.water,
-        saltG: data.saltG,
-        oilG: data.oilG,
-        yeastG: data.yeastG,
-        honeyG: data.honeyG,
-        hydration: data.hydration,
-        salt: data.salt,
-        flourBlend: data.flourBlend
+        flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
+        yeastG: data.yeastG, honeyG: data.honeyG, hydration: data.hydration,
+        salt: data.salt, flourBlend: data.flourBlend
       }
     };
     saveLastPlan(plan);
 
     const next = nextTimelineStep(data.timeline);
+    const shell = create('section', { class: 'doughResult', 'aria-label': 'Il tuo impasto' });
 
-    const nextCard = card('Prossimo step', 'primary');
-    nextCard.append(create('span', { class: 'bigStep', text: fmtShortDate(new Date(next.date)) }));
-    addParagraph(nextCard, next.label);
-    target.append(nextCard);
+    const head = create('div', { class: 'doughResultHead' });
+    const title = create('div');
+    title.append(
+      create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
+      create('h3', { text: resultName(data.load) }),
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+    );
+    const hydrationBadge = create('div', { class: 'hydrationBadge' });
+    hydrationBadge.append(
+      create('strong', { text: `${round(data.hydration, 0)}%` }),
+      create('span', { text: 'idratazione' })
+    );
+    head.append(title, hydrationBadge);
+    shell.append(head);
 
-    const kpis = card('Sintesi');
-    const grid = create('div', { class: 'kpi' });
-    [
-      ['Pizza', resultName(data.load)],
-      ['Metodo', methodLabel(data.hours)],
-      ['Impasto/teglia', `${round(data.doughPer, 0)} g`],
-      ['Tempo', `${round(data.hours, 1)} h`]
-    ].forEach(([label, value]) => {
-      const item = create('div', { class: 'kpiItem' });
-      item.append(create('span', { text: label }), create('strong', { text: value }));
-      grid.append(item);
-    });
-    kpis.append(grid);
-    target.append(kpis);
+    const now = create('div', { class: 'nextAction' });
+    now.append(
+      create('span', { class: 'nextLabel', text: 'Adesso' }),
+      create('strong', { text: next.label }),
+      create('time', { text: fmtShortDate(new Date(next.date)), datetime: next.date })
+    );
+    shell.append(now);
 
-    const weigh = card('Cosa pesare', 'ok');
-    const list = create('ul', { class: 'recipeList' });
+    const doses = create('div', { class: 'premiumSection' });
+    doses.append(create('div', { class: 'sectionBar' }, [
+      create('h4', { text: 'Dosi' }),
+      create('span', { text: `${round(data.total, 0)} g impasto totale` })
+    ]));
+    const doseGrid = create('div', { class: 'doseGrid' });
     const rows = [];
-    if (data.flourBlend.length === 1) {
-      rows.push(['Farina', `${round(data.flour)} g`]);
-    } else {
-      data.flourBlend.forEach((item) => {
-        rows.push([`Farina ${item.index} · ${round(item.pct, 0)}%`, `${round(item.grams)} g`]);
-      });
-    }
+    if (data.flourBlend.length === 1) rows.push(['Farina', `${round(data.flour)} g`]);
+    else data.flourBlend.forEach((item) => rows.push([`Farina ${item.index} · ${round(item.pct, 0)}%`, `${round(item.grams)} g`]));
     rows.push(
-      ['Acqua', `${round(data.water)} g (${round(data.hydration, 1)}%)`],
-      ['Sale', `${round(data.saltG)} g (${round(data.salt, 1)}%)`],
+      ['Acqua', `${round(data.water)} g`],
+      ['Sale', `${round(data.saltG)} g`],
       ['Olio', `${round(data.oilG)} g`],
-      ['Lievito fresco', `${round(data.yeastG, 1)} g`]
+      ['Lievito', `${round(data.yeastG, 1)} g`]
     );
     if (data.honeyG > 0) rows.push(['Miele', `${round(data.honeyG, 1)} g`]);
-    rows.forEach(([label, value]) => {
-      list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })]));
+    rows.forEach(([label,value]) => {
+      const item=create('div',{class:'doseItem'});
+      item.append(create('span',{text:label}),create('strong',{text:value}));
+      doseGrid.append(item);
     });
-    weigh.append(list);
-    target.append(weigh);
+    doses.append(doseGrid);
+    shell.append(doses);
 
-    const nowCard = card('Cosa fare adesso');
-    const actions = create('ul', { class: 'adviceList' });
+    const firstSteps = create('div', { class: 'premiumSection firstSteps' });
+    firstSteps.append(create('h4', { text: 'Parti così' }));
+    const steps=create('ol',{class:'compactSteps'});
     [
-      'Mescola farina, lievito e circa 85–90% dell’acqua.',
-      'Copri la ciotola e lascia riposare 20 minuti.',
-      'Aggiungi sale sciolto nell’acqua rimasta, poi olio. Poco lavoro, niente pieghe aggressive.',
-      'Tieni 5–10 g d’acqua da parte: aggiungila solo se dopo il riposo l’impasto resta rigido.'
-    ].forEach((text) => actions.append(create('li', {}, [create('span', { text })])));
-    nowCard.append(actions);
-    target.append(nowCard);
+      'Mescola farina, lievito e 85–90% dell’acqua.',
+      'Copri e lascia riposare 20 minuti.',
+      'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
+      'Lavora poco: le pieghe strutturali vengono dopo.'
+    ].forEach((text,index)=>{
+      const li=create('li');
+      li.append(create('span',{text:String(index+1)}),create('p',{text}));
+      steps.append(li);
+    });
+    firstSteps.append(steps);
+    shell.append(firstSteps);
 
-    const timelineLink = create('button', { class: 'compactLink', type: 'button', text: 'Vedi timeline completa' });
-    timelineLink.addEventListener('click', () => openView('impasto'));
-    nowCard.append(timelineLink);
+    const timeline = create('details', { class: 'timelineDisclosure' });
+    timeline.append(create('summary', { text: 'Timeline completa' }), renderPremiumTimeline(data.timeline));
+    shell.append(timeline);
 
+    const manage = create('button', { class: 'manageDough', type: 'button', text: 'Segui questo impasto' });
+    manage.addEventListener('click', () => openView('impasto'));
+    shell.append(manage);
+
+    target.append(shell);
     renderSavedTimeline();
     renderHomeSavedStep();
   }
