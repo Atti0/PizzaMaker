@@ -247,3 +247,35 @@ input,select{
   .sectionTitle,.viewHeader{margin:12px 0 12px}
   .siteLinks{margin-top:12px}
 }
+
+
+/* v2.5 gestione farine: semplice di default, miscele progressive */
+.flourSummary{
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+  padding:9px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.flourSummary .fieldLabel{color:var(--green);font-weight:900;font-size:13px;margin-bottom:2px}
+.flourSummary strong{font-family:Arial,sans-serif;font-size:15px;line-height:1.2}
+.flourSummary small{color:var(--muted);font-size:12px;margin-top:3px}
+.flourBlend{display:grid;gap:10px}
+.flourItem{border:1px solid var(--line);border-radius:16px;background:white;padding:12px}
+.flourItemHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;color:var(--red)}
+.flourFields{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr 1fr 1fr 1.35fr}
+.flourFields label{font-size:13px}
+.flourFields input,.flourFields select{min-height:44px;padding:8px 10px;font-size:15px}
+button.textButton{background:transparent;color:var(--red);border:0;box-shadow:none;padding:5px 2px;text-decoration:underline;font-size:13px}
+.addFlourBtn{justify-self:start;box-shadow:none;padding:10px 12px}
+.resetAdvanced{margin-top:10px}
+.advancedCalcRow{margin-top:14px}
+.inputError{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(169,43,37,.12)}
+@media(max-width:640px){
+  .flourFields,.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:1fr 1fr}
+  .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:1/-1}
+}
