@@ -325,3 +325,129 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
   #impasto .formCard{order:1;width:100%}
   #savedTimeline{order:2;width:100%}
 }
+
+
+/* v3.0 benchmark premium: nuovo impasto + risultato */
+.premiumCalc .viewHeader{margin-bottom:18px}
+.premiumCalc .recipeBuilder{
+  box-shadow:0 12px 34px rgba(49,34,13,.08);
+  border-color:rgba(111,82,43,.18);
+}
+.premiumCalc .recipeBuilder>h3{
+  color:var(--ink);
+  font-family:Arial,sans-serif;
+  font-size:15px;
+  letter-spacing:.02em;
+  padding-top:16px;
+  border-top:1px solid rgba(111,82,43,.13);
+}
+.premiumCalc .recipeBuilder>h3:first-child{padding-top:0;border-top:0}
+.premiumCalc .recipeBuilder label{font-family:Arial,sans-serif;font-size:13px}
+.premiumCalc .compactChoices .choice span{
+  box-shadow:none;
+  transition:border-color .16s ease,background .16s ease,transform .16s ease;
+}
+.premiumCalc .compactChoices .choice input:checked + span{transform:translateY(-1px)}
+.doughResult{
+  overflow:hidden;
+  background:#fffdf8;
+  border:1px solid rgba(111,82,43,.2);
+  border-radius:28px;
+  box-shadow:0 20px 54px rgba(49,34,13,.12);
+  font-family:Arial,sans-serif;
+}
+.doughResultHead{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
+  padding:22px 22px 18px;
+}
+.resultEyebrow{
+  display:block;color:var(--green);font-size:12px;font-weight:900;
+  letter-spacing:.11em;text-transform:uppercase;margin-bottom:6px;
+}
+.doughResultHead h3{
+  margin:0;color:var(--ink);font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(28px,4vw,38px);line-height:1.02;
+}
+.resultMeta{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.35}
+.hydrationBadge{
+  flex:0 0 auto;min-width:82px;text-align:center;
+  border-left:1px solid var(--line);padding-left:16px;
+}
+.hydrationBadge strong{display:block;color:var(--red);font-size:28px;line-height:1}
+.hydrationBadge span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.nextAction{
+  margin:0 14px;padding:15px 16px;border-radius:18px;
+  background:#f7edd6;display:grid;grid-template-columns:1fr auto;gap:3px 12px;
+}
+.nextAction .nextLabel{
+  grid-column:1/-1;color:var(--green);font-size:11px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.nextAction strong{font-family:Georgia,'Times New Roman',serif;font-size:21px;color:var(--ink)}
+.nextAction time{align-self:center;color:var(--red);font-weight:900;font-size:14px}
+.premiumSection{padding:20px 22px;border-bottom:1px solid rgba(111,82,43,.13)}
+.sectionBar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.premiumSection h4{margin:0;color:var(--ink);font-size:17px}
+.sectionBar>span{color:var(--muted);font-size:12px}
+.doseGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 22px}
+.doseItem{
+  display:flex;justify-content:space-between;gap:12px;padding:9px 0;
+  border-bottom:1px solid rgba(111,82,43,.1);
+}
+.doseItem span{color:#4f514e;font-size:14px}
+.doseItem strong{color:var(--ink);font-size:15px}
+.compactSteps{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:10px}
+.compactSteps li{display:grid;grid-template-columns:25px 1fr;gap:9px;align-items:start}
+.compactSteps li>span{
+  width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  background:#f1e5cc;color:var(--red);font-size:12px;font-weight:900;
+}
+.compactSteps p{margin:2px 0 0;color:#363b42;font-size:14px;line-height:1.35}
+.timelineDisclosure{border-bottom:1px solid rgba(111,82,43,.13)}
+.timelineDisclosure summary{
+  cursor:pointer;padding:16px 22px;color:var(--red);font-weight:900;
+  list-style-position:inside;
+}
+.premiumTimeline{list-style:none;margin:0;padding:0 22px 18px}
+.timelineStep{position:relative;display:grid;grid-template-columns:28px 1fr;gap:10px;min-height:52px}
+.timelineStep:not(:last-child):before{
+  content:"";position:absolute;left:13px;top:25px;bottom:-3px;width:1px;background:#d9cdb8;
+}
+.timelineMarker{
+  width:27px;height:27px;border-radius:50%;display:grid;place-items:center;
+  border:2px solid #d4c8b4;background:#fffdf8;color:white;font-size:12px;font-weight:900;z-index:1;
+}
+.timelineStep.done .timelineMarker{background:var(--green);border-color:var(--green)}
+.timelineStep.current .timelineMarker{border:7px solid var(--gold);background:white}
+.timelineStep.future{opacity:.58}
+.timelineCopy{display:flex;justify-content:space-between;gap:12px;padding-top:3px}
+.timelineCopy strong{color:var(--ink);font-size:14px}
+.timelineCopy span{color:var(--muted);font-size:12px;white-space:nowrap}
+.manageDough{
+  width:calc(100% - 44px);margin:18px 22px 22px;min-height:48px;
+  box-shadow:none;
+}
+@media(max-width:640px){
+  .premiumCalc .viewHeader{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px}
+  .premiumCalc .viewHeader .ghost{padding:10px 11px}
+  .premiumCalc .viewHeader .eyebrow{display:none}
+  .premiumCalc .viewHeader h2{font-size:27px}
+  .premiumCalc .recipeBuilder{border-radius:22px;box-shadow:0 8px 26px rgba(49,34,13,.07)}
+  .premiumCalc .recipeBuilder>h3{margin-top:14px;margin-bottom:9px}
+  .doughResult{border-radius:22px}
+  .doughResultHead{padding:18px 16px 15px}
+  .doughResultHead h3{font-size:29px}
+  .hydrationBadge{min-width:68px;padding-left:11px}
+  .hydrationBadge strong{font-size:24px}
+  .nextAction{margin:0 10px;padding:13px 14px;grid-template-columns:1fr}
+  .nextAction time{margin-top:2px}
+  .premiumSection{padding:17px 16px}
+  .doseGrid{grid-template-columns:1fr;gap:0}
+  .timelineDisclosure summary{padding:15px 16px}
+  .premiumTimeline{padding:0 16px 14px}
+  .timelineCopy{display:grid;gap:2px}
+  .manageDough{width:calc(100% - 32px);margin:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .premiumCalc .compactChoices .choice span{transition:none}
+}
