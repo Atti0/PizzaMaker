@@ -719,7 +719,7 @@
     target.append(panel);
   }
 
-  function savePrefs() {
+  function savePrefs(showConfirmation = true) {
     PREF_IDS.forEach((id) => {
       const node = $(id);
       if (node) localStorage.setItem(PREF_PREFIX + id, node.value);
@@ -727,7 +727,7 @@
     localStorage.setItem(PREF_PREFIX + 'flourCount', String(activeFlours().length));
     const style = document.querySelector('input[name="style"]:checked')?.value;
     if (style) localStorage.setItem(PREF_PREFIX + 'style', style);
-    alert('Preferenze salvate in questo browser.');
+    if (showConfirmation) alert('Preferenze salvate in questo browser.');
   }
 
   function loadPrefs() {
@@ -778,7 +778,6 @@
 
     $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
     $('calculateBtn')?.addEventListener('click', calculate);
-    $('saveBtn')?.addEventListener('click', savePrefs);
     $('homeResetBtn')?.addEventListener('click', resetApp);
     $('homePrintBtn')?.addEventListener('click', () => window.print());
     $('adviceBtn')?.addEventListener('click', renderAdvice);
@@ -799,6 +798,11 @@
         node?.addEventListener('change', () => updateFlourUI(id));
       });
     $('hydration')?.addEventListener('change', toggleCustoms);
+
+    $('recipeForm')?.addEventListener('change', () => savePrefs(false));
+    $('recipeForm')?.addEventListener('input', (event) => {
+      if (event.target.matches('input[type="number"], input[type="datetime-local"]')) savePrefs(false);
+    });
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && $('privacyOverlay')?.classList.contains('show')) {
