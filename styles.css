@@ -451,3 +451,117 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 @media(prefers-reduced-motion:reduce){
   .premiumCalc .compactChoices .choice span{transition:none}
 }
+
+
+/* v3.1 premium benchmark — visual direction + overflow hardening */
+html,body{max-width:100%;overflow-x:hidden}
+.premiumCalc,.premiumCalc *{min-width:0}
+.premiumCalc{
+  --pc-bg:#f3f0e8;
+  --pc-surface:#ffffff;
+  --pc-ink:#171915;
+  --pc-muted:#6f716b;
+  --pc-accent:#b9472f;
+  --pc-green:#465b35;
+  --pc-line:#deddd6;
+}
+.premiumCalc .viewHeader{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;
+  gap:12px;margin:8px 0 14px;
+}
+.premiumCalc .viewHeader .ghost{
+  width:44px;height:44px;padding:0;overflow:hidden;
+  font-size:0;border-radius:50%;background:transparent;border:1px solid #d7d1c6;
+}
+.premiumCalc .viewHeader .ghost::before{
+  content:"←";font-family:Arial,sans-serif;font-size:22px;color:var(--pc-ink);
+}
+.premiumCalc .viewHeader .eyebrow{display:none}
+.premiumCalc .viewHeader h2{
+  font-family:Arial,sans-serif;font-size:clamp(24px,5vw,32px);
+  letter-spacing:-.035em;color:var(--pc-ink);line-height:1.05;
+}
+.premiumCalc .twoColumns{gap:18px}
+.premiumCalc .recipeBuilder{
+  background:var(--pc-surface);border:1px solid var(--pc-line);
+  border-radius:28px;box-shadow:none;padding:0;overflow:hidden;
+}
+.premiumCalc .recipeBuilder>h3{
+  margin:0;padding:20px 20px 9px;border:0!important;
+  font-family:Arial,sans-serif;font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--pc-muted);
+}
+.premiumCalc .recipeBuilder>h3:not(:first-child){border-top:1px solid var(--pc-line)!important;margin-top:14px}
+.premiumCalc .panLine,
+.premiumCalc .choiceGrid,
+.premiumCalc .recipeBuilder>.row,
+.premiumCalc .recipeBuilder>.advancedPanel,
+.premiumCalc .recipeBuilder>.formActions,
+.premiumCalc .recipeBuilder>.inlineHint{margin-left:20px;margin-right:20px}
+.premiumCalc .panLine{width:auto}
+.premiumCalc input,.premiumCalc select{
+  max-width:100%;border:1px solid #d8d8d2;background:#f8f8f5;
+  border-radius:12px;box-shadow:none;font-family:Arial,sans-serif;
+}
+.premiumCalc .compactField input{background:#f8f8f5}
+.premiumCalc .choiceGrid.compactChoices{
+  display:flex;gap:8px;overflow-x:auto;padding:1px 0 5px;
+  scrollbar-width:none;overscroll-behavior-inline:contain;
+}
+.premiumCalc .choiceGrid.compactChoices::-webkit-scrollbar{display:none}
+.premiumCalc .compactChoices .choice{flex:0 0 auto}
+.premiumCalc .compactChoices .choice span{
+  min-height:58px;min-width:118px;border-radius:14px;background:#f7f7f3;
+  border:1px solid transparent;padding:9px 11px;font-family:Arial,sans-serif;
+}
+.premiumCalc .compactChoices .choice input:checked + span{
+  background:#f5e9e4;border-color:var(--pc-accent);
+  box-shadow:inset 0 0 0 1px var(--pc-accent);transform:none;
+}
+.premiumCalc .compactChoices .choice small{color:var(--pc-muted)}
+.premiumCalc .flourSummary{
+  background:#f8f8f5;border-color:#d8d8d2;border-radius:12px;
+}
+.premiumCalc .advancedPanel{
+  background:transparent;border:1px solid var(--pc-line);border-radius:14px;
+}
+.premiumCalc .advancedPanel summary{font-family:Arial,sans-serif;color:var(--pc-ink)}
+.premiumCalc .formActions{padding:4px 0 0}
+.premiumCalc .formActions button{box-shadow:none;border-radius:12px;font-family:Arial,sans-serif}
+.premiumCalc #calculateBtn{background:var(--pc-ink)}
+.premiumCalc #saveBtn{background:transparent;border:1px solid var(--pc-line)}
+.premiumCalc .recipeBuilder>.inlineHint{padding-bottom:20px;font-family:Arial,sans-serif}
+.premiumCalc .fieldJoin,.premiumCalc .fieldUnit{white-space:nowrap}
+.premiumCalc .doughResult{background:var(--pc-surface);border-color:var(--pc-line);box-shadow:none}
+.premiumCalc .resultEyebrow{color:var(--pc-green)}
+.premiumCalc .doughResultHead h3{color:var(--pc-ink)}
+.premiumCalc .hydrationBadge strong{color:var(--pc-accent)}
+.premiumCalc .nextAction{background:#eef0e8}
+.premiumCalc .nextAction .nextLabel{color:var(--pc-green)}
+.premiumCalc .nextAction time{color:var(--pc-accent)}
+.premiumCalc .manageDough{background:var(--pc-ink)}
+@media(max-width:640px){
+  .appShell{width:100%;max-width:100%;overflow:hidden}
+  .premiumCalc{width:100%;max-width:100%;overflow:hidden}
+  .premiumCalc .viewHeader{grid-template-columns:44px minmax(0,1fr)}
+  .premiumCalc .viewHeader h2{font-size:24px;white-space:normal;overflow-wrap:anywhere}
+  .premiumCalc .twoColumns{display:block;width:100%}
+  .premiumCalc .recipeBuilder,.premiumCalc #result{width:100%;max-width:100%}
+  .premiumCalc .panLine{
+    display:grid;grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr) 24px minmax(0,.78fr);
+    gap:5px;align-items:end;
+  }
+  .premiumCalc .compactField{min-width:0}
+  .premiumCalc .compactField input{width:100%;padding:8px 4px}
+  .premiumCalc .fieldJoin,.premiumCalc .fieldUnit{padding:0 0 13px;text-align:center}
+  .premiumCalc .recipeBuilder>.row{grid-template-columns:1fr}
+  .premiumCalc .choiceGrid.compactChoices{margin-right:0;padding-right:20px}
+  .premiumCalc .recipeBuilder>h3{padding-left:16px;padding-right:16px}
+  .premiumCalc .panLine,
+  .premiumCalc .choiceGrid,
+  .premiumCalc .recipeBuilder>.row,
+  .premiumCalc .recipeBuilder>.advancedPanel,
+  .premiumCalc .recipeBuilder>.formActions,
+  .premiumCalc .recipeBuilder>.inlineHint{margin-left:16px;margin-right:16px}
+  .premiumCalc .choiceGrid.compactChoices{margin-right:0}
+}
