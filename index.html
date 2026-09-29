@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=12">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -60,7 +60,7 @@
           </button>
         </div>
 
-        <div class="siteLinks">
+        <div class="siteLinks" aria-label="Utility">
           <a href="privacy.html">Privacy</a>
           <button type="button" id="homeResetBtn">Reset preferenze</button>
           <button type="button" id="homePrintBtn">Stampa / PDF</button>
@@ -185,10 +185,10 @@
           </div>
         </div>
 
-        <div class="twoColumns">
-          <div class="card formCard flowForm">
-            <p class="flowEyebrow">Controllo impasto</p>
-            <h3>Com’è messo adesso?</h3>
+        <div class="twoColumns doughWorkspace">
+          <div class="card formCard flowForm doughCheck">
+            <p class="flowEyebrow">Se qualcosa non torna</p>
+            <h3>Controlla o correggi</h3>
             <label for="checkMode">Cosa vuoi valutare?</label>
             <select id="checkMode">
               <option value="dough" selected>Impasto prima della cottura</option>
@@ -247,7 +247,7 @@
           </div>
         </div>
 
-        <div class="twoColumns">
+        <div class="twoColumns cookWorkspace">
           <div class="card formCard flowForm cookSetup">
             <p class="flowEyebrow">Prepara la guida</p>
             <h3>Come la cuoci?</h3>
@@ -264,6 +264,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=11" defer></script>
+  <script src="app.js?v=12" defer></script>
 </body>
 </html>
