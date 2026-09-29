@@ -95,12 +95,14 @@
   }
 
   function openView(id) {
-    $$('.view').forEach((view) => view.classList.remove('active'));
-    const next = $(id);
-    if (next) {
+    $$('.view').forEach((view)=>view.classList.remove('active'));
+    const next=$(id);
+    $('appHero')?.classList.toggle('hidden',id!=='home');
+    if(next){
       next.classList.add('active');
-      if (id === 'impasto') renderSavedTimeline();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if(id==='impasto') renderSavedTimeline();
+      if(id==='home') renderHomeSavedStep();
+      window.scrollTo({top:0,behavior:'smooth'});
     }
   }
 
@@ -335,9 +337,19 @@
     return timeline;
   }
 
+  function timelineStatus(timeline) {
+    const now=Date.now();
+    const items=(Array.isArray(timeline)?timeline:[]).map(item=>({...item,time:new Date(item.date).getTime()})).filter(item=>Number.isFinite(item.time));
+    if(!items.length) return { phase:'empty', current:null, next:null };
+    if(now < items[0].time) return { phase:'scheduled', current:null, next:items[0] };
+    const nextIndex=items.findIndex(item=>item.time>now);
+    if(nextIndex<0) return { phase:'finished', current:items[items.length-1], next:null };
+    return { phase:'active', current:items[Math.max(0,nextIndex-1)], next:items[nextIndex] };
+  }
+
   function nextTimelineStep(timeline) {
-    const now = Date.now();
-    return timeline.find((item) => new Date(item.date).getTime() > now) ?? timeline[timeline.length - 1];
+    const status=timelineStatus(timeline);
+    return status.next ?? status.current ?? timeline[timeline.length-1];
   }
 
   function emptyResult() {
@@ -500,17 +512,29 @@
     const plan=getLastPlan();
     if(!plan){
       const empty=create('div',{class:'savedPlan emptyPlan'});
-      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto attivo'}),create('h3',{text:'Calcola il tuo prossimo impasto'}),create('p',{text:'Quando avrai una timeline, qui troverai subito cosa fare adesso.'}));
+      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto pianificato'}),create('h3',{text:'Calcola il tuo prossimo impasto'}),create('p',{text:'Quando creerai una timeline, qui vedrai stato atteso e prossimo passaggio.'}));
       const go=create('button',{type:'button',class:'savedPlanCta',text:'Calcola un impasto →'}); go.addEventListener('click',()=>openView('calc')); empty.append(go); target.append(empty); return;
     }
-    const next=nextTimelineStep(plan.timeline);
+    const status=timelineStatus(plan.timeline);
     const main=create('section',{class:'savedPlan'});
-    main.append(create('span',{class:'flowEyebrow',text:'Adesso'}));
-    const nextBox=create('div',{class:'savedNext'});
-    nextBox.append(create('div',{},[create('h3',{text:next.label}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]),create('time',{text:fmtShortDate(new Date(next.date)),datetime:next.date}));
-    main.append(nextBox);
-    const details=create('details',{class:'savedPlanDetails'});
-    details.append(create('summary',{text:'Timeline e dosi'}));
+    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Timeline conclusa':'Stato atteso ora';
+    main.append(create('span',{class:'flowEyebrow',text:label}));
+    const currentBox=create('div',{class:'savedNext'});
+    const primary=status.phase==='scheduled'?status.next:status.current;
+    const primaryTitle=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
+    currentBox.append(create('div',{},[create('h3',{text:primaryTitle}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]));
+    if(primary) currentBox.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
+    main.append(currentBox);
+    if(status.phase==='active'&&status.next){
+      const nextRow=create('div',{class:'upNext'});
+      nextRow.append(create('span',{text:'Prossimo'}),create('strong',{text:status.next.label}),create('time',{text:fmtShortDate(new Date(status.next.date)),datetime:status.next.date}));
+      main.append(nextRow);
+    } else if(status.phase==='scheduled'&&status.next){
+      const nextRow=create('div',{class:'upNext'});
+      nextRow.append(create('span',{text:'Inizia'}),create('strong',{text:status.next.label}),create('time',{text:fmtShortDate(new Date(status.next.date)),datetime:status.next.date}));
+      main.append(nextRow);
+    }
+    const details=create('details',{class:'savedPlanDetails'}); details.append(create('summary',{text:'Timeline e dosi'}));
     const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
     const ingredientsSection=create('div',{class:'savedPlanSection'}); ingredientsSection.append(create('h4',{text:'Dosi'}));
     const list=create('div',{class:'savedDoseGrid'}),rows=[];
@@ -524,8 +548,15 @@
   function renderHomeSavedStep() {
     const target=$('homeSavedStep'); if(!target) return; clear(target);
     const plan=getLastPlan(); if(!plan){target.classList.add('hidden');return;}
-    const next=nextTimelineStep(plan.timeline); target.classList.remove('hidden');
-    target.append(create('span',{class:'homeStepLabel',text:'Impasto in corso'}),create('b',{text:next.label}),create('time',{text:fmtShortDate(new Date(next.date)),datetime:next.date}));
+    const status=timelineStatus(plan.timeline); if(status.phase==='empty'){target.classList.add('hidden');return;}
+    target.classList.remove('hidden');
+    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Timeline conclusa':'Stato atteso ora';
+    const primary=status.phase==='scheduled'?status.next:status.current;
+    const title=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
+    target.append(create('span',{class:'homeStepLabel',text:label}),create('b',{text:title}));
+    if(primary) target.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
+    if(status.phase==='active'&&status.next) target.append(create('small',{class:'homeNext',text:`Prossimo: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
+    if(status.phase==='scheduled'&&status.next) target.append(create('small',{class:'homeNext',text:`Inizia: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
     const button=create('button',{type:'button',class:'homeStepButton',text:'Apri →'}); button.addEventListener('click',()=>openView('impasto')); target.append(button);
   }
 
