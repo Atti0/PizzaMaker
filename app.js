@@ -7,8 +7,9 @@
   const PRIVACY_KEY = 'tc_privacy_notice_ok';
   const LAST_PLAN_KEY = 'tc7_last_plan';
   const PREF_IDS = [
-    'w','h','n','start','bake','flourProfile','saltProfile',
-    'flourType','protein','lmMix','hydration','customHyd','customSalt'
+    'w','h','n','start','bake','saltProfile',
+    'flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2',
+    'flour3Pct','flourType3','protein3','lmMix3','hydration','customHyd','customSalt'
   ];
 
   function clampNumber(id, fallback, min, max) {
@@ -115,50 +116,117 @@
     clear($('adviceOutput'));
   }
 
-  function applyFlourProfileDefaults() {
-    const profile = $('flourProfile').value;
-    const flourType = $('flourType');
-    const protein = $('protein');
-    const lmMix = $('lmMix');
+  function baseHydrationFor(protein, type) {
+    let value;
+    if (protein < 10.8) value = 64;
+    else if (protein < 11.8) value = 66;
+    else if (protein < 12.8) value = 68;
+    else if (protein < 13.7) value = 70;
+    else value = 72;
 
-    if (profile === 'common') {
-      flourType.value = '00';
-      protein.value = '10.8';
-      lmMix.value = 'no';
-    } else if (profile === 'standard') {
-      flourType.value = '0';
-      protein.value = '12.5';
-      lmMix.value = 'no';
-    } else if (profile === 'strong') {
-      flourType.value = '0';
-      protein.value = '13.2';
-      lmMix.value = 'no';
-    } else if (profile === 'whole') {
-      flourType.value = '1';
-      protein.value = '12.5';
-      lmMix.value = 'yes';
+    if (type === '1') value += 1.5;
+    if (type === '2') value += 2.5;
+    if (type === 'integrale') value += 4;
+    return value;
+  }
+
+  function activeFlours() {
+    const items = [{
+      index: 1,
+      pct: 100,
+      type: $('flourType').value,
+      protein: clampNumber('protein', 12.5, 8, 17),
+      lm: $('lmMix').value
+    }];
+
+    if (!$('flour2').classList.contains('hidden')) {
+      items.push({
+        index: 2,
+        pct: clampNumber('flour2Pct', 25, 1, 99),
+        type: $('flourType2').value,
+        protein: clampNumber('protein2', 12.5, 8, 17),
+        lm: $('lmMix2').value
+      });
     }
+    if (!$('flour3').classList.contains('hidden')) {
+      items.push({
+        index: 3,
+        pct: clampNumber('flour3Pct', 15, 1, 98),
+        type: $('flourType3').value,
+        protein: clampNumber('protein3', 12.5, 8, 17),
+        lm: $('lmMix3').value
+      });
+    }
+
+    const secondary = items.slice(1).reduce((sum, item) => sum + item.pct, 0);
+    items[0].pct = Math.max(1, 100 - secondary);
+    return items;
+  }
+
+  function flourBlendIsValid() {
+    const secondary = activeFlours().slice(1).reduce((sum, item) => sum + item.pct, 0);
+    return secondary <= 99;
+  }
+
+  function updateFlourUI() {
+    const flours = activeFlours();
+    $('flour1PctLabel').textContent = `${round(flours[0].pct, 0)}%`;
+    const secondary = flours.slice(1).reduce((sum, item) => sum + item.pct, 0);
+    const invalid = secondary > 99;
+    ['flour2Pct','flour3Pct'].forEach((id) => $(id)?.classList.toggle('inputError', invalid));
+
+    const summary = flours.length === 1
+      ? `1 farina · tipo ${flours[0].type} · ${round(flours[0].protein, 1)} g proteine`
+      : `${flours.length} farine · ${flours.map((item) => round(item.pct, 0) + '%').join(' + ')}`;
+    $('flourSummary').textContent = summary;
+
+    const add = $('addFlourBtn');
+    add.classList.toggle('hidden', flours.length >= 3);
+  }
+
+  function addFlour() {
+    if ($('flour2').classList.contains('hidden')) $('flour2').classList.remove('hidden');
+    else if ($('flour3').classList.contains('hidden')) $('flour3').classList.remove('hidden');
+    updateFlourUI();
+  }
+
+  function removeFlour(index) {
+    const node = $('flour' + index);
+    if (node) node.classList.add('hidden');
+    updateFlourUI();
+  }
+
+  function resetAdvanced() {
+    $('flourType').value = '0';
+    $('protein').value = '12.5';
+    $('lmMix').value = 'no';
+    $('flour2').classList.add('hidden');
+    $('flour3').classList.add('hidden');
+    $('flour2Pct').value = '25';
+    $('flour3Pct').value = '15';
+    $('flourType2').value = '0';
+    $('flourType3').value = '0';
+    $('protein2').value = '12.5';
+    $('protein3').value = '12.5';
+    $('lmMix2').value = 'no';
+    $('lmMix3').value = 'no';
+    $('hydration').value = 'auto';
+    $('customHyd').value = '69';
+    $('saltProfile').value = '2.3';
+    $('customSalt').value = '2.3';
+    toggleCustoms();
+    updateFlourUI();
   }
 
   function estimateHydration() {
-    const protein = clampNumber('protein', 12.5, 8, 17);
-    const type = $('flourType').value;
-    const lm = $('lmMix').value;
-    let hydration;
-
-    if (protein < 10.8) hydration = 64;
-    else if (protein < 11.8) hydration = 66;
-    else if (protein < 12.8) hydration = 68;
-    else if (protein < 13.7) hydration = 70;
-    else hydration = 72;
-
-    if (type === '1') hydration += 1.5;
-    if (type === '2') hydration += 2.5;
-    if (type === 'integrale') hydration += 4;
-    if (lm === 'yes') hydration += 1.5;
+    const flours = activeFlours();
+    let hydration = flours.reduce((sum, item) => {
+      return sum + baseHydrationFor(item.protein, item.type) * item.pct / 100;
+    }, 0);
 
     const hours = hoursBetween(new Date($('start').value), new Date($('bake').value));
-    if (hours >= 18 && protein >= 12) hydration += 0.5;
+    const weightedProtein = flours.reduce((sum, item) => sum + item.protein * item.pct / 100, 0);
+    if (hours >= 18 && weightedProtein >= 12) hydration += 0.5;
 
     return Math.max(62, Math.min(76, hydration));
   }
@@ -279,7 +347,8 @@
         yeastG: data.yeastG,
         honeyG: data.honeyG,
         hydration: data.hydration,
-        salt: data.salt
+        salt: data.salt,
+        flourBlend: data.flourBlend
       }
     };
     saveLastPlan(plan);
@@ -308,13 +377,20 @@
 
     const weigh = card('Cosa pesare', 'ok');
     const list = create('ul', { class: 'recipeList' });
-    const rows = [
-      ['Farina', `${round(data.flour)} g`],
+    const rows = [];
+    if (data.flourBlend.length === 1) {
+      rows.push(['Farina', `${round(data.flour)} g`]);
+    } else {
+      data.flourBlend.forEach((item) => {
+        rows.push([`Farina ${item.index} · ${round(item.pct, 0)}%`, `${round(item.grams)} g`]);
+      });
+    }
+    rows.push(
       ['Acqua', `${round(data.water)} g (${round(data.hydration, 1)}%)`],
       ['Sale', `${round(data.saltG)} g (${round(data.salt, 1)}%)`],
       ['Olio', `${round(data.oilG)} g`],
       ['Lievito fresco', `${round(data.yeastG, 1)} g`]
-    ];
+    );
     if (data.honeyG > 0) rows.push(['Miele', `${round(data.honeyG, 1)} g`]);
     rows.forEach(([label, value]) => {
       list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })]));
@@ -378,13 +454,22 @@
 
     const ingredients = card('Dosi salvate', 'ok');
     const list = create('ul', { class: 'recipeList' });
-    [
-      ['Farina', `${round(plan.ingredients.flour)} g`],
+    const savedRows = [];
+    if (Array.isArray(plan.ingredients.flourBlend) && plan.ingredients.flourBlend.length > 1) {
+      plan.ingredients.flourBlend.forEach((item) => savedRows.push([
+        `Farina ${item.index} · ${round(item.pct, 0)}%`,
+        `${round(item.grams)} g`
+      ]));
+    } else {
+      savedRows.push(['Farina', `${round(plan.ingredients.flour)} g`]);
+    }
+    savedRows.push(
       ['Acqua', `${round(plan.ingredients.water)} g`],
       ['Sale', `${round(plan.ingredients.saltG)} g`],
       ['Olio', `${round(plan.ingredients.oilG)} g`],
       ['Lievito fresco', `${round(plan.ingredients.yeastG, 1)} g`]
-    ].forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
+    );
+    savedRows.forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
     ingredients.append(list);
     target.append(ingredients);
   }
@@ -421,6 +506,14 @@
     const start = new Date($('start').value);
     const bake = new Date($('bake').value);
     const hours = hoursBetween(start, bake);
+    if (!flourBlendIsValid()) {
+      const target = $('result');
+      clear(target);
+      const error = card('Percentuali da correggere', 'bad');
+      addParagraph(error, 'Farina 2 e Farina 3 insieme devono lasciare almeno l’1% alla Farina 1.');
+      target.append(error);
+      return;
+    }
     const hydration = hydrationValue();
     const salt = saltValue();
     const oil = 2.5;
@@ -436,10 +529,14 @@
     const yeastG = flour * yeast / 100;
     const honeyG = flour * honey / 100;
     const timeline = buildTimeline(start, bake, hours);
+    const flourBlend = activeFlours().map((item) => ({
+      ...item,
+      grams: flour * item.pct / 100
+    }));
 
     renderRecipeResult({
       width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey,
-      area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline
+      area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
 
@@ -556,6 +653,7 @@
       const node = $(id);
       if (node) localStorage.setItem(PREF_PREFIX + id, node.value);
     });
+    localStorage.setItem(PREF_PREFIX + 'flourCount', String(activeFlours().length));
     const style = document.querySelector('input[name="style"]:checked')?.value;
     if (style) localStorage.setItem(PREF_PREFIX + 'style', style);
     alert('Preferenze salvate in questo browser.');
@@ -568,6 +666,10 @@
       const node = $(id);
       if (saved !== null && node) node.value = saved;
     });
+    const flourCount = Number.parseInt(localStorage.getItem(PREF_PREFIX + 'flourCount') ?? '1', 10);
+    $('flour2').classList.toggle('hidden', flourCount < 2);
+    $('flour3').classList.toggle('hidden', flourCount < 3);
+    updateFlourUI();
     const savedStyle = localStorage.getItem(PREF_PREFIX + 'style');
     if (savedStyle) {
       const styleNode = $$('input[name="style"]').find((node) => node.value === savedStyle);
@@ -577,7 +679,7 @@
   }
 
   function resetApp() {
-    [...PREF_IDS, 'style'].forEach((id) => localStorage.removeItem(PREF_PREFIX + id));
+    [...PREF_IDS, 'style', 'flourCount'].forEach((id) => localStorage.removeItem(PREF_PREFIX + id));
     localStorage.removeItem(LAST_PLAN_KEY);
     clear($('result'));
     emptyResult();
@@ -612,8 +714,12 @@
     $('cookBtn')?.addEventListener('click', renderCookGuide);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
 
-    $('flourProfile')?.addEventListener('change', applyFlourProfileDefaults);
     $('saltProfile')?.addEventListener('change', toggleCustoms);
+    $('addFlourBtn')?.addEventListener('click', addFlour);
+    $('.removeFlour').forEach((button) => button.addEventListener('click', () => removeFlour(button.dataset.removeFlour)));
+    $('resetAdvancedBtn')?.addEventListener('click', resetAdvanced);
+    ['flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2','flour3Pct','flourType3','protein3','lmMix3']
+      .forEach((id) => $(id)?.addEventListener('input', updateFlourUI));
     $('hydration')?.addEventListener('change', toggleCustoms);
 
     document.addEventListener('keydown', (event) => {
