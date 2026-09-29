@@ -638,3 +638,25 @@ html,body{max-width:100%;overflow-x:hidden}
   #cottura .cookSetup{padding:15px!important}
   #cottura .cookSetup h3{font-size:19px!important;margin-bottom:13px}
 }
+
+
+/* v4.3 — stato temporale corretto e flussi mobile finalizzati */
+.homeSavedStep{padding-right:78px!important}
+.homeSavedStep .homeNext{display:block;margin-top:5px;color:#5f625e;font:700 11px/1.3 Arial,sans-serif}
+.upNext{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px 17px;background:#f5f1e8;border-top:1px solid #e4dfd5;font-family:Arial,sans-serif}
+.upNext span{color:#526b2d;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.upNext strong{color:#172036;font-size:13px}.upNext time{color:#a94332;font-size:12px;font-weight:900}
+#cottura .cookWorkspace,#cottura .cookSetup,#cottura #cook{width:100%!important;max-width:none!important}
+#cottura .cookSetup{box-sizing:border-box}
+#impasto .doughWorkspace{width:100%}
+#impasto #savedTimeline{order:1!important}
+#impasto .doughCheck{order:2!important}
+#impasto #adviceOutput{order:3!important}
+#impasto .doughCheck{margin-top:0}
+@media(max-width:640px){
+  .appShell:has(.premiumCalc.active) .hero,.appShell:has(.premiumFlow.active) .hero{display:none!important}
+  .premiumCalc.active,.premiumFlow.active{padding-top:4px}
+  #cottura .cookWorkspace{display:block!important}
+  #cottura .cookSetup{width:100%!important;margin:0 0 12px!important}
+  #impasto .doughWorkspace{display:flex!important;flex-direction:column!important}
+  .upNext{grid-template-columns:1fr auto}.upNext span{grid-column:1/-1}
+}
