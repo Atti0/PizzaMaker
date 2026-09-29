@@ -496,28 +496,24 @@
   }
 
   function renderSavedTimeline() {
-    const target = $('savedTimeline');
-    if (!target) return;
-    clear(target);
-    const plan = getLastPlan();
-    if (!plan) {
-      const empty = create('div', { class: 'savedPlan emptyPlan' });
-      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto attivo'}),create('h3',{text:'Qui seguirai il prossimo impasto'}),create('p',{text:'Calcola un nuovo impasto: dosi e timeline compariranno automaticamente qui.'}));
-      target.append(empty); return;
+    const target=$('savedTimeline'); if(!target) return; clear(target);
+    const plan=getLastPlan();
+    if(!plan){
+      const empty=create('div',{class:'savedPlan emptyPlan'});
+      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto attivo'}),create('h3',{text:'Calcola il tuo prossimo impasto'}),create('p',{text:'Quando avrai una timeline, qui troverai subito cosa fare adesso.'}));
+      const go=create('button',{type:'button',class:'savedPlanCta',text:'Calcola un impasto →'}); go.addEventListener('click',()=>openView('calc')); empty.append(go); target.append(empty); return;
     }
-    const next = nextTimelineStep(plan.timeline);
-    const main = create('section',{class:'savedPlan'});
-    main.append(create('span',{class:'flowEyebrow',text:'Prossimo passo'}));
+    const next=nextTimelineStep(plan.timeline);
+    const main=create('section',{class:'savedPlan'});
+    main.append(create('span',{class:'flowEyebrow',text:'Adesso'}));
     const nextBox=create('div',{class:'savedNext'});
     nextBox.append(create('div',{},[create('h3',{text:next.label}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]),create('time',{text:fmtShortDate(new Date(next.date)),datetime:next.date}));
     main.append(nextBox);
     const details=create('details',{class:'savedPlanDetails'});
-    details.append(create('summary',{text:'Vedi timeline e dosi'}));
-    const timelineSection=create('div',{class:'savedPlanSection'});
-    timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
-    const ingredientsSection=create('div',{class:'savedPlanSection'});
-    ingredientsSection.append(create('h4',{text:'Dosi'}));
-    const list=create('div',{class:'savedDoseGrid'}); const rows=[];
+    details.append(create('summary',{text:'Timeline e dosi'}));
+    const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
+    const ingredientsSection=create('div',{class:'savedPlanSection'}); ingredientsSection.append(create('h4',{text:'Dosi'}));
+    const list=create('div',{class:'savedDoseGrid'}),rows=[];
     if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
     rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
