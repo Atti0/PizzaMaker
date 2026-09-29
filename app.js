@@ -163,17 +163,41 @@
     return items;
   }
 
+  function normalizeFlourPercentages(changedId = '') {
+    const flour2Active = !$('flour2').classList.contains('hidden');
+    const flour3Active = !$('flour3').classList.contains('hidden');
+    if (!flour2Active && !flour3Active) return;
+
+    const p2 = $('flour2Pct');
+    const p3 = $('flour3Pct');
+    let v2 = flour2Active ? Number.parseFloat(p2.value) : 0;
+    let v3 = flour3Active ? Number.parseFloat(p3.value) : 0;
+    if (!Number.isFinite(v2)) v2 = 1;
+    if (!Number.isFinite(v3)) v3 = 1;
+
+    v2 = Math.min(99, Math.max(1, v2));
+    v3 = Math.min(98, Math.max(1, v3));
+
+    if (flour2Active && flour3Active && v2 + v3 > 99) {
+      if (changedId === 'flour2Pct') v2 = 99 - v3;
+      else v3 = 99 - v2;
+    }
+
+    if (flour2Active) p2.value = String(Math.max(1, v2));
+    if (flour3Active) p3.value = String(Math.max(1, v3));
+  }
+
   function flourBlendIsValid() {
     const secondary = activeFlours().slice(1).reduce((sum, item) => sum + item.pct, 0);
     return secondary <= 99;
   }
 
-  function updateFlourUI() {
+  function updateFlourUI(changedId = '') {
+    normalizeFlourPercentages(changedId);
     const flours = activeFlours();
     $('flour1PctLabel').textContent = `${round(flours[0].pct, 0)}%`;
-    const secondary = flours.slice(1).reduce((sum, item) => sum + item.pct, 0);
-    const invalid = secondary > 99;
-    ['flour2Pct','flour3Pct'].forEach((id) => $(id)?.classList.toggle('inputError', invalid));
+
+    ['flour2Pct','flour3Pct'].forEach((id) => $(id)?.classList.remove('inputError'));
 
     const summary = flours.length === 1
       ? `1 farina · tipo ${flours[0].type} · ${round(flours[0].protein, 1)} g proteine`
@@ -192,7 +216,20 @@
 
   function removeFlour(index) {
     const node = $('flour' + index);
-    if (node) node.classList.add('hidden');
+    if (!node) return;
+
+    if (String(index) === '2' && !$('flour3').classList.contains('hidden')) {
+      $('flour2Pct').value = $('flour3Pct').value;
+      $('flourType2').value = $('flourType3').value;
+      $('protein2').value = $('protein3').value;
+      $('lmMix2').value = $('lmMix3').value;
+      $('flour3').classList.add('hidden');
+      $('flour3Pct').value = '15';
+    } else {
+      node.classList.add('hidden');
+      if (String(index) === '2') $('flour2Pct').value = '25';
+      if (String(index) === '3') $('flour3Pct').value = '15';
+    }
     updateFlourUI();
   }
 
@@ -720,13 +757,16 @@
 
     $('saltProfile')?.addEventListener('change', toggleCustoms);
     $('addFlourBtn')?.addEventListener('click', addFlour);
-    $('.removeFlour').forEach((button) => button.addEventListener('click', () => removeFlour(button.dataset.removeFlour)));
+    $('flourBlend')?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-remove-flour]');
+      if (button) removeFlour(button.dataset.removeFlour);
+    });
     $('resetAdvancedBtn')?.addEventListener('click', resetAdvanced);
     ['flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2','flour3Pct','flourType3','protein3','lmMix3']
       .forEach((id) => {
         const node = $(id);
-        node?.addEventListener('input', updateFlourUI);
-        node?.addEventListener('change', updateFlourUI);
+        node?.addEventListener('input', () => updateFlourUI(id));
+        node?.addEventListener('change', () => updateFlourUI(id));
       });
     $('hydration')?.addEventListener('change', toggleCustoms);
 
