@@ -580,3 +580,61 @@ html,body{max-width:100%;overflow-x:hidden}
 .savedPlan{overflow:hidden;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 8px 28px rgba(49,34,13,.055);font-family:Arial,sans-serif}.savedPlan>.flowEyebrow{padding:17px 17px 0}.savedNext{padding:6px 17px 16px;display:flex;justify-content:space-between;gap:12px}.savedNext h3{margin:0;color:#172036;font:900 22px/1.08 Arial,sans-serif}.savedNext p{margin:5px 0 0;color:#6f716b;font-size:12px}.savedNext time{color:#a94332;font-size:13px;font-weight:900;white-space:nowrap}.savedPlanDetails{border-top:1px solid #e4dfd5}.savedPlanDetails>summary{cursor:pointer;padding:14px 17px;color:#a94332;font:900 13px/1 Arial,sans-serif}.savedPlanSection{padding:2px 17px 16px;border-top:1px solid #eee9df}.savedPlanSection h4{margin:14px 0 10px;color:#172036;font:900 14px/1 Arial,sans-serif}.savedPlanSection .premiumTimeline{padding:0}.savedDoseGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.savedDose{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee9df}.savedDose span{color:#6f716b;font-size:12px}.savedDose strong{color:#172036;font-size:13px}.emptyPlan{padding:17px}.emptyPlan>.flowEyebrow{padding:0}.emptyPlan h3{margin:5px 0;color:#172036;font:900 20px/1.1 Arial,sans-serif}.emptyPlan p{margin:7px 0 0;color:#6f716b;font:400 13px/1.4 Arial,sans-serif}
 .premiumFlow #adviceOutput{margin-top:14px}.premiumFlow #adviceOutput .resultCard,.premiumFlow #cook .resultCard{padding:17px;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 8px 28px rgba(49,34,13,.055);font-family:Arial,sans-serif}.premiumFlow #adviceOutput .resultCard h3,.premiumFlow #cook .resultCard h3{color:#172036;font:900 20px/1.1 Arial,sans-serif}.premiumFlow .adviceRow p,.premiumFlow .guideStep p{color:#363b42;font-family:Arial,sans-serif;font-size:14px;line-height:1.4}.premiumFlow .adviceRow strong{font-family:Arial,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.06em}.premiumFlow .guideStepHead strong{color:#172036;font:900 17px/1.15 Arial,sans-serif}.premiumFlow .stepNumber{width:26px;height:26px;background:#526b2d;font:900 12px/1 Arial,sans-serif}
 @media(max-width:640px){.premiumHome .sectionTitle{margin:17px 4px 12px}.premiumHome .actionGrid.compact{gap:9px}.premiumHome .actionCard{padding:15px;border-radius:18px}.premiumHome .cardTitle{font-size:17px}.premiumFlow{width:100%;max-width:100%;overflow:hidden}.premiumFlow .viewHeader{margin:12px 6px 14px}.premiumFlow .viewHeader h2{font-size:24px}.premiumFlow .twoColumns{display:flex;flex-direction:column}.premiumFlow .flowForm{padding:16px;border-radius:20px}.premiumFlow .flowForm .row{grid-template-columns:1fr}.savedPlan{border-radius:20px}.savedNext{display:grid;gap:5px}.savedDoseGrid{grid-template-columns:1fr}}
+
+
+/* v4.2 — convergenza UI: home, impasto, cottura */
+.footerBar{display:none!important}
+.premiumHome,.premiumFlow{--ui-ink:#172036;--ui-muted:#71736f;--ui-red:#a94332;--ui-green:#526b2d;--ui-line:#ddd7ca;--ui-paper:#fffefa}
+.premiumHome .sectionTitle h2{font:900 clamp(27px,5vw,38px)/1.06 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumHome .sectionTitle .eyebrow{color:var(--ui-green)!important;font:900 11px/1.2 Arial,sans-serif!important;letter-spacing:.11em}
+.premiumHome .actionGrid.compact{display:grid;grid-template-columns:1fr;gap:10px}
+.premiumHome .actionCard{
+  text-align:left!important;padding:16px!important;border-radius:18px!important;background:var(--ui-paper)!important;
+  border:1px solid var(--ui-line)!important;box-shadow:0 7px 22px rgba(49,34,13,.045)!important;
+  grid-template-columns:38px minmax(0,1fr) 20px!important;grid-template-rows:auto auto!important;
+}
+.premiumHome .actionCard::after{content:"›";grid-column:3;grid-row:1/3;align-self:center;justify-self:end;color:#aaa59b;font:400 28px/1 Arial,sans-serif}
+.premiumHome .cardIcon{grid-column:1;grid-row:1/3;width:38px;height:38px;background:#f4eee2!important;color:var(--ui-red)!important;font:900 14px/1 Arial,sans-serif!important}
+.premiumHome .cardTitle{grid-column:2;color:var(--ui-ink)!important;font:900 17px/1.15 Arial,sans-serif!important}
+.premiumHome .cardText{grid-column:2;color:var(--ui-muted)!important;font:500 12.5px/1.35 Arial,sans-serif!important}
+.premiumHome .siteLinks{padding:4px 2px 16px;border:0;gap:16px}
+.premiumHome .siteLinks a,.premiumHome .siteLinks button{color:#77736c!important;font:700 11px/1 Arial,sans-serif!important;text-decoration:none}
+.premiumFlow .viewHeader h2{font:900 clamp(24px,5vw,32px)/1.06 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumFlow .viewHeader .eyebrow{display:none!important}
+.premiumFlow .flowForm h3{font:900 22px/1.08 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumFlow .flowForm{background:var(--ui-paper)!important;border:1px solid var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.premiumFlow .flowPrimary{background:var(--ui-ink)!important;color:white!important;font:900 15px/1 Arial,sans-serif!important}
+.premiumFlow label{color:var(--ui-green)!important;font:800 13px/1.2 Arial,sans-serif!important}
+.premiumFlow select,.premiumFlow input{background:#fff!important;color:var(--ui-ink)!important;border:1.5px solid #c9c7bf!important;font-family:Arial,sans-serif!important}
+#impasto .doughWorkspace{display:flex;flex-direction:column;gap:12px}
+#impasto #savedTimeline{order:1}
+#impasto .doughCheck{order:2}
+#impasto #adviceOutput{order:3}
+#impasto .doughCheck{padding:15px!important}
+#impasto .doughCheck .flowEyebrow{margin-bottom:4px}
+#impasto .doughCheck h3{font-size:19px!important;margin-bottom:13px}
+.savedPlan{background:var(--ui-paper)!important;border-color:var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.savedPlan>.flowEyebrow{color:var(--ui-green)!important}
+.savedNext h3{font:900 24px/1.05 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.savedNext time{color:var(--ui-red)!important}
+.savedPlanDetails>summary{color:var(--ui-red)!important;font-family:Arial,sans-serif!important}
+.savedPlanCta{margin-top:14px;width:100%;min-height:48px;background:var(--ui-ink);color:white;border-radius:12px;box-shadow:none;font:900 14px/1 Arial,sans-serif}
+#cottura .cookWorkspace{display:block}
+#cottura .cookSetup{margin-bottom:12px}
+#cottura #cook .cookGuide{background:var(--ui-paper)!important;border:1px solid var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+#cottura #cook .cookGuide>h3{font:900 20px/1.1 Arial,sans-serif!important;color:var(--ui-ink)!important}
+#cottura .guideStep{display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:10px;padding:14px 0!important}
+#cottura .guideStepHead{display:contents}
+#cottura .stepNumber{grid-column:1;grid-row:1/3;width:28px;height:28px;background:var(--ui-green)!important;color:#fff}
+#cottura .guideStepHead strong{grid-column:2;color:var(--ui-ink)!important;font:900 17px/1.15 Arial,sans-serif!important}
+#cottura .guideStep p{grid-column:2;margin:5px 0 0!important;color:#363b42!important;font:400 14px/1.42 Arial,sans-serif!important}
+#cottura .guideStep p+p{margin-top:6px!important}
+@media(max-width:640px){
+  .premiumHome .sectionTitle{margin-top:18px}
+  .premiumHome .sectionTitle h2{font-size:29px!important;max-width:330px}
+  .premiumHome .actionCard{padding:15px!important}
+  .premiumHome .siteLinks{justify-content:flex-start;flex-wrap:wrap}
+  #impasto .doughCheck .row{grid-template-columns:1fr}
+  #cottura .cookSetup{padding:15px!important}
+  #cottura .cookSetup h3{font-size:19px!important;margin-bottom:13px}
+}
