@@ -499,73 +499,38 @@
     const target = $('savedTimeline');
     if (!target) return;
     clear(target);
-
     const plan = getLastPlan();
     if (!plan) {
-      const empty = card('Dati salvati');
-      addParagraph(empty, 'Non c’è ancora un impasto salvato. Calcola un nuovo impasto per ritrovare qui timeline e dosi.');
-      target.append(empty);
-      return;
+      const empty = create('div', { class: 'savedPlan emptyPlan' });
+      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto attivo'}),create('h3',{text:'Qui seguirai il prossimo impasto'}),create('p',{text:'Calcola un nuovo impasto: dosi e timeline compariranno automaticamente qui.'}));
+      target.append(empty); return;
     }
-
     const next = nextTimelineStep(plan.timeline);
-    const main = card('Prossimo step', 'primary compactResult');
-    main.append(create('span', { class: 'bigStep', text: fmtShortDate(new Date(next.date)) }));
-    addParagraph(main, next.label);
-    addParagraph(main, `${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`, 'mutedLine');
-    target.append(main);
-
-    const details = create('details', { class: 'savedDetails' });
-    details.append(create('summary', { text: 'Timeline e dosi salvate' }));
-
-    const timelineSection = create('div', { class: 'savedSection' });
-    timelineSection.append(create('h3', { text: 'Timeline completa' }), renderTimelineList(plan.timeline));
-    details.append(timelineSection);
-
-    const ingredientsSection = create('div', { class: 'savedSection' });
-    ingredientsSection.append(create('h3', { text: 'Dosi' }));
-    const list = create('ul', { class: 'recipeList' });
-    const savedRows = [];
-    if (Array.isArray(plan.ingredients.flourBlend) && plan.ingredients.flourBlend.length > 1) {
-      plan.ingredients.flourBlend.forEach((item) => savedRows.push([
-        `Farina ${item.index} · ${round(item.pct, 0)}%`,
-        `${round(item.grams)} g`
-      ]));
-    } else {
-      savedRows.push(['Farina', `${round(plan.ingredients.flour)} g`]);
-    }
-    savedRows.push(
-      ['Acqua', `${round(plan.ingredients.water)} g`],
-      ['Sale', `${round(plan.ingredients.saltG)} g`],
-      ['Olio', `${round(plan.ingredients.oilG)} g`],
-      ['Lievito fresco', `${round(plan.ingredients.yeastG, 1)} g`]
-    );
-    savedRows.forEach(([label, value]) => list.append(create('li', {}, [create('span', { text: label }), create('b', { text: value })])));
-    ingredientsSection.append(list);
-    details.append(ingredientsSection);
-    target.append(details);
+    const main = create('section',{class:'savedPlan'});
+    main.append(create('span',{class:'flowEyebrow',text:'Prossimo passo'}));
+    const nextBox=create('div',{class:'savedNext'});
+    nextBox.append(create('div',{},[create('h3',{text:next.label}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]),create('time',{text:fmtShortDate(new Date(next.date)),datetime:next.date}));
+    main.append(nextBox);
+    const details=create('details',{class:'savedPlanDetails'});
+    details.append(create('summary',{text:'Vedi timeline e dosi'}));
+    const timelineSection=create('div',{class:'savedPlanSection'});
+    timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
+    const ingredientsSection=create('div',{class:'savedPlanSection'});
+    ingredientsSection.append(create('h4',{text:'Dosi'}));
+    const list=create('div',{class:'savedDoseGrid'}); const rows=[];
+    if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
+    else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
+    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
+    rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
+    ingredientsSection.append(list); details.append(ingredientsSection); main.append(details); target.append(main);
   }
 
   function renderHomeSavedStep() {
-    const target = $('homeSavedStep');
-    if (!target) return;
-    clear(target);
-
-    const plan = getLastPlan();
-    if (!plan) {
-      target.classList.add('hidden');
-      return;
-    }
-
-    const next = nextTimelineStep(plan.timeline);
-    target.classList.remove('hidden');
-    target.append(
-      create('b', { text: `Prossimo step · ${fmtShortDate(new Date(next.date))}` }),
-      create('span', { text: next.label })
-    );
-    const button = create('button', { type: 'button', class: 'secondary', text: 'Apri timeline' });
-    button.addEventListener('click', () => openView('impasto'));
-    target.append(button);
+    const target=$('homeSavedStep'); if(!target) return; clear(target);
+    const plan=getLastPlan(); if(!plan){target.classList.add('hidden');return;}
+    const next=nextTimelineStep(plan.timeline); target.classList.remove('hidden');
+    target.append(create('span',{class:'homeStepLabel',text:'Impasto in corso'}),create('b',{text:next.label}),create('time',{text:fmtShortDate(new Date(next.date)),datetime:next.date}));
+    const button=create('button',{type:'button',class:'homeStepButton',text:'Apri →'}); button.addEventListener('click',()=>openView('impasto')); target.append(button);
   }
 
   function calculate() {
