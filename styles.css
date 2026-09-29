@@ -26,7 +26,7 @@ body{
 button,input,select{font:inherit}
 button,a,input,select{touch-action:manipulation}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid rgba(169,43,37,.35);outline-offset:3px}
-.appShell{max-width:1160px;margin:auto;padding:16px 14px 70px}
+.appShell{max-width:1160px;margin:auto;padding:16px 14px 28px}
 .hero,.card{
   background:rgba(255,253,244,.96);
   border:1px solid var(--line);
@@ -163,18 +163,6 @@ input,select{
 .recipeList b,.timelineList b{color:var(--red)}
 .emptyState{color:var(--muted);line-height:1.45}
 .hidden{display:none!important}
-.footerBar{
-  position:fixed;
-  left:0;right:0;bottom:0;
-  display:flex;
-  justify-content:center;
-  padding:8px 14px;
-  background:rgba(255,253,244,.92);
-  border-top:1px solid var(--line);
-  backdrop-filter:blur(8px);
-  z-index:30;
-}
-.footerBar button{min-width:180px}
 .privacyOverlay{position:fixed;inset:0;background:rgba(23,32,54,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;backdrop-filter:blur(6px)}
 .privacyOverlay.show{display:flex}
 .privacyModal{width:min(560px,100%);background:var(--paper);border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:20px}
@@ -189,7 +177,7 @@ input,select{
   .kpi{grid-template-columns:1fr 1fr}
 }
 @media(max-width:640px){
-  .appShell{padding:12px 10px 76px}
+  .appShell{padding:12px 10px 28px}
   .hero{padding:22px 16px}
   h1{font-size:clamp(42px,13vw,66px)}
   h2{font-size:clamp(30px,10vw,44px)}
@@ -197,11 +185,10 @@ input,select{
   .row,.row3{grid-template-columns:1fr}
   .choiceGrid{grid-template-columns:1fr}
   .viewHeader{align-items:flex-start;flex-direction:column}
-  .footerBar button{min-width:min(220px,90vw)}
 }
 @media print{
   body{background:white}
-  .privacyOverlay,.footerBar,.viewHeader button,button{display:none!important}
+  .privacyOverlay,.viewHeader button,button{display:none!important}
   .appShell{max-width:100%;padding:0}
   .view{display:block;break-inside:avoid}
   .view:not(.active){display:none}
@@ -278,4 +265,63 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 @media(max-width:640px){
   .flourFields,.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:1fr 1fr}
   .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:1/-1}
+}
+
+
+/* v2.6 flusso mobile compatto */
+.compactLink{
+  margin-top:10px;
+  padding:7px 0;
+  background:transparent;
+  color:var(--red);
+  border:0;
+  box-shadow:none;
+  text-decoration:underline;
+}
+.mutedLine{color:var(--muted);font-size:14px;margin-top:6px}
+.savedDetails{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.savedDetails summary{
+  cursor:pointer;
+  padding:14px 16px;
+  color:var(--red);
+  font-weight:900;
+}
+.savedDetails[open] summary{border-bottom:1px solid var(--line)}
+.savedSection{padding:14px 16px}
+.savedSection + .savedSection{border-top:1px solid var(--line)}
+.savedSection h3{font-size:20px;margin-bottom:8px}
+.adviceRow{padding:11px 0;border-top:1px solid var(--line)}
+.adviceRow:first-of-type{border-top:0}
+.adviceRow strong{display:block;color:var(--red);font-size:16px;margin-bottom:3px}
+.adviceRow p{margin:0;line-height:1.35}
+.adviceRow.badRow strong{color:var(--red)}
+.adviceRow.okRow strong{color:var(--green)}
+.adviceRow.warnRow strong{color:#9b6718}
+.cookGuide{padding:14px 16px}
+.guideStep{padding:13px 0;border-top:1px solid var(--line)}
+.guideStep:first-of-type{border-top:0;padding-top:2px}
+.guideStepHead{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.guideStepHead strong{color:var(--red);font-size:19px}
+.stepNumber{
+  width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--green);color:white;font-weight:900;
+  flex:0 0 auto;
+}
+.guideStep p{margin:5px 0;line-height:1.35}
+@media(max-width:640px){
+  .resultStack{gap:9px}
+  .resultCard{padding:13px 14px;border-radius:18px}
+  .resultCard h3{font-size:22px;margin-bottom:7px}
+  .bigStep{font-size:28px}
+  .viewHeader h2{font-size:clamp(28px,8.5vw,38px)}
+  #impasto .twoColumns{display:flex;flex-direction:column}
+  #impasto .formCard{order:1;width:100%}
+  #savedTimeline{order:2;width:100%}
 }
