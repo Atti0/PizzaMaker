@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=11">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -34,7 +34,7 @@
     </header>
 
     <main>
-      <section id="home" class="view active" aria-labelledby="homeTitle">
+      <section id="home" class="view active premiumHome" aria-labelledby="homeTitle">
         <div class="sectionTitle">
           <p class="eyebrow">Da dove parti?</p>
           <h2 id="homeTitle">Scegli cosa devi fare</h2>
@@ -176,7 +176,7 @@
         </div>
       </section>
 
-      <section id="impasto" class="view" aria-labelledby="impastoTitle">
+      <section id="impasto" class="view premiumFlow" aria-labelledby="impastoTitle">
         <div class="viewHeader">
           <button type="button" class="ghost" data-open="home">← Home</button>
           <div>
@@ -186,8 +186,9 @@
         </div>
 
         <div class="twoColumns">
-          <div class="card formCard">
-            <h3>Correggi o controlla</h3>
+          <div class="card formCard flowForm">
+            <p class="flowEyebrow">Controllo impasto</p>
+            <h3>Com’è messo adesso?</h3>
             <label for="checkMode">Cosa vuoi valutare?</label>
             <select id="checkMode">
               <option value="dough" selected>Impasto prima della cottura</option>
@@ -228,7 +229,7 @@
               </select>
             </div>
 
-            <button type="button" id="adviceBtn">Ricevi consiglio</button>
+            <button type="button" id="adviceBtn" class="flowPrimary">Dimmi cosa fare <span aria-hidden="true">→</span></button>
           </div>
 
           <div class="resultStack" id="savedTimeline" aria-live="polite"></div>
@@ -237,7 +238,7 @@
         <div class="resultStack singleColumn" id="adviceOutput" aria-live="polite"></div>
       </section>
 
-      <section id="cottura" class="view" aria-labelledby="cotturaTitle">
+      <section id="cottura" class="view premiumFlow" aria-labelledby="cotturaTitle">
         <div class="viewHeader">
           <button type="button" class="ghost" data-open="home">← Home</button>
           <div>
@@ -247,12 +248,14 @@
         </div>
 
         <div class="twoColumns">
-          <div class="card formCard">
+          <div class="card formCard flowForm cookSetup">
+            <p class="flowEyebrow">Prepara la guida</p>
+            <h3>Come la cuoci?</h3>
             <div class="row">
               <div><label for="pizzaType">Pizza</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
               <div><label for="panType">Teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
             </div>
-            <button type="button" id="cookBtn">Prepara guida</button>
+            <button type="button" id="cookBtn" class="flowPrimary">Prepara la guida <span aria-hidden="true">→</span></button>
           </div>
 
           <div class="resultStack" id="cook" aria-live="polite"></div>
@@ -261,6 +264,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=9" defer></script>
+  <script src="app.js?v=11" defer></script>
 </body>
 </html>
