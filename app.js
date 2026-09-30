@@ -674,42 +674,43 @@
   }
 
   function renderCookGuide() {
-    const pizza = $('pizzaType').value;
-    const pan = $('panType').value;
-    const target = $('cook');
-    clear(target);
-
-    const panel = card('Guida operativa', 'cookGuide');
-    panel.append(guideStep(1, 'Stesura', [
-      'Banco con poca semola, lato liscio sopra. Polpastrelli dal centro verso l’esterno senza schiacciare tutto.',
-      'Se si ritira, pausa 5–10 minuti. Completa in teglia con mani leggere.'
+    const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
+    clear(target); closeCookTimer();
+    const panel=card('Guida operativa','cookGuide');
+    panel.append(guideStep(1,'Stesura',[
+      'Poca semola sul banco, lato liscio sopra. Allarga dal centro verso l’esterno senza schiacciare tutte le bolle.',
+      'Se si ritira, fermati: non forzarlo.'
     ]));
+    const restButton=create('button',{type:'button',class:'stepTimer',text:'Timer pausa · 7 min'});
+    restButton.addEventListener('click',()=>startCookTimer(7,'Pausa stesura'));
+    panel.lastElementChild.append(restButton);
 
-    const panText = pan === 'leccarda'
-      ? 'Con la leccarda spingi bene la prima fase in basso: è meno conduttiva di ferro e alluminio.'
-      : 'Con una teglia più conduttiva controlla prima il fondo: può colorire più velocemente.';
-    panel.append(guideStep(2, 'Forno e teglia', [`${panText} Preriscalda 40–45 minuti a 250 °C.`]));
+    const panText=pan==='leccarda'
+      ? 'Leccarda: prima fase ben in basso; conduce meno di ferro e alluminio.'
+      : 'Teglia più conduttiva: controlla il fondo prima perché può colorire più velocemente.';
+    panel.append(guideStep(2,'Preriscalda',[panText,'Forno statico a 250 °C per 40–45 minuti.']));
+    const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer preriscaldo · 40 min'});
+    preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo forno')); panel.lastElementChild.append(preheat);
 
-    let toppingTexts;
-    if (pizza === 'margherita') {
-      toppingTexts = [
-        'Pomodoro denso 110–130 g per una 37×26. Prima fase in basso con pomodoro; mozzarella scolata solo negli ultimi 2–4 minuti.',
-        'Ventilato o grill solo come rifinitura breve se resta umida sopra.'
-      ];
-    } else if (pizza === 'rossa') {
-      toppingTexts = ['Pomodoro denso, olio moderato, ripiano basso nella prima fase per mantenere il fondo asciutto e croccante.'];
-    } else {
-      toppingTexts = [
-        'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima. Lardo fuori forno o negli ultimi secondi.',
-        'Se le patate sono più spesse, pretrattale o tagliale più sottili.'
-      ];
+    if(pizza==='margherita'){
+      panel.append(guideStep(3,'Prima cottura',['Pomodoro denso 110–130 g per una 37×26. Cuoci sul ripiano basso.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer prima cottura · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
+      panel.append(guideStep(4,'Completa',['Aggiungi 120–140 g di mozzarella ben scolata. Sposta medio-alto e termina la cottura.']));
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer mozzarella · 3 min'}); finish.addEventListener('click',()=>startCookTimer(3,'Mozzarella')); panel.lastElementChild.append(finish);
+    }else if(pizza==='rossa'){
+      panel.append(guideStep(3,'Cottura',['Pomodoro denso e olio moderato. Parti in basso e controlla il fondo prima di proseguire.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer controllo · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
+    }else{
+      panel.append(guideStep(3,'Patate e cottura',['Patate sottilissime, sciacquate e asciugate bene. Condiscile prima e cuoci in basso.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer primo controllo · 11 min'}); first.addEventListener('click',()=>startCookTimer(11,'Patate · primo controllo')); panel.lastElementChild.append(first);
+      panel.append(guideStep(4,'Completa',['Sposta medio-alto per finire. Lardo fuori forno o negli ultimi secondi.']));
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer finitura · 4 min'}); finish.addEventListener('click',()=>startCookTimer(4,'Finitura')); panel.lastElementChild.append(finish);
     }
-    panel.append(guideStep(3, 'Condimento e cottura', toppingTexts));
-    panel.append(guideStep(4, 'Uscita forno', [
-      'Appena cotta, togli la pizza dalla teglia e mettila su griglia: il vapore nella teglia ammorbidisce il fondo.'
-    ]));
+    const finalNo= pizza==='rossa'?4:5;
+    panel.append(guideStep(finalNo,'Sforna e asciuga',['Fondo dorato e superficie asciutta? Togli subito la pizza dalla teglia e appoggiala su griglia.']));
     target.append(panel);
   }
+
 
   function savePrefs(showConfirmation = true) {
     PREF_IDS.forEach((id) => {
@@ -774,6 +775,10 @@
     $('homePrintBtn')?.addEventListener('click', () => window.print());
     $('adviceBtn')?.addEventListener('click', renderAdvice);
     $('cookBtn')?.addEventListener('click', renderCookGuide);
+    $('timerToggle')?.addEventListener('click', toggleCookTimer);
+    $('timerAdd')?.addEventListener('click', ()=>{timerState.remaining+=60; paintTimer();});
+    $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; paintTimer();});
+    $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
 
     $('saltProfile')?.addEventListener('change', toggleCustoms);
