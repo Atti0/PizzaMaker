@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -259,11 +259,23 @@
           </div>
 
           <div class="resultStack" id="cook" aria-live="polite"></div>
+          <section id="cookTimer" class="cookTimer hidden" aria-live="polite" aria-label="Timer di cottura">
+            <div class="timerTop">
+              <div><span class="flowEyebrow">Timer cucina</span><strong id="timerLabel">Timer</strong></div>
+              <button type="button" class="timerClose" id="timerClose" aria-label="Chiudi timer">×</button>
+            </div>
+            <div class="timerDisplay" id="timerDisplay">10:00</div>
+            <div class="timerActions">
+              <button type="button" id="timerToggle">Pausa</button>
+              <button type="button" id="timerAdd">+1 min</button>
+              <button type="button" id="timerReset">Azzera</button>
+            </div>
+          </section>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="app.js?v=13" defer></script>
+  <script src="app.js?v=14" defer></script>
 </body>
 </html>
