@@ -712,6 +712,59 @@
   }
 
 
+  let timerState={remaining:0,initial:0,running:false,label:'Timer',interval:null,deadline:0};
+  function formatTimer(seconds){
+    const safe=Math.max(0,Math.ceil(seconds));
+    return `${pad(Math.floor(safe/60))}:${pad(safe%60)}`;
+  }
+  function paintTimer(){
+    if(!$('cookTimer'))return;
+    $('timerDisplay').textContent=formatTimer(timerState.remaining);
+    $('timerLabel').textContent=timerState.label;
+    $('timerToggle').textContent=timerState.running?'Pausa':timerState.remaining<=0?'Ricomincia':'Riprendi';
+    $('cookTimer').classList.toggle('timerDone',timerState.remaining<=0);
+    document.title=timerState.running?`${formatTimer(timerState.remaining)} · PizzaMaker`:'PizzaMaker — Teglia Coach';
+  }
+  function stopTimer(){
+    if(timerState.interval){window.clearInterval(timerState.interval);timerState.interval=null;}
+    timerState.running=false;paintTimer();
+  }
+  function tickTimer(){
+    if(!timerState.running)return;
+    timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+    if(timerState.remaining===0){
+      stopTimer();
+      if('vibrate' in navigator)navigator.vibrate([180,90,180]);
+    }
+    paintTimer();
+  }
+  function startCookTimer(minutes,label){
+    if(timerState.interval)window.clearInterval(timerState.interval);
+    timerState.initial=Math.max(1,Math.round(minutes*60));
+    timerState.remaining=timerState.initial;
+    timerState.label=label;timerState.running=true;
+    timerState.deadline=Date.now()+timerState.remaining*1000;
+    $('cookTimer').classList.remove('hidden');
+    timerState.interval=window.setInterval(tickTimer,250);
+    paintTimer();$('cookTimer').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function toggleCookTimer(){
+    if(timerState.remaining<=0)timerState.remaining=timerState.initial;
+    timerState.running=!timerState.running;
+    if(timerState.running){
+      timerState.deadline=Date.now()+timerState.remaining*1000;
+      if(!timerState.interval)timerState.interval=window.setInterval(tickTimer,250);
+    }else if(timerState.interval){
+      timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+      window.clearInterval(timerState.interval);timerState.interval=null;
+    }
+    paintTimer();
+  }
+  function closeCookTimer(){
+    stopTimer();$('cookTimer')?.classList.add('hidden');
+    document.title='PizzaMaker — Teglia Coach';
+  }
+
   function savePrefs(showConfirmation = true) {
     PREF_IDS.forEach((id) => {
       const node = $(id);
@@ -776,8 +829,8 @@
     $('adviceBtn')?.addEventListener('click', renderAdvice);
     $('cookBtn')?.addEventListener('click', renderCookGuide);
     $('timerToggle')?.addEventListener('click', toggleCookTimer);
-    $('timerAdd')?.addEventListener('click', ()=>{timerState.remaining+=60; paintTimer();});
-    $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; paintTimer();});
+    $('timerAdd')?.addEventListener('click', ()=>{timerState.remaining+=60; if(timerState.running)timerState.deadline+=60000; paintTimer();});
+    $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
 
