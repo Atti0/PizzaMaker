@@ -840,3 +840,43 @@ body{
   font:800 12px/1 Arial,sans-serif;
 }
 .homeStepDelete:active{background:#f7e8e2}
+
+
+/* v5.4 — scheda impasto stampabile */
+.printSheet{display:none}
+.savedPlanActions{padding:0 17px 17px}
+.savedPlanPrint{
+  width:100%;min-height:44px;padding:0 13px;border:1px solid #d8d1c4;border-radius:12px;
+  background:#f6f1e7;color:#172036;box-shadow:none;font:900 12px/1 Arial,sans-serif;
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff!important;color:#172036!important}
+  body>.privacyOverlay,.appShell>header,.appShell>main{display:none!important}
+  .appShell{max-width:none!important;padding:0!important;margin:0!important}
+  .printSheet{display:block!important;font-family:Arial,sans-serif;color:#172036}
+  .printHead{display:flex;justify-content:space-between;gap:18px;padding-bottom:10mm;border-bottom:2px solid #172036}
+  .printBrand{display:block;margin-bottom:4px;color:#526b2d;font-size:9pt;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+  .printHead h1{margin:0;color:#a94332;font:900 25pt/1 Arial,sans-serif;text-transform:none}
+  .printHead p{margin:5px 0 0;color:#62645f;font-size:9.5pt}
+  .printHydration{min-width:28mm;text-align:center;padding:4mm;border:1px solid #d9d1c3;border-radius:5mm}
+  .printHydration strong{display:block;color:#a94332;font-size:20pt;line-height:1}
+  .printHydration span{display:block;margin-top:2mm;font-size:7.5pt;font-weight:800;text-transform:uppercase}
+  .printFacts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:6mm 0;border:1px solid #ddd6c9;border-radius:3mm;overflow:hidden}
+  .printFacts div{padding:3mm 4mm;border-right:1px solid #ddd6c9}.printFacts div:last-child{border-right:0}
+  .printFacts span{display:block;color:#77736c;font-size:7pt;text-transform:uppercase;font-weight:800}.printFacts strong{display:block;margin-top:1mm;font-size:10pt}
+  .printSection{margin-top:7mm;break-inside:avoid}
+  .printSection h2{margin:0 0 3mm;padding-bottom:2mm;border-bottom:1px solid #d8d1c4;color:#172036;font:900 14pt/1 Arial,sans-serif}
+  .printDoseGrid{display:grid;grid-template-columns:1fr 1fr;column-gap:10mm}
+  .printDose{display:flex;justify-content:space-between;padding:2.2mm 0;border-bottom:1px solid #eee9df;font-size:9pt}
+  .printDose span{color:#62645f}.printDose strong{color:#172036}
+  .printMethod{display:grid;grid-template-columns:1fr 1fr;column-gap:7mm}.printMethod h2{grid-column:1/-1}
+  .printMethodStep{display:grid;grid-template-columns:7mm 1fr;gap:2mm;align-items:start;padding:2mm 0}
+  .printMethodStep>b,.printTimelineNumber{width:6mm;height:6mm;border-radius:50%;display:grid;place-items:center;background:#526b2d;color:#fff;font-size:7.5pt}
+  .printMethodStep p{margin:0;font-size:8.5pt;line-height:1.35}
+  .printTimeline{break-inside:auto}
+  .printTimelineRow{display:grid;grid-template-columns:7mm 23mm 1fr;gap:3mm;align-items:start;padding:2.6mm 0;border-bottom:1px solid #e9e4da;break-inside:avoid}
+  .printTimelineRow time{color:#a94332;font-size:8pt;font-weight:900;padding-top:1mm}
+  .printTimelineRow strong{display:block;font-size:9pt}.printTimelineRow p{margin:1mm 0 0;color:#62645f;font-size:7.8pt;line-height:1.3}
+  .printFooter{margin-top:8mm;padding-top:3mm;border-top:1px solid #d8d1c4;color:#77736c;font-size:7.5pt;text-align:center}
+}
