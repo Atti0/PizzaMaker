@@ -932,3 +932,22 @@ body{
  .builderSectionTitle{padding:14px 20px 12px}
  .builderSection .panLine,.builderSection .choiceGrid,.builderSection>.row{padding:16px 20px}
 }
+
+
+/* v5.8 — respiro laterale uniforme nei pannelli del calcolatore */
+.panEditor .panLine,
+.pizzaTypeEditor .choiceGrid,
+.scheduleEditor > .row{
+  margin-left:20px;
+  margin-right:20px;
+  padding-left:0;
+  padding-right:0;
+}
+@media(max-width:640px){
+  .panEditor .panLine,
+  .pizzaTypeEditor .choiceGrid,
+  .scheduleEditor > .row{
+    margin-left:20px;
+    margin-right:20px;
+  }
+}
