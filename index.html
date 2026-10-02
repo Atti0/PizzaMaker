@@ -184,9 +184,12 @@
         </div>
 
         <div class="twoColumns doughWorkspace">
-          <div class="card formCard flowForm doughCheck">
-            <p class="flowEyebrow">Se qualcosa non torna</p>
-            <h3>Controlla o correggi</h3>
+          <details class="card formCard flowForm doughCheck">
+            <summary class="doughCheckSummary">
+              <span><small>Se qualcosa non torna</small><strong>Controlla o correggi</strong></span>
+              <span class="summaryChevron" aria-hidden="true">⌄</span>
+            </summary>
+            <div class="doughCheckBody">
             <label for="checkMode">Cosa vuoi valutare?</label>
             <select id="checkMode">
               <option value="dough" selected>Impasto prima della cottura</option>
@@ -228,7 +231,8 @@
             </div>
 
             <button type="button" id="adviceBtn" class="flowPrimary">Dimmi cosa fare <span aria-hidden="true">→</span></button>
-          </div>
+            </div>
+          </details>
 
           <div class="resultStack" id="savedTimeline" aria-live="polite"></div>
         </div>
@@ -274,6 +278,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=17" defer></script>
+  <script src="app.js?v=18" defer></script>
 </body>
 </html>
