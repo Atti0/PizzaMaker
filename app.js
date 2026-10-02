@@ -97,7 +97,7 @@
   function openView(id) {
     // Il calcolatore è una simulazione: rientrando si parte senza un risultato precedente.
     if (id === 'calc') clear($('result'));
-    $('.view').forEach((view)=>view.classList.remove('active'));
+    document.querySelectorAll('.view').forEach((view)=>view.classList.remove('active'));
     const next=$(id);
     $('appHero')?.classList.toggle('hidden',id!=='home');
     if(next){
