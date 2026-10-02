@@ -951,3 +951,49 @@ body{
     margin-right:20px;
   }
 }
+
+
+/* v6.0 — griglia calcolatore e inset coerenti con Farine */
+.premiumCalc .twoColumns:has(#result:empty){
+  grid-template-columns:minmax(0,1fr);
+}
+.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{
+  width:100%;
+}
+.premiumCalc .builderSection .panLine,
+.premiumCalc .builderSection .choiceGrid,
+.premiumCalc .builderSection > .row{
+  margin:14px 14px 18px;
+}
+.premiumCalc .builderSection .panLine{
+  padding:14px;
+  border:1px solid var(--pc-line);
+  border-radius:16px;
+  background:#fff;
+}
+.premiumCalc .builderSection .choiceGrid{
+  padding:0;
+  background:transparent;
+}
+.premiumCalc .builderSection > .row{
+  padding:14px;
+  border:1px solid var(--pc-line);
+  border-radius:16px;
+  background:#fff;
+}
+.premiumCalc .calculatorInset{
+  margin:14px 14px 18px;
+  padding:14px;
+  border:1px solid var(--pc-line);
+  border-radius:16px;
+  background:#fff;
+}
+.premiumCalc .calculatorInset .basicField{margin:0}
+.premiumCalc .calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+.premiumCalc .calculatorInset > .hidden + *{margin-top:0}
+@media(max-width:640px){
+  .premiumCalc .builderSection .panLine,
+  .premiumCalc .builderSection .choiceGrid,
+  .premiumCalc .builderSection > .row,
+  .premiumCalc .calculatorInset{margin-left:14px;margin-right:14px}
+}
