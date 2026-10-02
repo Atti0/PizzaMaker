@@ -880,3 +880,31 @@ body{
   .printTimelineRow strong{display:block;font-size:9pt}.printTimelineRow p{margin:1mm 0 0;color:#62645f;font-size:7.8pt;line-height:1.3}
   .printFooter{margin-top:8mm;padding-top:3mm;border-top:1px solid #d8d1c4;color:#77736c;font-size:7.5pt;text-align:center}
 }
+
+
+/* v5.5 — Home adattiva: creazione senza piano, dashboard con impasto */
+.homeActiveState,.homeDoughWorkspace{width:100%}
+.homeActiveState .activeDoughTitle{margin-bottom:12px}
+.homeDoughWorkspace{display:flex;flex-direction:column;gap:12px}
+.homeTools{padding:0!important;overflow:hidden;background:#fffdf8!important;border:1px solid rgba(91,72,43,.18)!important;border-radius:20px!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.homeToolsSummary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 18px;color:#172036;font-family:Arial,sans-serif}
+.homeToolsSummary::-webkit-details-marker{display:none}
+.homeToolsSummary small{display:block;margin-bottom:5px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.homeToolsSummary strong{display:block;font:900 19px/1.1 Arial,sans-serif}
+.homeToolsSummary .summaryChevron{color:#a94332;font:900 22px/1 Arial,sans-serif;transition:transform .18s ease}
+.homeTools[open] .summaryChevron{transform:rotate(180deg)}
+.homeToolsBody{padding:4px 16px 16px;border-top:1px solid #e6e0d5;display:grid;gap:8px}
+.homeToolAction{width:100%;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;text-align:left;padding:13px 12px;border:1px solid #e1dbcf;border-radius:13px;background:#faf8f2;color:#172036;box-shadow:none}
+.homeToolAction span{display:block}.homeToolAction strong{display:block;font:900 14px/1.15 Arial,sans-serif}.homeToolAction small{display:block;margin-top:4px;color:#71736f;font:600 11px/1.35 Arial,sans-serif}.homeToolAction>b{color:#a94332;font-size:18px}
+.savedPlanActions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.savedPlanDelete{min-height:44px;padding:0 12px;border:1px solid #d9b9ae;border-radius:12px;background:transparent;color:#7a342c;box-shadow:none;font:800 11px/1 Arial,sans-serif}
+.homeActiveState .savedPlan{margin:0}
+.homeActiveState .savedPlan>.flowEyebrow{padding-top:17px}
+.homeEmptyActions .primaryHomeAction{border-color:rgba(169,67,50,.28)!important}
+@media(max-width:640px){
+ .homeActiveState .sectionTitle h2{font-size:27px!important}
+ .homeToolsSummary{padding:16px}
+ .homeToolsBody{padding:4px 14px 14px}
+ .savedPlanActions{grid-template-columns:1fr auto}
+}
+@media(prefers-reduced-motion:reduce){.homeToolsSummary .summaryChevron{transition:none}}
