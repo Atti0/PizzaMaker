@@ -798,3 +798,28 @@ body{
  .timelineVisualTitle{font-size:14px}
  .timelineVisualBody p{font-size:11px}
 }
+
+
+/* v5.1 — simulazione effimera e controlli progressivi */
+.premiumCalc #result:not(:empty){margin-top:18px}
+#impasto .doughCheck{padding:0!important;overflow:hidden}
+#impasto .doughCheckSummary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:17px 18px;color:#172036;font-family:Arial,sans-serif;
+}
+#impasto .doughCheckSummary::-webkit-details-marker{display:none}
+#impasto .doughCheckSummary small{
+  display:block;margin-bottom:5px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+#impasto .doughCheckSummary strong{display:block;font:900 19px/1.1 Arial,sans-serif}
+#impasto .summaryChevron{color:#a94332;font:900 22px/1 Arial,sans-serif;transition:transform .18s ease}
+#impasto .doughCheck[open] .summaryChevron{transform:rotate(180deg)}
+#impasto .doughCheckBody{padding:2px 18px 18px;border-top:1px solid #e6e0d5}
+#impasto .doughCheckBody>label:first-child{margin-top:15px}
+@media(max-width:640px){
+  .premiumCalc #result:not(:empty){margin-top:16px}
+  #impasto .doughCheckSummary{padding:16px}
+  #impasto .doughCheckBody{padding:2px 16px 16px}
+}
+@media(prefers-reduced-motion:reduce){#impasto .summaryChevron{transition:none}}
