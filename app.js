@@ -600,7 +600,79 @@
     else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
     rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
     rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
-    ingredientsSection.append(list); details.append(ingredientsSection); main.append(details); target.append(main);
+    ingredientsSection.append(list); details.append(ingredientsSection); main.append(details);
+    const printActions=create('div',{class:'savedPlanActions'});
+    const printButton=create('button',{type:'button',class:'savedPlanPrint',text:'Stampa / salva PDF'});
+    printButton.addEventListener('click',()=>printSavedPlan());
+    printActions.append(printButton); main.append(printActions);
+    target.append(main);
+  }
+
+  function renderPrintSheet(plan) {
+    const sheet=$('printSheet'); if(!sheet) return; clear(sheet);
+    const head=create('header',{class:'printHead'});
+    head.append(create('div',{},[
+      create('span',{class:'printBrand',text:'PizzaMaker · Teglia Coach'}),
+      create('h1',{text:plan.pizza||'Il tuo impasto'}),
+      create('p',{text:`${plan.method||''} · cottura ${fmtShortDate(new Date(plan.bake))}`})
+    ]));
+    head.append(create('div',{class:'printHydration'},[
+      create('strong',{text:`${round(plan.ingredients?.hydration||0,0)}%`}),
+      create('span',{text:'idratazione'})
+    ]));
+    sheet.append(head);
+
+    const facts=create('section',{class:'printFacts'});
+    [
+      ['Impasto totale', plan.total ? `${round(plan.total,0)} g` : '—'],
+      ['Per teglia', plan.doughPer ? `${round(plan.doughPer,0)} g` : '—'],
+      ['Sale', plan.ingredients?.salt ? `${round(plan.ingredients.salt,1)}%` : '—'],
+      ['Cottura', fmtShortDate(new Date(plan.bake))]
+    ].forEach(([label,value])=>facts.append(create('div',{},[create('span',{text:label}),create('strong',{text:value})])));
+    sheet.append(facts);
+
+    const doses=create('section',{class:'printSection'});
+    doses.append(create('h2',{text:'Dosi'}));
+    const doseGrid=create('div',{class:'printDoseGrid'}), rows=[];
+    const ing=plan.ingredients||{};
+    if(Array.isArray(ing.flourBlend)&&ing.flourBlend.length>1) ing.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
+    else rows.push(['Farina',`${round(ing.flour)} g`]);
+    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],['Lievito fresco',`${round(ing.yeastG,1)} g`]);
+    if(ing.honeyG>0) rows.push(['Miele',`${round(ing.honeyG,1)} g`]);
+    rows.forEach(([label,value])=>doseGrid.append(create('div',{class:'printDose'},[create('span',{text:label}),create('strong',{text:value})])));
+    doses.append(doseGrid); sheet.append(doses);
+
+    const method=create('section',{class:'printSection printMethod'});
+    method.append(create('h2',{text:'Metodo'}));
+    [
+      'Mescola farine, lievito e 85–90% dell’acqua.',
+      'Copri e lascia riposare 20 minuti.',
+      'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.',
+      'Lavora poco e fai le pieghe previste dalla timeline senza sgonfiare l’impasto.'
+    ].forEach((txt,i)=>method.append(create('div',{class:'printMethodStep'},[create('b',{text:String(i+1)}),create('p',{text:txt})])));
+    sheet.append(method);
+
+    const timeline=create('section',{class:'printSection printTimeline'});
+    timeline.append(create('h2',{text:'Timeline completa'}));
+    (plan.timeline||[]).forEach((item,i)=>{
+      const meta=TIMELINE_VISUALS[item.label]||{short:'Segui questo passaggio della lavorazione.',duration:''};
+      const row=create('div',{class:'printTimelineRow'});
+      row.append(create('b',{class:'printTimelineNumber',text:String(i+1)}),create('time',{text:fmtShortDate(new Date(item.date)),datetime:item.date}),create('div',{},[
+        create('strong',{text:item.label}),
+        create('p',{text:meta.short})
+      ]));
+      timeline.append(row);
+    });
+    sheet.append(timeline);
+
+    sheet.append(create('footer',{class:'printFooter',text:'PizzaMaker · Scheda impasto personale'}));
+  }
+
+  function printSavedPlan() {
+    const plan=getLastPlan();
+    if(!plan) return;
+    renderPrintSheet(plan);
+    window.print();
   }
 
   function renderHomeSavedStep() {
@@ -893,7 +965,6 @@
 
     $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
     $('calculateBtn')?.addEventListener('click', calculate);
-    $('homePrintBtn')?.addEventListener('click', () => window.print());
     $('adviceBtn')?.addEventListener('click', renderAdvice);
     $('cookBtn')?.addEventListener('click', renderCookGuide);
     $('timerToggle')?.addEventListener('click', toggleCookTimer);
