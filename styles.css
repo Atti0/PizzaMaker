@@ -917,50 +917,22 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
-/* v6.1 — calcolatore: unica sorgente di stile */
+/* v6.2 — tutti i gruppi riusano il componente Farine */
 .premiumCalc .twoColumns:has(#result:empty){grid-template-columns:minmax(0,1fr)}
 .premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{width:100%;max-width:none}
 
-.builderSection{
-  margin:0 0 16px;
-  border:1px solid #d8d3c8;
-  border-radius:18px;
-  overflow:hidden;
-  background:#fbfaf6;
-}
-.builderSectionTitle{
-  padding:14px 20px 12px;
-  background:#f3f0e7;
-  border-bottom:1px solid #d8d3c8;
-}
-.builderSectionTitle>span{
-  display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;
-  letter-spacing:.08em;text-transform:uppercase;
-}
-.builderSectionTitle>small{
-  display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif;
-}
-
-/* Il corpo di ogni sezione resta staccato dai bordi come Farina 1. */
-.premiumCalc .builderSection .panLine,
-.premiumCalc .builderSection .choiceGrid,
-.premiumCalc .builderSection>.row,
-.premiumCalc .calculatorInset{
-  margin:14px;
-}
-.premiumCalc .builderSection .panLine,
-.premiumCalc .builderSection>.row,
-.premiumCalc .calculatorInset{
-  padding:14px;
-  border:1px solid var(--pc-line);
-  border-radius:16px;
+.premiumCalc .calcGroup{margin-bottom:16px}
+.premiumCalc .calcGroup>.flourBlendTitle{margin:0}
+.premiumCalc .calcGroup>.flourItem{
+  margin:0;
+  padding:12px 13px;
+  border:0;
+  border-radius:0;
   background:#fff;
 }
-.premiumCalc .builderSection .choiceGrid{
-  padding:0;
-  background:transparent;
-}
-.premiumCalc .builderSection .choice{margin:0}
-.premiumCalc .calculatorInset{display:grid;gap:12px}
-.premiumCalc .calculatorInset .basicField{margin:0}
-.premiumCalc .calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+.premiumCalc .calcGroup>.choiceGrid{display:grid;padding:0 13px 12px;gap:8px}
+.premiumCalc .calcGroup>.row{padding:12px 13px}
+.premiumCalc .calcGroup>.panLine{padding:12px 13px}
+.premiumCalc .calcGroup>.calculatorInset{display:grid;gap:12px;padding:12px 13px}
+.premiumCalc .calcGroup>.calculatorInset .basicField{margin:0}
+.premiumCalc .calcGroup>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
