@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=30">
+  <link rel="stylesheet" href="styles.css?v=31">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -102,8 +102,8 @@
 
         <div class="twoColumns">
           <form class="card formCard recipeBuilder" id="recipeForm" novalidate>
-            <div class="flourBlendEditor calcGroup panEditor">
-              <div class="flourBlendTitle">
+            <div class="calculatorSection panEditor">
+              <div class="calculatorSectionHeader">
                 <span>Teglia</span>
                 <small>Dimensioni interne della teglia che userai.</small>
               </div>
@@ -116,8 +116,8 @@
               </div>
             </div>
 
-            <div class="flourBlendEditor calcGroup pizzaTypeEditor">
-              <div class="flourBlendTitle">
+            <div class="calculatorSection pizzaTypeEditor">
+              <div class="calculatorSectionHeader">
                 <span>Tipo pizza</span>
                 <small>Scegli altezza e consistenza che vuoi ottenere.</small>
               </div>
@@ -130,8 +130,8 @@
               </div>
             </div>
 
-            <div class="flourBlendEditor calcGroup scheduleEditor">
-              <div class="flourBlendTitle">
+            <div class="calculatorSection scheduleEditor">
+              <div class="calculatorSectionHeader">
                 <span>Orari</span>
                 <small>Da quando inizi l’impasto a quando vuoi infornare.</small>
               </div>
@@ -142,8 +142,8 @@
             </div>
 
 
-            <div class="flourBlendEditor" id="flourBlend">
-              <div class="flourBlendTitle">
+            <div class="calculatorSection flourEditor" id="flourBlend">
+              <div class="calculatorSectionHeader">
                 <span>Farine</span>
                 <small>La prima completa automaticamente il 100%.</small>
               </div>
@@ -179,8 +179,8 @@
               <button type="button" class="secondary addFlourBtn" id="addFlourBtn">+ Aggiungi farina</button>
             </div>
 
-            <div class="flourBlendEditor calcGroup hydrationEditor">
-              <div class="flourBlendTitle"><span>Idratazione</span><small>Adattata alle farine che hai scelto.</small></div>
+            <div class="calculatorSection hydrationEditor">
+              <div class="calculatorSectionHeader"><span>Idratazione</span><small>Adattata alle farine che hai scelto.</small></div>
               <div class="flourItem calculatorInset">
                 <div class="basicField">
                   <label for="hydration">Idratazione</label>
@@ -194,8 +194,8 @@
                 <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
               </div>
             </div>
-            <div class="flourBlendEditor calcGroup saltEditor">
-              <div class="flourBlendTitle"><span>Sale</span><small>Scegli il profilo più adatto al tuo impasto.</small></div>
+            <div class="calculatorSection saltEditor">
+              <div class="calculatorSectionHeader"><span>Sale</span><small>Scegli il profilo più adatto al tuo impasto.</small></div>
               <div class="calculatorInset">
                 <div class="basicField">
                   <label for="saltProfile">Sale</label>
