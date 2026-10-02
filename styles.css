@@ -823,3 +823,20 @@ body{
   #impasto .doughCheckBody{padding:2px 16px 16px}
 }
 @media(prefers-reduced-motion:reduce){#impasto .summaryChevron{transition:none}}
+
+
+/* v5.3 — azioni impasto salvato in Home */
+.homeStepActions{display:flex;align-items:center;gap:8px;margin-top:10px}
+.homeStepActions .homeStepButton{margin-top:0}
+.homeStepDelete{
+  margin:0;
+  padding:8px 10px;
+  min-height:34px;
+  border-radius:10px;
+  background:transparent;
+  color:#7a342c;
+  border:1px solid #d9b9ae;
+  box-shadow:none;
+  font:800 12px/1 Arial,sans-serif;
+}
+.homeStepDelete:active{background:#f7e8e2}
