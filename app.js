@@ -208,6 +208,7 @@
 
     const add = $('addFlourBtn');
     add.classList.toggle('hidden', flours.length >= 3);
+    updateHydrationRecommendation();
   }
 
   function addFlour() {
@@ -268,6 +269,14 @@
     if (hours >= 18 && weightedProtein >= 12) hydration += 0.5;
 
     return Math.max(62, Math.min(76, hydration));
+  }
+
+  function updateHydrationRecommendation() {
+    const value=round(estimateHydration(),1);
+    const option=$('hydration')?.querySelector('option[value="auto"]');
+    if(option) option.textContent=`Automatica consigliata · ${String(value).replace('.',',')}%`;
+    const hint=$('autoHydHint');
+    if(hint) hint.textContent=`Consigliata per queste farine: ${String(value).replace('.',',')}%`;
   }
 
   function hydrationValue() {
@@ -848,6 +857,7 @@
         node?.addEventListener('change', () => updateFlourUI(id));
       });
     $('hydration')?.addEventListener('change', toggleCustoms);
+    ['start','bake'].forEach((id)=>$(id)?.addEventListener('change', updateHydrationRecommendation));
 
     $('recipeForm')?.addEventListener('change', () => savePrefs(false));
     $('recipeForm')?.addEventListener('input', (event) => {
