@@ -984,104 +984,59 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 
 
-/* v7.1 — respiro laterale e viewport mobile stabile */
+/* v7.3 — viewport stabile + respiro laterale coerente */
 html,body{
   width:100%;
   max-width:100%;
   margin:0;
-  overflow-x:clip;
+  overflow-x:hidden;
 }
 .appShell{
-  width:auto!important;
-  max-width:1160px!important;
+  max-width:1160px;
+  margin:0 auto;
   box-sizing:border-box;
 }
 .premiumCalc,
 .premiumCalc .twoColumns,
 .premiumCalc .recipeBuilder{
-  width:auto!important;
-  max-width:100%!important;
-  min-width:0!important;
+  min-width:0;
+  max-width:100%;
   box-sizing:border-box;
 }
-.premiumCalc .calculatorSection{
-  width:auto!important;
-  max-width:none!important;
-  margin-left:12px!important;
-  margin-right:12px!important;
-}
-.premiumCalc .calculatorSection>.panLine,
-.premiumCalc .calculatorSection>.choiceGrid,
-.premiumCalc .calculatorSection>.row,
-.premiumCalc .calculatorSection>.calculatorInset{
-  width:auto!important;
-  max-width:100%!important;
-  margin:0!important;
-  padding-left:20px!important;
-  padding-right:20px!important;
-}
-.premiumCalc .calculatorSection.flourEditor>.flourItem{
-  width:auto!important;
-  max-width:100%!important;
-}
-@media(max-width:640px){
+@media(max-width:900px){
   .appShell{
-    width:auto!important;
-    max-width:100%!important;
-    margin:0 auto!important;
-    padding-left:10px!important;
-    padding-right:10px!important;
-  }
-  .premiumCalc{width:100%!important}
-  .premiumCalc .recipeBuilder{width:100%!important}
-  .premiumCalc .calculatorSection{
-    margin-left:8px!important;
-    margin-right:8px!important;
-  }
-}
-
-
-/* v7.2 — mobile: card più raccolte, nessun overflow orizzontale */
-@media(max-width:640px){
-  html,body{
-    width:100%!important;
-    max-width:100%!important;
-    overflow-x:hidden!important;
-  }
-  .appShell{
-    width:100%!important;
-    max-width:100%!important;
-    margin:0!important;
-    padding-left:16px!important;
-    padding-right:16px!important;
-    overflow-x:hidden!important;
+    width:100%;
+    max-width:100%;
+    padding-left:18px;
+    padding-right:18px;
+    overflow-x:hidden;
   }
   .premiumCalc,
   .premiumCalc .twoColumns,
-  .premiumCalc .recipeBuilder{
-    width:100%!important;
-    max-width:100%!important;
-    margin-left:0!important;
-    margin-right:0!important;
-    overflow-x:hidden!important;
+  .premiumCalc .recipeBuilder,
+  .premiumCalc .resultColumn{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    margin-left:0;
+    margin-right:0;
+    box-sizing:border-box;
   }
+  .premiumCalc .twoColumns{display:block}
   .premiumCalc .calculatorSection{
-    width:calc(100% - 16px)!important;
-    max-width:calc(100% - 16px)!important;
-    margin-left:8px!important;
-    margin-right:8px!important;
+    width:calc(100% - 24px);
+    max-width:calc(100% - 24px);
+    margin-left:12px;
+    margin-right:12px;
+    box-sizing:border-box;
   }
   .premiumCalc .calculatorSection>.panLine,
   .premiumCalc .calculatorSection>.choiceGrid,
   .premiumCalc .calculatorSection>.row,
-  .premiumCalc .calculatorSection>.calculatorInset{
-    width:100%!important;
-    max-width:100%!important;
-    padding-left:18px!important;
-    padding-right:18px!important;
-  }
+  .premiumCalc .calculatorSection>.calculatorInset,
   .premiumCalc .calculatorSection.flourEditor>.flourItem,
   .premiumCalc .calculatorSection.flourEditor>.flourAddRow{
-    max-width:100%!important;
+    max-width:100%;
+    box-sizing:border-box;
   }
 }
