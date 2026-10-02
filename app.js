@@ -547,7 +547,7 @@
       saveLastPlan(plan);
       renderSavedTimeline();
       renderHomeSavedStep();
-      openView('impasto');
+      openView('home');
     });
     shell.append(manage);
 
@@ -604,7 +604,15 @@
     const printActions=create('div',{class:'savedPlanActions'});
     const printButton=create('button',{type:'button',class:'savedPlanPrint',text:'Stampa / salva PDF'});
     printButton.addEventListener('click',()=>printSavedPlan());
-    printActions.append(printButton); main.append(printActions);
+    const removeButton=create('button',{type:'button',class:'savedPlanDelete',text:'Elimina impasto'});
+    removeButton.addEventListener('click',()=>{
+      if(!window.confirm('Eliminare questo impasto e la sua timeline?')) return;
+      localStorage.removeItem(LAST_PLAN_KEY);
+      renderSavedTimeline();
+      renderHomeSavedStep();
+      openView('home');
+    });
+    printActions.append(printButton,removeButton); main.append(printActions);
     target.append(main);
   }
 
@@ -676,29 +684,24 @@
   }
 
   function renderHomeSavedStep() {
-    const target=$('homeSavedStep'); if(!target) return; clear(target);
-    const plan=getLastPlan(); if(!plan){target.classList.add('hidden');return;}
-    const status=timelineStatus(plan.timeline); if(status.phase==='empty'){target.classList.add('hidden');return;}
-    target.classList.remove('hidden');
-    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Timeline conclusa':'Stato atteso ora';
-    const primary=status.phase==='scheduled'?status.next:status.current;
-    const title=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
-    target.append(create('span',{class:'homeStepLabel',text:label}),create('b',{text:title}));
-    if(primary) target.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
-    if(status.phase==='active'&&status.next) target.append(create('small',{class:'homeNext',text:`Prossimo: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
-    if(status.phase==='scheduled'&&status.next) target.append(create('small',{class:'homeNext',text:`Inizia: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
-    const actions=create('div',{class:'homeStepActions'});
-    const button=create('button',{type:'button',class:'homeStepButton',text:'Apri →'});
-    button.addEventListener('click',()=>openView('impasto'));
-    const remove=create('button',{type:'button',class:'homeStepDelete',text:'Elimina','aria-label':'Elimina impasto e timeline'});
-    remove.addEventListener('click',()=>{
-      if(!window.confirm('Eliminare questo impasto e la sua timeline?')) return;
-      localStorage.removeItem(LAST_PLAN_KEY);
-      renderSavedTimeline();
-      renderHomeSavedStep();
-    });
-    actions.append(button,remove);
-    target.append(actions);
+    const plan=getLastPlan();
+    const empty=$('homeEmptyState'), active=$('homeActiveState'), mount=$('homeSavedPlan');
+    if(!empty||!active||!mount) return;
+    if(!plan){
+      empty.classList.remove('hidden');
+      active.classList.add('hidden');
+      clear(mount);
+      return;
+    }
+    empty.classList.add('hidden');
+    active.classList.remove('hidden');
+    const original=$('savedTimeline');
+    const proxyId=original?.id;
+    if(original) original.id='savedTimelineOffscreen';
+    mount.id='savedTimeline';
+    renderSavedTimeline();
+    mount.id='homeSavedPlan';
+    if(original) original.id=proxyId;
   }
 
   function calculate() {
