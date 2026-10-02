@@ -948,3 +948,30 @@ body{
 .premiumCalc .calcGroup>.flourItem{
   background:#fff;
 }
+
+
+/* v6.4 — parità reale con Farine + blocco overflow orizzontale */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.appShell,.premiumCalc,.premiumCalc .twoColumns,.premiumCalc .recipeBuilder{
+  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+}
+.premiumCalc .calcGroup{
+  width:auto;max-width:calc(100% - 32px);min-width:0;
+  background:#faf8f2!important;
+  box-sizing:border-box;
+}
+.premiumCalc .calcGroup>.flourBlendTitle{
+  background:#f6f3eb!important;
+}
+.premiumCalc .calcGroup>.flourItem{
+  background:#faf8f2!important;
+}
+.premiumCalc .calcGroup input,
+.premiumCalc .calcGroup select,
+.premiumCalc .calcGroup .choice,
+.premiumCalc .calcGroup .choice span{
+  min-width:0;max-width:100%;box-sizing:border-box;
+}
+@media(max-width:640px){
+  .premiumCalc .calcGroup{max-width:calc(100% - 32px)}
+}
