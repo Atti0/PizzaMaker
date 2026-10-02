@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=20">
+  <link rel="stylesheet" href="styles.css?v=21">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -37,25 +37,30 @@
       <section id="home" class="view active premiumHome" aria-labelledby="homeTitle">
         <div id="homeEmptyState">
           <div class="sectionTitle">
-            <p class="eyebrow">Da dove parti?</p>
+            <p class="eyebrow">Il tuo impasto</p>
             <h2 id="homeTitle">Prepara il tuo prossimo impasto</h2>
           </div>
-          <div class="actionGrid compact homeEmptyActions">
-            <button type="button" class="actionCard primaryHomeAction" data-open="calc">
-              <span class="cardIcon">①</span>
-              <span class="cardTitle">Calcola un nuovo impasto</span>
-              <span class="cardText">Dosi, acqua, sale, lievito e timeline.</span>
-            </button>
-            <button type="button" class="actionCard" data-open="impasto">
-              <span class="cardIcon">②</span>
-              <span class="cardTitle">Controlla o correggi</span>
-              <span class="cardText">Valuta crescita, consistenza o problemi del tuo impasto.</span>
-            </button>
-            <button type="button" class="actionCard" data-open="cottura">
-              <span class="cardIcon">③</span>
-              <span class="cardTitle">Stesura e cottura</span>
-              <span class="cardText">Banco, teglia, condimenti, forno e uscita su griglia.</span>
-            </button>
+          <div class="homeDoughWorkspace">
+            <section class="card homeCreateCard" aria-labelledby="homeCreateTitle">
+              <p class="flowEyebrow">Nessun impasto pianificato</p>
+              <h3 id="homeCreateTitle">Calcola il tuo prossimo impasto</h3>
+              <p>Dosi, acqua, sale, lievito e una timeline costruita sul tuo orario.</p>
+              <button type="button" class="savedPlanCta" data-open="calc">Calcola un impasto →</button>
+            </section>
+            <details class="card formCard flowForm homeTools">
+              <summary class="homeToolsSummary">
+                <span><small>Se qualcosa non torna</small><strong>Controlla, correggi o cuoci</strong></span>
+                <span class="summaryChevron" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="homeToolsBody">
+                <button type="button" class="homeToolAction" data-open="impasto">
+                  <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="cottura">
+                  <span><strong>Stesura e cottura</strong><small>Banco, teglia, condimenti, forno e timer.</small></span><b>→</b>
+                </button>
+              </div>
+            </details>
           </div>
         </div>
 
