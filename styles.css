@@ -706,3 +706,44 @@ body{
   .cookTimer{bottom:8px;border-radius:18px}
 }
 @media(prefers-reduced-motion:reduce){.cookTimer.timerDone .timerDisplay{animation:none}.premiumHome .actionCard:active{transform:none}}
+
+
+/* v4.5 — contrasto calcolatore e gerarchia superfici */
+.premiumCalc .recipeBuilder{
+  background:#fffefa!important;
+  border-color:rgba(75,58,34,.24)!important;
+  box-shadow:0 2px 3px rgba(58,40,15,.045),0 16px 38px rgba(58,40,15,.09)!important;
+}
+.premiumCalc .recipeBuilder>h3{
+  color:#6d6d68!important;
+  border-top-color:rgba(84,69,45,.18)!important;
+}
+.premiumCalc .flourSaltCompact{display:block!important}
+.premiumCalc .flourSaltCompact>div{width:100%}
+.premiumCalc .flourBlendEditor,
+.premiumCalc details.advanced{
+  background:#faf8f2!important;
+  border-color:rgba(83,68,45,.21)!important;
+  box-shadow:0 1px 2px rgba(54,39,18,.025)!important;
+}
+.premiumCalc .flourBlendTitle{
+  background:#f6f3eb!important;
+  border-bottom-color:rgba(83,68,45,.16)!important;
+}
+.premiumCalc .flourItem+.flourItem{border-top-color:rgba(83,68,45,.16)!important}
+.premiumCalc input,.premiumCalc select{
+  border-color:#bbb8ae!important;
+  box-shadow:0 1px 2px rgba(45,34,18,.045)!important;
+}
+.premiumCalc .choice span{
+  background:#fff!important;
+  border-color:#d4d0c6!important;
+}
+.premiumCalc .choice input:checked+span{
+  background:#fbf2ed!important;
+  border-color:#a94332!important;
+  box-shadow:0 0 0 1px #a94332!important;
+}
+@media(max-width:640px){
+  .premiumCalc .recipeBuilder{box-shadow:0 2px 3px rgba(58,40,15,.04),0 12px 28px rgba(58,40,15,.075)!important}
+}
