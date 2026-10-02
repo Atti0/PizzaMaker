@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=22">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -102,30 +102,46 @@
 
         <div class="twoColumns">
           <form class="card formCard recipeBuilder" id="recipeForm" novalidate>
-            <h3>1. Teglia</h3>
-            <div class="panLine">
-              <div class="compactField"><label for="w">Larg.</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
-              <span class="fieldJoin">×</span>
-              <div class="compactField"><label for="h">Alt.</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
-              <span class="fieldUnit">cm</span>
-              <div class="compactField pans"><label for="n">Teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
+            <div class="builderSection panEditor">
+              <div class="builderSectionTitle">
+                <span>Teglia</span>
+                <small>Dimensioni interne della teglia che userai.</small>
+              </div>
+              <div class="panLine">
+                <div class="compactField"><label for="w">Larghezza</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
+                <span class="fieldJoin">×</span>
+                <div class="compactField"><label for="h">Altezza</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
+                <span class="fieldUnit">cm</span>
+                <div class="compactField pans"><label for="n">Teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
+              </div>
             </div>
 
-            <h3>2. Risultato</h3>
-            <div class="choiceGrid compactChoices" role="radiogroup" aria-label="Risultato desiderato">
-              <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra<small>croccante</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.50"><span>Classica<small>bassa</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.54" checked><span>Equilibrata<small>bassa-media</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>alveolata</small></span></label>
-              <label class="choice"><input type="radio" name="style" value="0.65"><span>Soffice<small>alta</small></span></label>
+            <div class="builderSection pizzaTypeEditor">
+              <div class="builderSectionTitle">
+                <span>Tipo pizza</span>
+                <small>Scegli altezza e consistenza che vuoi ottenere.</small>
+              </div>
+              <div class="choiceGrid compactChoices" role="radiogroup" aria-label="Tipo pizza">
+                <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra<small>croccante</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.50"><span>Classica<small>bassa</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.54" checked><span>Equilibrata<small>bassa-media</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>alveolata</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.65"><span>Soffice<small>alta</small></span></label>
+              </div>
             </div>
 
-            <div class="row">
-              <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
-              <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
+            <div class="builderSection scheduleEditor">
+              <div class="builderSectionTitle">
+                <span>Orari</span>
+                <small>Da quando inizi l’impasto a quando vuoi infornare.</small>
+              </div>
+              <div class="row">
+                <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
+                <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
+              </div>
             </div>
 
-            <h3>4. Farina e impasto</h3>
+
             <div class="flourBlendEditor" id="flourBlend">
               <div class="flourBlendTitle">
                 <span>Farine</span>
