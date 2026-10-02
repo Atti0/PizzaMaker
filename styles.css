@@ -747,3 +747,19 @@ body{
 @media(max-width:640px){
   .premiumCalc .recipeBuilder{box-shadow:0 2px 3px rgba(58,40,15,.04),0 12px 28px rgba(58,40,15,.075)!important}
 }
+
+
+/* v4.6 — idratazione come parametro principale */
+.premiumCalc .doughBasics{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;
+  margin-top:14px;padding:17px 20px 18px;border:1px solid rgba(83,68,45,.21);border-radius:18px;
+  background:#faf8f2;box-shadow:0 1px 2px rgba(54,39,18,.025);
+}
+.premiumCalc .doughBasics .basicField{min-width:0}
+.premiumCalc .doughBasics .fieldHint{display:block;margin:7px 2px 0;color:#77756f;font:600 11px/1.35 Arial,sans-serif}
+.premiumCalc .doughBasics .textButton{grid-column:1/-1;justify-self:start;margin-top:0}
+.premiumCalc .doughBasics #customHydWrap,.premiumCalc .doughBasics #customSaltWrap{align-self:end}
+@media(max-width:640px){
+  .premiumCalc .doughBasics{grid-template-columns:1fr;padding:15px 20px 16px;gap:13px}
+  .premiumCalc .doughBasics .textButton{grid-column:auto}
+}
