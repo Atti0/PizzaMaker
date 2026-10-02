@@ -763,3 +763,38 @@ body{
   .premiumCalc .doughBasics{grid-template-columns:1fr;padding:15px 20px 16px;gap:13px}
   .premiumCalc .doughBasics .textButton{grid-column:auto}
 }
+
+
+/* v5.0 — timeline visuale, prima iterazione */
+.visualTimeline{list-style:none;margin:0;padding:4px 0 8px;display:grid;gap:10px}
+.visualTimelineStep{position:relative;display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px}
+.visualTimelineRail{position:relative;display:flex;justify-content:center}
+.visualTimelineStep:not(:last-child) .visualTimelineRail:after{content:"";position:absolute;top:30px;bottom:-16px;width:2px;background:#ddd4c3}
+.visualTimelineNumber{position:relative;z-index:1;width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:#f1ede4;border:2px solid #d7cebe;color:#77736a;font:900 12px/1 Arial,sans-serif}
+.visualTimelineStep.done .visualTimelineNumber{background:#526b2d;border-color:#526b2d;color:#fff}
+.visualTimelineStep.current .visualTimelineNumber{background:#b62d29;border-color:#b62d29;color:#fff;box-shadow:0 0 0 4px rgba(182,45,41,.1)}
+.visualTimelineStep.next .visualTimelineNumber{border-color:#a94332;color:#a94332;background:#fffefa}
+.visualTimelineCard{min-width:0;display:grid;grid-template-columns:94px minmax(0,1fr);gap:12px;padding:9px;background:#fffefa;border:1px solid #e1dbcf;border-radius:17px;box-shadow:0 5px 16px rgba(49,34,13,.045)}
+.timelineVisual{min-height:92px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#fbf0dc,#f4e5c9);border:1px solid #eee0c8;overflow:hidden}
+.timelineVisual span{font-size:36px;filter:saturate(.8)}
+.timelineVisualBody{min-width:0;padding:2px 4px 3px 0}
+.timelineVisualTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px}
+.timelineVisualTop time{color:#a94332;font:900 11px/1 Arial,sans-serif;white-space:nowrap}
+.timelineState{color:#71736f;font:900 9px/1 Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em}
+.visualTimelineStep.current .timelineState{color:#b62d29}.visualTimelineStep.next .timelineState{color:#526b2d}
+.timelineVisualTitle{display:block;color:#172036;font:900 15px/1.12 Arial,sans-serif}
+.timelineVisualBody p{margin:5px 0 6px;color:#62645f;font:400 11.5px/1.32 Arial,sans-serif}
+.timelineDuration{display:inline-flex;padding:4px 7px;border-radius:999px;background:#f3efe6;color:#65645e;font:800 9.5px/1 Arial,sans-serif}
+.visualTimelineStep.future .visualTimelineCard{opacity:.72}
+.savedPlanSection .visualTimeline{padding:2px 0 4px}
+.timelineDisclosure .visualTimeline{padding:2px 20px 18px}
+@media(max-width:420px){
+ .visualTimelineStep{grid-template-columns:30px minmax(0,1fr);gap:6px}
+ .visualTimelineNumber{width:27px;height:27px}
+ .visualTimelineStep:not(:last-child) .visualTimelineRail:after{top:28px}
+ .visualTimelineCard{grid-template-columns:78px minmax(0,1fr);gap:9px;padding:8px}
+ .timelineVisual{min-height:84px}
+ .timelineVisual span{font-size:31px}
+ .timelineVisualTitle{font-size:14px}
+ .timelineVisualBody p{font-size:11px}
+}
