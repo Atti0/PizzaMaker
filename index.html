@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -102,20 +102,7 @@
               <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
             </div>
 
-            <h3>4. Farina e sale</h3>
-            <div class="row flourSaltRow flourSaltCompact">
-              <div>
-                <label for="saltProfile">Sale</label>
-                <select id="saltProfile">
-                  <option value="2.0">Condimento sapido — 2,0%</option>
-                  <option value="2.2">Equilibrato — 2,2%</option>
-                  <option value="2.3" selected>Standard — 2,3%</option>
-                  <option value="2.5">Lunga lievitazione / caldo — 2,5%</option>
-                  <option value="custom">Personalizzato</option>
-                </select>
-              </div>
-            </div>
-
+            <h3>4. Farina e impasto</h3>
             <div class="flourBlendEditor" id="flourBlend">
               <div class="flourBlendTitle">
                 <span>Farine</span>
@@ -153,15 +140,30 @@
               <button type="button" class="secondary addFlourBtn" id="addFlourBtn">+ Aggiungi farina</button>
             </div>
 
-            <details class="advancedPanel">
-              <summary>Altre impostazioni</summary>
-              <div class="row advancedCalcRow">
-                <div><label for="hydration">Idratazione</label><select id="hydration"><option value="auto" selected>Automatica consigliata</option><option value="65">65%</option><option value="68">68%</option><option value="70">70%</option><option value="72">72%</option><option value="75">75%</option><option value="custom">Personalizzata</option></select></div>
-                <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
+            <div class="doughBasics">
+              <div class="basicField">
+                <label for="hydration">Idratazione</label>
+                <select id="hydration">
+                  <option value="auto" selected>Automatica consigliata</option>
+                  <option value="65">65%</option><option value="68">68%</option><option value="70">70%</option><option value="72">72%</option><option value="75">75%</option>
+                  <option value="custom">Personalizzata</option>
+                </select>
+                <small id="autoHydHint" class="fieldHint">Consigliata per queste farine: 68%</small>
+              </div>
+              <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
+              <div class="basicField">
+                <label for="saltProfile">Sale</label>
+                <select id="saltProfile">
+                  <option value="2.0">Condimento sapido — 2,0%</option>
+                  <option value="2.2">Equilibrato — 2,2%</option>
+                  <option value="2.3" selected>Standard — 2,3%</option>
+                  <option value="2.5">Lunga lievitazione / caldo — 2,5%</option>
+                  <option value="custom">Personalizzato</option>
+                </select>
               </div>
               <div id="customSaltWrap" class="hidden"><label for="customSalt">Sale personalizzato % farina</label><input id="customSalt" type="number" value="2.3" min="1.5" max="3.0" step="0.1" inputmode="decimal"></div>
-              <button type="button" class="textButton resetAdvanced" id="resetAdvancedBtn">Ripristina impostazioni consigliate</button>
-            </details>
+              <button type="button" class="textButton resetAdvanced" id="resetAdvancedBtn">Ripristina valori consigliati</button>
+            </div>
 
             <div class="formActions primaryAction">
               <button type="button" id="calculateBtn">Calcola il mio impasto <span aria-hidden="true">→</span></button>
@@ -272,6 +274,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=15" defer></script>
+  <script src="app.js?v=16" defer></script>
 </body>
 </html>
