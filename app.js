@@ -453,9 +453,8 @@
         salt: data.salt, flourBlend: data.flourBlend
       }
     };
-    saveLastPlan(plan);
-
-    const next = nextTimelineStep(data.timeline);
+    const status = timelineStatus(data.timeline);
+    const next = status.phase === 'scheduled' ? status.next : (status.next ?? status.current ?? data.timeline[data.timeline.length - 1]);
     const shell = create('section', { class: 'doughResult', 'aria-label': 'Il tuo impasto' });
 
     const head = create('div', { class: 'doughResultHead' });
@@ -475,7 +474,7 @@
 
     const now = create('div', { class: 'nextAction' });
     now.append(
-      create('span', { class: 'nextLabel', text: 'Adesso' }),
+      create('span', { class: 'nextLabel', text: status.phase === 'scheduled' ? 'In programma' : 'Prossimo' }),
       create('strong', { text: next.label }),
       create('time', { text: fmtShortDate(new Date(next.date)), datetime: next.date })
     );
@@ -521,17 +520,36 @@
     firstSteps.append(steps);
     shell.append(firstSteps);
 
-    const timeline = create('details', { class: 'timelineDisclosure' });
-    timeline.append(create('summary', { text: 'Timeline completa' }), renderPremiumTimeline(data.timeline));
-    shell.append(timeline);
+    const schedule = create('div', { class: 'premiumSection' });
+    schedule.append(create('div', { class: 'sectionBar' }, [
+      create('h4', { text: 'Programma' }),
+      create('span', { text: 'Anteprima' })
+    ]));
+    const scheduleList = create('div', { class: 'savedDoseGrid' });
+    const previewSteps = [
+      data.timeline[0],
+      data.timeline.find((item) => item.label === 'Stesura' || item.label === 'Fuori frigo o stesura secondo stato impasto'),
+      data.timeline[data.timeline.length - 1]
+    ].filter((item, index, items) => item && items.findIndex((candidate) => candidate.date === item.date && candidate.label === item.label) === index);
+    previewSteps.forEach((item) => scheduleList.append(
+      create('div', { class: 'savedDose' }, [
+        create('span', { text: item.label }),
+        create('strong', { text: fmtShortDate(new Date(item.date)) })
+      ])
+    ));
+    schedule.append(scheduleList);
+    shell.append(schedule);
 
-    const manage = create('button', { class: 'manageDough', type: 'button', text: 'Segui questo impasto' });
-    manage.addEventListener('click', () => openView('impasto'));
+    const manage = create('button', { class: 'manageDough', type: 'button', text: 'Salva e segui questo impasto →' });
+    manage.addEventListener('click', () => {
+      saveLastPlan(plan);
+      renderSavedTimeline();
+      renderHomeSavedStep();
+      openView('impasto');
+    });
     shell.append(manage);
 
     target.append(shell);
-    renderSavedTimeline();
-    renderHomeSavedStep();
   }
 
   function renderTimelineList(timeline) {
