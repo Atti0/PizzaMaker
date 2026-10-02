@@ -615,7 +615,18 @@
     if(primary) target.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
     if(status.phase==='active'&&status.next) target.append(create('small',{class:'homeNext',text:`Prossimo: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
     if(status.phase==='scheduled'&&status.next) target.append(create('small',{class:'homeNext',text:`Inizia: ${status.next.label} · ${fmtShortDate(new Date(status.next.date))}`}));
-    const button=create('button',{type:'button',class:'homeStepButton',text:'Apri →'}); button.addEventListener('click',()=>openView('impasto')); target.append(button);
+    const actions=create('div',{class:'homeStepActions'});
+    const button=create('button',{type:'button',class:'homeStepButton',text:'Apri →'});
+    button.addEventListener('click',()=>openView('impasto'));
+    const remove=create('button',{type:'button',class:'homeStepDelete',text:'Elimina','aria-label':'Elimina impasto e timeline'});
+    remove.addEventListener('click',()=>{
+      if(!window.confirm('Eliminare questo impasto e la sua timeline?')) return;
+      localStorage.removeItem(LAST_PLAN_KEY);
+      renderSavedTimeline();
+      renderHomeSavedStep();
+    });
+    actions.append(button,remove);
+    target.append(actions);
   }
 
   function calculate() {
@@ -882,7 +893,6 @@
 
     $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
     $('calculateBtn')?.addEventListener('click', calculate);
-    $('homeResetBtn')?.addEventListener('click', resetApp);
     $('homePrintBtn')?.addEventListener('click', () => window.print());
     $('adviceBtn')?.addEventListener('click', renderAdvice);
     $('cookBtn')?.addEventListener('click', renderCookGuide);
