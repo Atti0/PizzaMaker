@@ -104,7 +104,9 @@
       next.classList.add('active');
       if(id==='impasto') renderSavedTimeline();
       if(id==='home') renderHomeSavedStep();
-      window.scrollTo({top:0,behavior:'smooth'});
+      window.scrollTo({top:0,left:0,behavior:'smooth'});
+    document.documentElement.scrollLeft=0;
+    document.body.scrollLeft=0;
     }
   }
 
