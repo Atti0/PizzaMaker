@@ -917,55 +917,40 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
-/* v5.7 — sezioni coerenti del calcolatore */
-.builderSection{margin:0 0 20px;border:1px solid #d8d3c8;border-radius:18px;overflow:hidden;background:#fbfaf6}
-.builderSectionTitle{padding:15px 20px 13px;background:#f3f0e7;border-bottom:1px solid #d8d3c8}
-.builderSectionTitle>span{display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
-.builderSectionTitle>small{display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif}
-.builderSection .panLine,.builderSection .choiceGrid,.builderSection>.row{margin:0;padding:18px 20px}
-.builderSection .choiceGrid{background:#fff}
-.builderSection .choice{margin:0}
-.scheduleEditor>.row{background:#fff}
-.panEditor .panLine{background:#fff}
-@media(max-width:640px){
- .builderSection{margin-bottom:16px}
- .builderSectionTitle{padding:14px 20px 12px}
- .builderSection .panLine,.builderSection .choiceGrid,.builderSection>.row{padding:16px 20px}
+/* v6.1 — calcolatore: unica sorgente di stile */
+.premiumCalc .twoColumns:has(#result:empty){grid-template-columns:minmax(0,1fr)}
+.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{width:100%;max-width:none}
+
+.builderSection{
+  margin:0 0 16px;
+  border:1px solid #d8d3c8;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fbfaf6;
+}
+.builderSectionTitle{
+  padding:14px 20px 12px;
+  background:#f3f0e7;
+  border-bottom:1px solid #d8d3c8;
+}
+.builderSectionTitle>span{
+  display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.builderSectionTitle>small{
+  display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif;
 }
 
-
-/* v5.8 — respiro laterale uniforme nei pannelli del calcolatore */
-.panEditor .panLine,
-.pizzaTypeEditor .choiceGrid,
-.scheduleEditor > .row{
-  margin-left:20px;
-  margin-right:20px;
-  padding-left:0;
-  padding-right:0;
-}
-@media(max-width:640px){
-  .panEditor .panLine,
-  .pizzaTypeEditor .choiceGrid,
-  .scheduleEditor > .row{
-    margin-left:20px;
-    margin-right:20px;
-  }
-}
-
-
-/* v6.0 — griglia calcolatore e inset coerenti con Farine */
-.premiumCalc .twoColumns:has(#result:empty){
-  grid-template-columns:minmax(0,1fr);
-}
-.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{
-  width:100%;
-}
+/* Il corpo di ogni sezione resta staccato dai bordi come Farina 1. */
 .premiumCalc .builderSection .panLine,
 .premiumCalc .builderSection .choiceGrid,
-.premiumCalc .builderSection > .row{
-  margin:14px 14px 18px;
+.premiumCalc .builderSection>.row,
+.premiumCalc .calculatorInset{
+  margin:14px;
 }
-.premiumCalc .builderSection .panLine{
+.premiumCalc .builderSection .panLine,
+.premiumCalc .builderSection>.row,
+.premiumCalc .calculatorInset{
   padding:14px;
   border:1px solid var(--pc-line);
   border-radius:16px;
@@ -975,25 +960,7 @@ body{
   padding:0;
   background:transparent;
 }
-.premiumCalc .builderSection > .row{
-  padding:14px;
-  border:1px solid var(--pc-line);
-  border-radius:16px;
-  background:#fff;
-}
-.premiumCalc .calculatorInset{
-  margin:14px 14px 18px;
-  padding:14px;
-  border:1px solid var(--pc-line);
-  border-radius:16px;
-  background:#fff;
-}
+.premiumCalc .builderSection .choice{margin:0}
+.premiumCalc .calculatorInset{display:grid;gap:12px}
 .premiumCalc .calculatorInset .basicField{margin:0}
 .premiumCalc .calculatorInset .fieldHint{display:block;margin:8px 2px 0}
-.premiumCalc .calculatorInset > .hidden + *{margin-top:0}
-@media(max-width:640px){
-  .premiumCalc .builderSection .panLine,
-  .premiumCalc .builderSection .choiceGrid,
-  .premiumCalc .builderSection > .row,
-  .premiumCalc .calculatorInset{margin-left:14px;margin-right:14px}
-}
