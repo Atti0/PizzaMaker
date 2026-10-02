@@ -916,3 +916,19 @@ body{
 .homeCreateCard>p:not(.flowEyebrow){margin:9px 0 18px;color:#71736f;font:600 14px/1.45 Arial,sans-serif}
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
+
+/* v5.7 — sezioni coerenti del calcolatore */
+.builderSection{margin:0 0 20px;border:1px solid #d8d3c8;border-radius:18px;overflow:hidden;background:#fbfaf6}
+.builderSectionTitle{padding:15px 20px 13px;background:#f3f0e7;border-bottom:1px solid #d8d3c8}
+.builderSectionTitle>span{display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.builderSectionTitle>small{display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif}
+.builderSection .panLine,.builderSection .choiceGrid,.builderSection>.row{margin:0;padding:18px 20px}
+.builderSection .choiceGrid{background:#fff}
+.builderSection .choice{margin:0}
+.scheduleEditor>.row{background:#fff}
+.panEditor .panLine{background:#fff}
+@media(max-width:640px){
+ .builderSection{margin-bottom:16px}
+ .builderSectionTitle{padding:14px 20px 12px}
+ .builderSection .panLine,.builderSection .choiceGrid,.builderSection>.row{padding:16px 20px}
+}
