@@ -917,46 +917,32 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
-/* v6.2 — tutti i gruppi riusano il componente Farine */
-.premiumCalc .twoColumns:has(#result:empty){grid-template-columns:minmax(0,1fr)}
-.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{width:100%;max-width:none}
-
-.premiumCalc .calcGroup{margin-bottom:16px}
-.premiumCalc .calcGroup>.flourBlendTitle{margin:0}
-.premiumCalc .calcGroup>.flourItem{
-  margin:0;
-  padding:12px 13px;
-  border:0;
-  border-radius:0;
-  background:#fff;
+/* v6.5 — componenti calcolatore allineati a Farine */
+.premiumCalc{
+  width:100%;
+  max-width:100%;
+  min-width:0;
 }
-.premiumCalc .calcGroup>.choiceGrid{display:grid;padding:0 13px 12px;gap:8px}
-.premiumCalc .calcGroup>.row{padding:12px 13px}
-.premiumCalc .calcGroup>.panLine{padding:12px 13px}
-.premiumCalc .calcGroup>.calculatorInset{display:grid;gap:12px;padding:12px 13px}
-.premiumCalc .calcGroup>.calculatorInset .basicField{margin:0}
-.premiumCalc .calcGroup>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+.premiumCalc .twoColumns{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.premiumCalc .twoColumns:has(#result:empty){
+  display:block;
+}
+.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
 
-
-/* v6.3 — corpo dei gruppi calcolatore bianco come Farine */
+/* Stessa superficie del componente Farine: header crema, corpo bianco. */
 .premiumCalc .calcGroup{
-  background:#fff;
-}
-.premiumCalc .calcGroup>.flourBlendTitle{
-  background:#f7f4eb;
-}
-.premiumCalc .calcGroup>.flourItem{
-  background:#fff;
-}
-
-
-/* v6.4 — parità reale con Farine + blocco overflow orizzontale */
-html,body{width:100%;max-width:100%;overflow-x:hidden}
-.appShell,.premiumCalc,.premiumCalc .twoColumns,.premiumCalc .recipeBuilder{
-  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
-}
-.premiumCalc .calcGroup{
-  width:auto;max-width:calc(100% - 32px);min-width:0;
+  width:auto;
+  max-width:none;
+  min-width:0;
+  margin:0 0 16px;
   background:#faf8f2!important;
   box-sizing:border-box;
 }
@@ -964,14 +950,38 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   background:#f6f3eb!important;
 }
 .premiumCalc .calcGroup>.flourItem{
-  background:#faf8f2!important;
+  margin:0!important;
+  background:#fff!important;
+  box-sizing:border-box;
 }
-.premiumCalc .calcGroup input,
-.premiumCalc .calcGroup select,
-.premiumCalc .calcGroup .choice,
-.premiumCalc .calcGroup .choice span{
-  min-width:0;max-width:100%;box-sizing:border-box;
+.premiumCalc .calcGroup>.panLine,
+.premiumCalc .calcGroup>.row,
+.premiumCalc .calcGroup>.calculatorInset{
+  padding:12px 13px!important;
 }
-@media(max-width:640px){
-  .premiumCalc .calcGroup{max-width:calc(100% - 32px)}
+.premiumCalc .calcGroup>.choiceGrid{
+  padding:0 13px 12px!important;
+  gap:8px;
+}
+.premiumCalc .calcGroup>.calculatorInset{
+  display:grid;
+  gap:12px;
+}
+.premiumCalc .calcGroup>.calculatorInset .basicField{margin:0}
+.premiumCalc .calcGroup>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+
+html,body{max-width:100%;overflow-x:hidden}
+.appShell,.view,.premiumCalc,.premiumCalc .twoColumns,.premiumCalc .recipeBuilder{
+  min-width:0;
+  box-sizing:border-box;
+}
+@media(max-width:900px){
+  .premiumCalc .twoColumns{
+    display:block;
+  }
+  .premiumCalc .recipeBuilder,
+  .premiumCalc .resultColumn{
+    width:100%;
+    max-width:100%;
+  }
 }
