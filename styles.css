@@ -936,3 +936,15 @@ body{
 .premiumCalc .calcGroup>.calculatorInset{display:grid;gap:12px;padding:12px 13px}
 .premiumCalc .calcGroup>.calculatorInset .basicField{margin:0}
 .premiumCalc .calcGroup>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+
+
+/* v6.3 — corpo dei gruppi calcolatore bianco come Farine */
+.premiumCalc .calcGroup{
+  background:#fff;
+}
+.premiumCalc .calcGroup>.flourBlendTitle{
+  background:#f7f4eb;
+}
+.premiumCalc .calcGroup>.flourItem{
+  background:#fff;
+}
