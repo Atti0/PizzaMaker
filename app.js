@@ -378,23 +378,52 @@
     }
   }
 
-  function renderPremiumTimeline(timeline) {
-    const now = Date.now();
-    const nextIndex = timeline.findIndex((item) => new Date(item.date).getTime() > now);
-    const activeIndex = nextIndex >= 0 ? nextIndex : timeline.length - 1;
-    const list = create('ol', { class: 'premiumTimeline' });
+  const TIMELINE_VISUALS = {
+    'Impasto grezzo': { icon:'🥣', short:'Unisci farine, acqua e lievito fino a ottenere un impasto grezzo.', duration:'~ 10 min' },
+    'Riposo 20 min coperto': { icon:'⏱️', short:'Copri e lascia riposare: l’impasto inizierà a rilassarsi.', duration:'20 min' },
+    'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
+    '1ª piega leggera': { icon:'↪', short:'Fai una piega delicata per dare struttura senza sgonfiare.', duration:'~ 2 min' },
+    '2ª piega leggera': { icon:'↪', short:'Ripeti la piega con mani leggere e lascia poi riposare.', duration:'~ 2 min' },
+    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi, senza schiacciare tutto.', duration:'~ 10 min' },
+    'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
+    'Frigo coperto dopo le pieghe': { icon:'❄', short:'Copri bene e trasferisci in frigo per la maturazione.', duration:'Riposo' },
+    'Controllo volume': { icon:'◎', short:'Controlla volume e tenuta: lo stato dell’impasto conta più dell’orologio.', duration:'Controllo' },
+    'Fuori frigo o stesura secondo stato impasto': { icon:'👐', short:'Valuta l’impasto e procedi con uscita dal frigo o stesura delicata.', duration:'~ 10 min' },
+    'Cottura': { icon:'♨', short:'Forno ben caldo: segui la guida di stesura e cottura.', duration:'10–15 min' }
+  };
 
-    timeline.forEach((item, index) => {
-      const state = index < activeIndex ? 'done' : index === activeIndex ? 'current' : 'future';
-      const row = create('li', { class: `timelineStep ${state}` });
-      const marker = create('span', { class: 'timelineMarker', 'aria-hidden': 'true', text: index < activeIndex ? '✓' : '' });
-      const copy = create('div', { class: 'timelineCopy' });
-      copy.append(
-        create('strong', { text: item.label }),
-        create('span', { text: fmtShortDate(new Date(item.date)) })
-      );
-      row.append(marker, copy);
-      list.append(row);
+  function renderPremiumTimeline(timeline) {
+    const status=timelineStatus(timeline);
+    const now=Date.now();
+    const list=create('ol',{class:'visualTimeline','aria-label':'Timeline impasto'});
+
+    timeline.forEach((item,index)=>{
+      const time=new Date(item.date).getTime();
+      let state='future',stateLabel='Più tardi';
+      if(status.phase==='scheduled'){
+        if(index===0){state='next';stateLabel='Inizia qui';}
+      } else if(status.phase==='finished'){
+        state='done';stateLabel='Completato';
+      } else {
+        const currentIndex=timeline.findIndex(step=>step.date===status.current?.date&&step.label===status.current?.label);
+        const nextIndex=timeline.findIndex(step=>step.date===status.next?.date&&step.label===status.next?.label);
+        if(index<currentIndex){state='done';stateLabel='Completato';}
+        else if(index===currentIndex){state='current';stateLabel='Adesso';}
+        else if(index===nextIndex){state='next';stateLabel='Prossimo';}
+      }
+      const meta=TIMELINE_VISUALS[item.label]||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
+      const row=create('li',{class:`visualTimelineStep ${state}`});
+      const rail=create('div',{class:'visualTimelineRail','aria-hidden':'true'});
+      rail.append(create('span',{class:'visualTimelineNumber',text:String(index+1)}));
+      const card=create('article',{class:'visualTimelineCard'});
+      const visual=create('div',{class:'timelineVisual','aria-hidden':'true'});
+      visual.append(create('span',{text:meta.icon}));
+      const body=create('div',{class:'timelineVisualBody'});
+      const top=create('div',{class:'timelineVisualTop'});
+      top.append(create('span',{class:'timelineState',text:stateLabel}),create('time',{text:fmtShortDate(new Date(item.date)),datetime:item.date}));
+      body.append(top,create('strong',{class:'timelineVisualTitle',text:item.label}),create('p',{text:meta.short}));
+      if(meta.duration) body.append(create('span',{class:'timelineDuration',text:`◷ ${meta.duration}`}));
+      card.append(visual,body); row.append(rail,card); list.append(row);
     });
     return list;
   }
