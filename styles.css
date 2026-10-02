@@ -917,71 +917,68 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
-/* v6.5 — componenti calcolatore allineati a Farine */
-.premiumCalc{
-  width:100%;
-  max-width:100%;
-  min-width:0;
+/* v7.0 — unico componente sezione del calcolatore */
+html,body{max-width:100%;overflow-x:hidden}
+.premiumCalc,.premiumCalc .twoColumns,.premiumCalc .recipeBuilder{
+  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
 }
-.premiumCalc .twoColumns{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
-.premiumCalc .twoColumns:has(#result:empty){
-  display:block;
-}
-.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
+.premiumCalc .twoColumns:has(#result:empty){display:block}
+.premiumCalc .twoColumns:has(#result:empty) .recipeBuilder{width:100%;max-width:100%}
 
-/* Stessa superficie del componente Farine: header crema, corpo bianco. */
-.premiumCalc .calcGroup{
-  width:auto;
-  max-width:none;
+.calculatorSection{
+  width:100%;
   min-width:0;
   margin:0 0 16px;
-  background:#faf8f2!important;
+  border:1px solid #d8d3c8;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
   box-sizing:border-box;
 }
-.premiumCalc .calcGroup>.flourBlendTitle{
-  background:#f6f3eb!important;
+.calculatorSectionHeader{
+  display:block;
+  padding:14px 20px 12px;
+  border-bottom:1px solid #d8d3c8;
+  background:#f6f3eb;
 }
-.premiumCalc .calcGroup>.flourItem{
-  margin:0!important;
+.calculatorSectionHeader>span{
+  display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.calculatorSectionHeader>small{
+  display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif;
+}
+
+/* Un solo body visivo: bianco e con lo stesso inset laterale per tutte le sezioni. */
+.calculatorSection>.panLine,
+.calculatorSection>.choiceGrid,
+.calculatorSection>.row,
+.calculatorSection>.calculatorInset{
+  margin:0;
+  padding:16px 20px 18px;
   background:#fff!important;
   box-sizing:border-box;
 }
-.premiumCalc .calcGroup>.panLine,
-.premiumCalc .calcGroup>.row,
-.premiumCalc .calcGroup>.calculatorInset{
-  padding:12px 13px!important;
-}
-.premiumCalc .calcGroup>.choiceGrid{
-  padding:0 13px 12px!important;
-  gap:8px;
-}
-.premiumCalc .calcGroup>.calculatorInset{
-  display:grid;
-  gap:12px;
-}
-.premiumCalc .calcGroup>.calculatorInset .basicField{margin:0}
-.premiumCalc .calcGroup>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+.calculatorSection>.choiceGrid{gap:10px}
+.calculatorSection>.calculatorInset{display:grid;gap:12px}
+.calculatorSection>.calculatorInset .basicField{margin:0}
+.calculatorSection>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
 
-html,body{max-width:100%;overflow-x:hidden}
-.appShell,.view,.premiumCalc,.premiumCalc .twoColumns,.premiumCalc .recipeBuilder{
-  min-width:0;
-  box-sizing:border-box;
+/* Farine usa lo stesso body bianco e lo stesso inset, senza la vecchia superficie crema. */
+.calculatorSection.flourEditor>.flourItem{
+  margin:0!important;
+  padding:16px 20px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#fff!important;
 }
+.calculatorSection.flourEditor>.flourAddRow{
+  padding:0 20px 16px!important;
+  background:#fff!important;
+}
+
+/* Nessuna seconda colonna fantasma su telefono/tablet. */
 @media(max-width:900px){
-  .premiumCalc .twoColumns{
-    display:block;
-  }
-  .premiumCalc .recipeBuilder,
-  .premiumCalc .resultColumn{
-    width:100%;
-    max-width:100%;
-  }
+  .premiumCalc .twoColumns{display:block;width:100%;max-width:100%}
+  .premiumCalc .recipeBuilder,.premiumCalc .resultColumn{width:100%;max-width:100%;min-width:0}
 }
