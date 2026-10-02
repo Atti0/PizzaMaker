@@ -204,7 +204,7 @@
     const summary = flours.length === 1
       ? `1 farina · tipo ${flours[0].type} · ${round(flours[0].protein, 1)} g proteine`
       : `${flours.length} farine · ${flours.map((item) => round(item.pct, 0) + '%').join(' + ')}`;
-    $('flourSummary').textContent = summary;
+    if ($('flourSummary')) $('flourSummary').textContent = summary;
 
     const add = $('addFlourBtn');
     add.classList.toggle('hidden', flours.length >= 3);
