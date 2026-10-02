@@ -908,3 +908,11 @@ body{
  .savedPlanActions{grid-template-columns:1fr auto}
 }
 @media(prefers-reduced-motion:reduce){.homeToolsSummary .summaryChevron{transition:none}}
+
+/* v5.6 — stessa grammatica visiva della Home con e senza impasto */
+.homeCreateCard{padding:22px 26px 24px;border-radius:20px;background:#fffdf8;border:1px solid rgba(91,72,43,.18);box-shadow:0 7px 24px rgba(49,34,13,.05)}
+.homeCreateCard .flowEyebrow{margin:0 0 9px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.homeCreateCard h3{margin:0;color:#172036;font:900 24px/1.08 Arial,sans-serif}
+.homeCreateCard>p:not(.flowEyebrow){margin:9px 0 18px;color:#71736f;font:600 14px/1.45 Arial,sans-serif}
+.homeCreateCard .savedPlanCta{width:100%;margin:0}
+@media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
