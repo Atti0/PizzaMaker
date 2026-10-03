@@ -1126,3 +1126,73 @@ main,
 .premiumCalc .calculatorInset{
   max-width:100%;
 }
+
+
+/* v8.2 — mobile containment definitivo
+   Le sezioni vivono DENTRO il form: niente margini che si sommano a width:100%. */
+@media (max-width:980px){
+  .premiumCalc .recipeBuilder{
+    padding:14px 14px 18px!important;
+    overflow:hidden!important;
+  }
+
+  .premiumCalc .calculatorSection{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0 0 16px!important;
+  }
+  .premiumCalc .calculatorSection:last-of-type{
+    margin-bottom:0!important;
+  }
+
+  /* Neutralizza i vecchi margin laterali del layout compatto:
+     erano la causa del taglio a destra e dello scroll orizzontale. */
+  .premiumCalc .calculatorSection>.panLine,
+  .premiumCalc .calculatorSection>.choiceGrid,
+  .premiumCalc .calculatorSection>.row,
+  .premiumCalc .calculatorSection>.calculatorInset{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .premiumCalc .choiceGrid.compactChoices{
+    margin:0!important;
+    padding:16px 18px 18px!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+    overflow:hidden!important;
+  }
+  .premiumCalc .compactChoices .choice{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .premiumCalc .compactChoices .choice:nth-child(n){
+    grid-column:auto!important;
+  }
+  .premiumCalc .compactChoices .choice:nth-child(5){
+    grid-column:1/2!important;
+  }
+  .premiumCalc .compactChoices .choice span{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  .premiumCalc .panLine,
+  .premiumCalc .scheduleEditor>.row{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+}
+
+@media (max-width:640px){
+  html,body,.appShell,main,.premiumCalc,.premiumCalc .twoColumns,
+  .premiumCalc .recipeBuilder{
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+}
