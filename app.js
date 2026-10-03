@@ -329,16 +329,16 @@
 
     if (hours <= 12) {
       timeline.push(
-        { label: 'Stesura', date: addMinutes(bake, -75).toISOString() },
+        { label: 'Stesura', date: addMinutes(bake, -75).toISOString(), action: 'cook' },
         { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
-        { label: 'Cottura', date: bake.toISOString() }
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     } else {
       timeline.push(
         { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115).toISOString() },
-        { label: 'Controllo volume', date: addMinutes(bake, -120).toISOString() },
-        { label: 'Fuori frigo o stesura secondo stato impasto', date: addMinutes(bake, -90).toISOString() },
-        { label: 'Cottura', date: bake.toISOString() }
+        { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
+        { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'cook' },
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     }
 
@@ -383,8 +383,7 @@
     'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi, senza schiacciare tutto.', duration:'~ 10 min' },
     'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
     'Frigo coperto dopo le pieghe': { icon:'❄', short:'Copri bene e trasferisci in frigo per la maturazione.', duration:'Riposo' },
-    'Controllo volume': { icon:'◎', short:'Controlla volume e tenuta: lo stato dell’impasto conta più dell’orologio.', duration:'Controllo' },
-    'Fuori frigo o stesura secondo stato impasto': { icon:'👐', short:'Valuta l’impasto e procedi con uscita dal frigo o stesura delicata.', duration:'~ 10 min' },
+    'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
     'Cottura': { icon:'♨', short:'Forno ben caldo: segui la guida di stesura e cottura.', duration:'10–15 min' }
   };
 
@@ -407,7 +406,10 @@
         else if(index===currentIndex){state='current';stateLabel='Adesso';}
         else if(index===nextIndex){state='next';stateLabel='Prossimo';}
       }
-      const meta=TIMELINE_VISUALS[item.label]||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
+      const legacyCheck = item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto';
+      const action = item.action || (legacyCheck ? 'check' : null) || (item.label === 'Cottura' || item.label === 'Stesura' ? 'cook' : null);
+      const legacyMeta = legacyCheck ? { icon:'◎', short:'Verifica lo stato reale dell’impasto prima di decidere come proseguire.', duration:'Controllo' } : null;
+      const meta=TIMELINE_VISUALS[item.label]||legacyMeta||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
       const row=create('li',{class:`visualTimelineStep ${state}`});
       const rail=create('div',{class:'visualTimelineRail','aria-hidden':'true'});
       rail.append(create('span',{class:'visualTimelineNumber',text:String(index+1)}));
@@ -419,6 +421,19 @@
       top.append(create('span',{class:'timelineState',text:stateLabel}),create('time',{text:fmtShortDate(new Date(item.date)),datetime:item.date}));
       body.append(top,create('strong',{class:'timelineVisualTitle',text:item.label}),create('p',{text:meta.short}));
       if(meta.duration) body.append(create('span',{class:'timelineDuration',text:`◷ ${meta.duration}`}));
+      if(action){
+        const actionButton=create('button',{type:'button',class:'timelineAction',text:action==='check'?'Controlla lo stato →':(item.label==='Cottura'?'Apri guida cottura →':'Guida alla stesura →')});
+        actionButton.addEventListener('click',()=>{
+          if(action==='check'){
+            $('checkMode').value='dough';
+            toggleCheckMode();
+            openView('impasto');
+            $('doughCheck')?.setAttribute('open','');
+            $('doughCheck')?.scrollIntoView({behavior:'smooth',block:'start'});
+          } else openView('cottura');
+        });
+        body.append(actionButton);
+      }
       card.append(visual,body); row.append(rail,card); list.append(row);
     });
     return list;
