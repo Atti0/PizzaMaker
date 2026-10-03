@@ -326,169 +326,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
   #savedTimeline{order:2;width:100%}
 }
 
-/* Calcolatore — primitive visive (il layout è definito nel blocco canonico in fondo) */
-.premiumCalc{
-  --pc-surface:#fffefa;
-  --pc-input:#fff;
-  --pc-ink:#172036;
-  --pc-muted:#73736d;
-  --pc-accent:#a94332;
-  --pc-green:#526b2d;
-  --pc-line:#ddd7ca;
-}
-.premiumCalc,.premiumCalc *{min-width:0}
-.premiumCalc .viewHeader{
-  display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;
-  gap:12px;margin:14px 0 16px;
-}
-.premiumCalc .viewHeader .ghost{
-  width:44px;height:44px;padding:0;font-size:0;border-radius:50%;
-  background:rgba(255,253,244,.7);border:1px solid var(--pc-line);box-shadow:none;
-}
-.premiumCalc .viewHeader .ghost::before{content:"←";font:700 21px/1 Arial,sans-serif;color:var(--pc-ink)}
-.premiumCalc .viewHeader .eyebrow{display:none}
-.premiumCalc .viewHeader h2{
-  margin:0;color:var(--pc-ink);font-family:Arial,sans-serif;
-  font-size:clamp(24px,5vw,32px);line-height:1.08;letter-spacing:-.035em;
-}
-.premiumCalc label{color:var(--pc-green);font-family:Arial,sans-serif;font-size:13px;font-weight:800}
-.premiumCalc input,.premiumCalc select{
-  width:100%;min-height:50px;background:var(--pc-input);color:var(--pc-ink);
-  border:1.5px solid #bbb8ae;border-radius:13px;
-  box-shadow:0 1px 2px rgba(45,34,18,.045);font-family:Arial,sans-serif;font-size:16px;
-}
-.premiumCalc input:hover,.premiumCalc select:hover{border-color:#aaa89f}
-.premiumCalc input:focus,.premiumCalc select:focus{
-  border-color:var(--pc-accent);box-shadow:0 0 0 3px rgba(169,67,50,.12);outline:0;
-}
-.premiumCalc .compactField input{text-align:center;font-weight:800}
-.premiumCalc .fieldJoin,.premiumCalc .fieldUnit{
-  padding:0 0 15px;text-align:center;white-space:nowrap;color:var(--pc-muted);
-  font-family:Arial,sans-serif;font-weight:800;
-}
-.premiumCalc .fieldUnit{font-size:13px}
-.premiumCalc .compactChoices .choice{width:100%;min-width:0}
-.premiumCalc .compactChoices .choice span{
-  width:100%;min-width:0;min-height:66px;padding:10px 11px;
-  justify-content:center;background:#fff;border:1.5px solid #d4d0c6;
-  border-radius:14px;box-shadow:none;color:var(--pc-ink);
-  font-family:Arial,sans-serif;font-size:15px;
-}
-.premiumCalc .compactChoices .choice small{color:var(--pc-muted);font-size:12px}
-.premiumCalc .compactChoices .choice input:checked+span{
-  background:#fbf2ed;border-color:var(--pc-accent);box-shadow:0 0 0 1px var(--pc-accent);
-}
-.premiumCalc .flourItemHead{
-  margin:0 0 10px;display:flex;align-items:center;justify-content:space-between;
-  gap:10px;color:var(--pc-ink);font-family:Arial,sans-serif;
-}
-.premiumCalc .flourItemHead strong{font-size:15px}
-.premiumCalc .flourItemHead>span{color:var(--pc-accent);font-size:14px;font-weight:900}
-.premiumCalc .flourItemHead .removeFlour{color:var(--pc-accent);font:800 12px/1 Arial,sans-serif}
-.premiumCalc .flourFields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr .9fr 1fr 1.25fr}
-.premiumCalc .flourFields label{color:var(--pc-muted);font-size:11px}
-.premiumCalc .flourFields input,.premiumCalc .flourFields select{min-height:43px;padding:7px 9px;font-size:14px}
-.premiumCalc .addFlourBtn{
-  padding:9px 11px;background:#fff;color:var(--pc-ink);border:1px dashed #bdb9af;
-  border-radius:10px;box-shadow:none;font:800 13px/1 Arial,sans-serif;
-}
-.premiumCalc .primaryAction{display:block;margin:18px 0 0}
-.premiumCalc .primaryAction #calculateBtn{
-  width:100%;min-height:54px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;
-  background:var(--pc-ink);border-radius:13px;box-shadow:none;font:900 16px/1 Arial,sans-serif;
-}
 
-/* risultato premium */
-.doughResult{
-  overflow:hidden;background:#fffefa;border:1px solid #ddd7ca;border-radius:24px;
-  box-shadow:0 12px 34px rgba(49,34,13,.08);font-family:Arial,sans-serif;
-}
-.doughResultHead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px}
-.resultEyebrow{display:block;color:var(--green);font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-.doughResultHead h3{margin:0;color:var(--ink);font-family:Georgia,'Times New Roman',serif;font-size:clamp(28px,4vw,36px);line-height:1.02}
-.resultMeta{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
-.hydrationBadge{flex:0 0 auto;min-width:76px;text-align:center;border-left:1px solid var(--line);padding-left:14px}
-.hydrationBadge strong{display:block;color:var(--red);font-size:26px;line-height:1}
-.hydrationBadge span{display:block;color:var(--muted);font-size:10px;margin-top:4px}
-.nextAction{margin:0 12px;padding:14px 15px;border-radius:16px;background:#eef0e8;display:grid;grid-template-columns:1fr auto;gap:3px 12px}
-.nextAction .nextLabel{grid-column:1/-1;color:var(--green);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
-.nextAction strong{font-family:Georgia,'Times New Roman',serif;font-size:20px;color:var(--ink)}
-.nextAction time{align-self:center;color:var(--red);font-weight:900;font-size:13px}
-.premiumSection{padding:18px 20px;border-bottom:1px solid rgba(111,82,43,.13)}
-.sectionBar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
-.premiumSection h4{margin:0;color:var(--ink);font-size:16px}
-.sectionBar>span{color:var(--muted);font-size:11px}
-.doseGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 20px}
-.doseItem{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(111,82,43,.1)}
-.doseItem span{color:#4f514e;font-size:13px}.doseItem strong{color:var(--ink);font-size:14px}
-.compactSteps{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:9px}
-.compactSteps li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start}
-.compactSteps li>span{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#f1e5cc;color:var(--red);font-size:11px;font-weight:900}
-.compactSteps p{margin:2px 0 0;color:#363b42;font-size:13px;line-height:1.35}
-.timelineDisclosure{border-bottom:1px solid rgba(111,82,43,.13)}
-.timelineDisclosure summary{cursor:pointer;padding:15px 20px;color:var(--red);font-weight:900;list-style-position:inside}
-.premiumTimeline{list-style:none;margin:0;padding:0 20px 16px}
-.timelineStep{position:relative;display:grid;grid-template-columns:27px 1fr;gap:9px;min-height:50px}
-.timelineStep:not(:last-child):before{content:"";position:absolute;left:13px;top:24px;bottom:-3px;width:1px;background:#d9cdb8}
-.timelineMarker{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid #d4c8b4;background:#fffdf8;color:white;font-size:11px;font-weight:900;z-index:1}
-.timelineStep.done .timelineMarker{background:var(--green);border-color:var(--green)}
-.timelineStep.current .timelineMarker{border:7px solid var(--gold);background:white}
-.timelineStep.future{opacity:.58}
-.timelineCopy{display:flex;justify-content:space-between;gap:12px;padding-top:3px}
-.timelineCopy strong{color:var(--ink);font-size:13px}.timelineCopy span{color:var(--muted);font-size:11px;white-space:nowrap}
-.manageDough{width:calc(100% - 40px);margin:16px 20px 20px;min-height:48px;box-shadow:none}
-
-@media(max-width:640px){
-  .appShell{width:100%;max-width:100%;overflow:hidden}
-  .premiumCalc{width:100%;max-width:100%;overflow:hidden}
-  .premiumCalc .viewHeader{margin:12px 6px 14px}
-  .premiumCalc .viewHeader h2{font-size:24px;white-space:normal}
-  .premiumCalc .twoColumns{display:block;width:100%}
-  .premiumCalc .recipeBuilder,.premiumCalc #result{width:100%;max-width:100%}
-  .premiumCalc .recipeBuilder{border-radius:22px}
-  .premiumCalc .recipeBuilder>h3{padding:18px 16px 9px!important}
-  .premiumCalc .recipeBuilder>h3:not(:first-child){margin-top:12px!important}
-  .premiumCalc .panLine{
-    margin:0 16px 2px;
-    grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) minmax(0,.7fr);
-    gap:7px;
-  }
-  .premiumCalc .panLine .fieldUnit{display:none}
-  .premiumCalc .panLine .pans label::after{content:" · n."}
-  .premiumCalc .fieldJoin{padding-bottom:15px}
-  .premiumCalc .choiceGrid.compactChoices{
-    margin:0 16px 2px!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  }
-  .premiumCalc .compactChoices .choice:nth-child(n){grid-column:auto}
-  .premiumCalc .compactChoices .choice:nth-child(5){grid-column:1/2}
-  .premiumCalc .compactChoices .choice span{min-height:62px}
-  .premiumCalc .recipeBuilder>.row{
-    margin-left:16px;margin-right:16px;grid-template-columns:1fr;
-  }
-  .premiumCalc .flourSummary{min-height:64px}
-  .premiumCalc .flourBlendEditor{margin:12px 16px 4px}
-  .premiumCalc .flourBlendTitle{align-items:flex-start;flex-direction:column;gap:2px}
-  .premiumCalc .flourBlendTitle small{text-align:left}
-  .premiumCalc .flourFields,
-  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .premiumCalc .flourFields>div:last-child,
-  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:1/-1}
-  .premiumCalc .advancedPanel{margin-left:16px;margin-right:16px}
-  .premiumCalc .advancedPanel .advancedCalcRow{grid-template-columns:1fr}
-  .premiumCalc .primaryAction{margin-left:16px;margin-right:16px}
-  .doughResult{border-radius:22px}
-  .doughResultHead{padding:17px 15px 14px}
-  .doughResultHead h3{font-size:28px}
-  .hydrationBadge{min-width:66px;padding-left:10px}.hydrationBadge strong{font-size:23px}
-  .nextAction{margin:0 9px;padding:12px 13px;grid-template-columns:1fr}.nextAction time{margin-top:2px}
-  .premiumSection{padding:16px 15px}.doseGrid{grid-template-columns:1fr}
-  .timelineDisclosure summary{padding:14px 15px}.premiumTimeline{padding:0 15px 14px}
-  .timelineCopy{display:grid;gap:2px}
-  .manageDough{width:calc(100% - 30px);margin:15px}
-}
-@media(prefers-reduced-motion:reduce){.premiumCalc .compactChoices .choice span{transition:none}}
 
 
 /* v4.1 — premium design system esteso */
@@ -591,17 +429,17 @@ body{
     linear-gradient(115deg,rgba(255,248,229,.76),rgba(240,224,191,.34));
   background-size:19px 19px,27px 27px,100% 100%;
 }
-.premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.premiumCalc .recipeBuilder,.doughResult,#cottura #cook .cookGuide{
+.premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.doughResult,#cottura #cook .cookGuide{
   background:#fffdf8!important;
   border-color:rgba(91,72,43,.18)!important;
   box-shadow:0 1px 1px rgba(65,43,15,.04),0 10px 30px rgba(65,43,15,.075)!important;
 }
 .premiumHome .actionCard:active{transform:translateY(1px)}
 .homeSavedStep{background:#eef0e7!important;border-color:#d3d9c8!important;box-shadow:0 7px 20px rgba(65,43,15,.045)!important}
-.premiumCalc input,.premiumCalc select,.premiumFlow input,.premiumFlow select{
+.premiumFlow input,.premiumFlow select{
   background:#fff!important;border-color:#c8c5bc!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 2px rgba(45,34,18,.035)!important;
 }
-.premiumCalc input:focus,.premiumCalc select:focus,.premiumFlow input:focus,.premiumFlow select:focus{
+.premiumFlow input:focus,.premiumFlow select:focus{
   border-color:#a94332!important;box-shadow:0 0 0 3px rgba(169,67,50,.11)!important;
 }
 #cottura .cookGuide{overflow:hidden}
@@ -622,7 +460,7 @@ body{
 @keyframes timerPulse{50%{transform:scale(1.025)}}
 @media(max-width:640px){
   body{background-size:17px 17px,25px 25px,100% 100%}
-  .premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.premiumCalc .recipeBuilder,.doughResult,#cottura #cook .cookGuide{box-shadow:0 1px 1px rgba(65,43,15,.035),0 8px 22px rgba(65,43,15,.06)!important}
+  .premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.doughResult,#cottura #cook .cookGuide{box-shadow:0 1px 1px rgba(65,43,15,.035),0 8px 22px rgba(65,43,15,.06)!important}
   .cookTimer{bottom:8px;border-radius:18px}
 }
 @media(prefers-reduced-motion:reduce){.cookTimer.timerDone .timerDisplay{animation:none}.premiumHome .actionCard:active{transform:none}}
@@ -780,126 +618,111 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
-/* Calcolatore — layout canonico mobile-first
-   Gerarchia unica: viewport > appShell > premiumCalc > twoColumns > recipeBuilder > calculatorSection */
-html,body{width:100%;max-width:100%;margin:0}
-.appShell{width:100%;max-width:1160px;margin:0 auto;padding:16px 14px 28px;box-sizing:border-box}
+/* CALCOLATORE — unica sorgente di stile, mobile-first */
+.premiumCalc{
+  --pc-ink:#172036;--pc-muted:#73736d;--pc-accent:#a94332;
+  --pc-green:#526b2d;--pc-line:#d8d3c8;
+  width:100%;min-width:0;font-family:Arial,sans-serif;
+}
+.premiumCalc *{box-sizing:border-box;min-width:0}
+.premiumCalc .viewHeader{
+  display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;
+  margin:12px 0 16px;
+}
+.premiumCalc .viewHeader .ghost{
+  width:44px;height:44px;padding:0;border:1px solid var(--pc-line);border-radius:50%;
+  background:rgba(255,253,244,.72);box-shadow:none;font-size:0;
+}
+.premiumCalc .viewHeader .ghost::before{content:"←";font:700 21px/1 Arial,sans-serif;color:var(--pc-ink)}
+.premiumCalc .viewHeader .eyebrow{display:none}
+.premiumCalc .viewHeader h2{margin:0;color:var(--pc-ink);font:900 24px/1.08 Arial,sans-serif;letter-spacing:-.035em}
 
-.premiumCalc,
-.premiumCalc .twoColumns,
-.premiumCalc .recipeBuilder,
-.premiumCalc .resultColumn,
-.premiumCalc .calculatorSection{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
-
-.premiumCalc .twoColumns{display:block}
+.premiumCalc .twoColumns{display:block;width:100%}
 .premiumCalc .recipeBuilder{
-  padding:14px;
-  background:transparent;
-  border:0;border-radius:0;box-shadow:none;
+  width:100%;margin:0;padding:14px;
+  border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;
 }
 .premiumCalc .calculatorSection{
-  margin:0 0 18px;
-  border:1px solid #d8d3c8;border-radius:18px;
-  overflow:hidden;background:#fff;
+  width:100%;margin:0 0 18px;border:1px solid var(--pc-line);
+  border-radius:18px;background:#fff;overflow:hidden;
 }
 .premiumCalc .calculatorSection:last-of-type{margin-bottom:0}
-.premiumCalc .calculatorSectionHeader{
-  display:block;padding:14px 18px 12px;
-  border-bottom:1px solid #d8d3c8;background:#f6f3eb;
-}
-.premiumCalc .calculatorSectionHeader>span{
-  display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;
-  letter-spacing:.08em;text-transform:uppercase;
-}
-.premiumCalc .calculatorSectionHeader>small{
-  display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif;
-}
+.premiumCalc .calculatorSectionHeader{padding:14px 18px 12px;border-bottom:1px solid var(--pc-line);background:#f6f3eb}
+.premiumCalc .calculatorSectionHeader>span{display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.premiumCalc .calculatorSectionHeader>small{display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif}
 
-/* Tutti i contenuti di sezione condividono lo stesso gutter interno. */
-.premiumCalc .calculatorSection>.panLine,
-.premiumCalc .calculatorSection>.choiceGrid,
-.premiumCalc .calculatorSection>.row,
-.premiumCalc .calculatorSection>.calculatorInset{
-  width:100%;max-width:100%;margin:0;padding:16px 18px 18px;
-  background:#fff;box-sizing:border-box;
+.premiumCalc label{display:block;margin:0 0 6px;color:var(--pc-green);font:800 13px/1.2 Arial,sans-serif}
+.premiumCalc input,.premiumCalc select{
+  display:block;width:100%;max-width:100%;min-height:50px;padding:10px 12px;
+  border:1.5px solid #bbb8ae;border-radius:13px;background:#fff;color:var(--pc-ink);
+  box-shadow:0 1px 2px rgba(45,34,18,.045);font:16px/1.2 Arial,sans-serif;
 }
-.premiumCalc .calculatorSection>.calculatorInset{display:grid;gap:12px}
-.premiumCalc .calculatorSection>.calculatorInset .basicField{margin:0}
-.premiumCalc .calculatorSection>.calculatorInset .fieldHint{display:block;margin:8px 2px 0}
+.premiumCalc input:focus,.premiumCalc select:focus{border-color:var(--pc-accent);box-shadow:0 0 0 3px rgba(169,67,50,.12);outline:0}
 
-/* Teglia: tre campi sulla stessa riga senza larghezze fisse. */
 .premiumCalc .panLine{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) minmax(0,.72fr);
-  gap:7px;align-items:end;
+  display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) minmax(0,.72fr);
+  gap:7px;align-items:end;width:100%;margin:0;padding:16px 18px 18px;
 }
-.premiumCalc .panLine .fieldUnit{display:none}
-.premiumCalc .panLine .pans label::after{content:" · n."}
+.premiumCalc .compactField input{text-align:center;font-weight:800}
+.premiumCalc .fieldJoin{padding-bottom:15px;text-align:center;color:var(--pc-muted);font-weight:800}
+.premiumCalc .fieldUnit{display:none}
+.premiumCalc .pans label::after{content:" · n."}
 
-/* Tipo pizza: due colonne contenute, mai oltre la card. */
 .premiumCalc .choiceGrid.compactChoices{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  display:grid;width:100%;margin:0;padding:16px 18px 18px;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
 }
-.premiumCalc .compactChoices .choice:nth-child(n){grid-column:auto}
-.premiumCalc .compactChoices .choice:nth-child(5){grid-column:1/2}
-.premiumCalc .compactChoices .choice span{min-height:62px}
-
-/* Orari e parametri principali. */
-.premiumCalc .calculatorSection>.row{display:grid;grid-template-columns:1fr;gap:12px}
-.premiumCalc .calculatorSection>.row>label{margin:0}
-.premiumCalc .doughBasics{display:grid;grid-template-columns:1fr;gap:13px}
-.premiumCalc .doughBasics .textButton{justify-self:start}
-
-/* Farine: stessa superficie e stessi gutter delle altre sezioni. */
-.premiumCalc .calculatorSection.flourEditor>.flourItem{
-  width:100%;max-width:100%;margin:0;padding:16px 18px;
-  border:0;border-radius:0;background:#fff;box-sizing:border-box;
+.premiumCalc .choice{display:block;width:100%;margin:0;cursor:pointer}
+.premiumCalc .choice input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.premiumCalc .choice span{
+  display:flex;width:100%;min-height:62px;padding:10px 11px;flex-direction:column;
+  justify-content:center;gap:6px;border:1.5px solid #d4d0c6;border-radius:14px;
+  background:#fff;color:var(--pc-ink);font:900 15px/1.15 Arial,sans-serif;
 }
-.premiumCalc .calculatorSection.flourEditor>.flourItem+.flourItem{border-top:1px solid #e2ddd3}
-.premiumCalc .calculatorSection.flourEditor>.flourAddRow{
-  width:100%;max-width:100%;padding:0 18px 16px;background:#fff;box-sizing:border-box;
-}
-.premiumCalc .flourFields,
-.premiumCalc .flourItem:not([data-flour="1"]) .flourFields{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
-.premiumCalc .flourFields>div:last-child,
-.premiumCalc .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:1/-1}
+.premiumCalc .choice small{display:block;color:var(--pc-muted);font:700 12px/1.2 Arial,sans-serif}
+.premiumCalc .choice input:checked+span{border-color:var(--pc-accent);background:#fbf2ed;box-shadow:inset 0 0 0 1px var(--pc-accent)}
+.premiumCalc .compactChoices .choice:nth-child(5){grid-column:1}
 
-/* Azione primaria allineata alle card, senza creare larghezza aggiuntiva. */
-.premiumCalc .primaryAction{margin:18px 14px 0}
+.premiumCalc .scheduleEditor>.row{
+  display:grid;grid-template-columns:1fr;gap:12px;width:100%;margin:0;padding:16px 18px 18px;
+}
+.premiumCalc .scheduleEditor>.row>div{width:100%}
 
-/* Mobile: gutter esterno reale e nessun overflow mascherato. */
+.premiumCalc .flourEditor>.flourItem{width:100%;margin:0;padding:16px 18px;border:0;border-radius:0;background:#fff}
+.premiumCalc .flourEditor>.flourItem+.flourItem{border-top:1px solid #e2ddd3}
+.premiumCalc .flourItemHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;color:var(--pc-ink)}
+.premiumCalc .flourItemHead strong{font-size:15px}.premiumCalc .flourItemHead>span{color:var(--pc-accent);font-size:14px;font-weight:900}
+.premiumCalc .flourFields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.premiumCalc .flourFields>div:last-child{grid-column:1/-1}
+.premiumCalc .flourFields label{color:var(--pc-muted);font-size:11px}
+.premiumCalc .flourFields input,.premiumCalc .flourFields select{min-height:43px;padding:7px 9px;font-size:14px}
+.premiumCalc .addFlourBtn{margin:0 18px 16px;padding:9px 11px;border:1px dashed #bdb9af;border-radius:10px;background:#fff;color:var(--pc-ink);box-shadow:none;font:800 13px/1 Arial,sans-serif}
+
+.premiumCalc .calculatorInset{display:grid;gap:12px;width:100%;margin:0;padding:16px 18px 18px}
+.premiumCalc .calculatorInset .fieldHint{display:block;margin:8px 2px 0;color:var(--pc-muted);font:600 11px/1.35 Arial,sans-serif}
+.premiumCalc .resetAdvanced{margin:12px 14px 0}
+.premiumCalc .primaryAction{display:block;margin:18px 14px 0}
+.premiumCalc #calculateBtn{width:100%;min-height:54px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-radius:13px;background:var(--pc-ink);box-shadow:none;font:900 16px/1 Arial,sans-serif}
+.premiumCalc #result{width:100%;max-width:100%}
+.premiumCalc #result:not(:empty){margin-top:18px}
+
 @media(max-width:980px){
-  .appShell{padding:14px 16px 28px}
-  .premiumCalc .viewHeader{margin:12px 0 16px}
+  .appShell{width:100%;max-width:100%;padding:14px 16px 28px}
 }
-@media(max-width:640px){
-  .premiumCalc .viewHeader h2{font-size:24px;white-space:normal}
-}
-
-/* Desktop: il risultato può affiancarsi solo quando esiste. */
 @media(min-width:981px){
-  .premiumCalc .recipeBuilder{padding:14px}
-  .premiumCalc .twoColumns:not(:has(#result:empty)){
-    display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:18px;align-items:start;
-  }
-  .premiumCalc .panLine{
-    grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 44px minmax(0,.78fr);
-  }
-  .premiumCalc .panLine .fieldUnit{display:block}
-  .premiumCalc .panLine .pans label::after{content:""}
+  .premiumCalc .viewHeader h2{font-size:32px}
+  .premiumCalc .twoColumns:not(:has(#result:empty)){display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:18px;align-items:start}
+  .premiumCalc .panLine{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 44px minmax(0,.78fr)}
+  .premiumCalc .fieldUnit{display:block;padding-bottom:15px;text-align:center;color:var(--pc-muted);font-weight:800}
+  .premiumCalc .pans label::after{content:""}
   .premiumCalc .choiceGrid.compactChoices{grid-template-columns:repeat(6,minmax(0,1fr))}
   .premiumCalc .compactChoices .choice:nth-child(1),
   .premiumCalc .compactChoices .choice:nth-child(2),
   .premiumCalc .compactChoices .choice:nth-child(3){grid-column:span 2}
   .premiumCalc .compactChoices .choice:nth-child(4){grid-column:2/span 2}
   .premiumCalc .compactChoices .choice:nth-child(5){grid-column:4/span 2}
-  .premiumCalc .calculatorSection>.row{grid-template-columns:1fr 1fr}
-  .premiumCalc .doughBasics{grid-template-columns:1fr 1fr}
-  .premiumCalc .doughBasics .textButton{grid-column:1/-1}
+  .premiumCalc .scheduleEditor>.row{grid-template-columns:1fr 1fr}
   .premiumCalc .flourFields{grid-template-columns:repeat(3,minmax(0,1fr))}
   .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr .9fr 1fr 1.25fr}
-  .premiumCalc .flourFields>div:last-child,
-  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:auto}
+  .premiumCalc .flourFields>div:last-child{grid-column:auto}
 }
