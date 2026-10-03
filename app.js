@@ -985,10 +985,10 @@
   }
 
   function bindEvents() {
-    $('[data-open]').forEach((button) => {
+    document.querySelectorAll('[data-open]').forEach((button) => {
       button.addEventListener('click', () => openView(button.dataset.open));
     });
-    $('[data-open-check]').forEach((button) => {
+    document.querySelectorAll('[data-open-check]').forEach((button) => {
       button.addEventListener('click', () => openCheckTool('dough'));
     });
     $('closeCheckTool')?.addEventListener('click', closeCheckTool);
