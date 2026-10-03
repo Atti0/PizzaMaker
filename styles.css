@@ -714,3 +714,12 @@ body{
 #impasto .checkToolHeader h3{margin:0;color:#172036;font:900 22px/1.08 Arial,sans-serif}
 #impasto .checkTool .doughCheck{width:100%;margin:0}
 #impasto .checkTool #adviceOutput{margin-top:12px}
+
+/* Catalogo farine e parametri tecnici */
+.premiumCalc .flourCatalogField{grid-column:1/-1}
+.premiumCalc .optionalLabel{font-weight:600;color:#92918b;text-transform:none;letter-spacing:0}
+@media(min-width:981px){
+  .premiumCalc .flourFields{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.65fr repeat(4,minmax(0,1fr))}
+  .premiumCalc .flourCatalogField{grid-column:1/-1}
+}
