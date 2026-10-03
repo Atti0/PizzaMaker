@@ -1056,3 +1056,73 @@ html,body{
   .calculatorSection.flourEditor>.flourItem{padding-left:18px!important;padding-right:18px!important}
   .calculatorSection.flourEditor>.flourAddRow{padding-left:18px!important;padding-right:18px!important}
 }
+
+
+/* v8.1 — fix strutturale responsive: una colonna è il default, desktop è l'eccezione */
+main,
+.view,
+.premiumCalc,
+.premiumCalc .twoColumns,
+.premiumCalc .recipeBuilder,
+.premiumCalc .resultColumn{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.premiumCalc .twoColumns{
+  display:block;
+  grid-template-columns:none;
+}
+.premiumCalc .recipeBuilder{
+  width:100%;
+  max-width:100%;
+}
+
+/* Il risultato affiancato esiste solo su desktop reale e solo quando è presente. */
+@media (min-width:981px){
+  .premiumCalc .twoColumns:not(:has(#result:empty)){
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);
+  }
+}
+
+/* Mobile: margine esterno reale + respiro interno uniforme. */
+@media (max-width:980px){
+  .appShell{
+    width:100%;
+    max-width:100%;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .premiumCalc .viewHeader{
+    width:100%;
+    max-width:100%;
+    margin-left:0;
+    margin-right:0;
+  }
+  .premiumCalc .recipeBuilder{
+    width:100%;
+    max-width:100%;
+    padding-left:12px;
+    padding-right:12px;
+  }
+  .premiumCalc .calculatorSection{
+    width:100%;
+    max-width:100%;
+    margin-left:0;
+    margin-right:0;
+  }
+}
+
+/* Nessun discendente del calcolatore può allargare il documento. */
+.premiumCalc input,
+.premiumCalc select,
+.premiumCalc button,
+.premiumCalc .panLine,
+.premiumCalc .choiceGrid,
+.premiumCalc .row,
+.premiumCalc .flourItem,
+.premiumCalc .flourFields,
+.premiumCalc .calculatorInset{
+  max-width:100%;
+}
