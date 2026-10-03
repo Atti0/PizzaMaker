@@ -205,11 +205,6 @@
 
     ['flour2Pct','flour3Pct'].forEach((id) => $(id)?.classList.remove('inputError'));
 
-    const summary = flours.length === 1
-      ? `1 farina · tipo ${flours[0].type} · ${round(flours[0].protein, 1)} g proteine`
-      : `${flours.length} farine · ${flours.map((item) => round(item.pct, 0) + '%').join(' + ')}`;
-    if ($('flourSummary')) $('flourSummary').textContent = summary;
-
     const add = $('addFlourBtn');
     add.classList.toggle('hidden', flours.length >= 3);
     updateHydrationRecommendation();
@@ -360,10 +355,7 @@
     return { phase:'active', current:items[Math.max(0,nextIndex-1)], next:items[nextIndex] };
   }
 
-  function nextTimelineStep(timeline) {
-    const status=timelineStatus(timeline);
-    return status.next ?? status.current ?? timeline[timeline.length-1];
-  }
+  
 
   function emptyResult() {
     clear($('result'));
@@ -556,16 +548,7 @@
     target.append(shell);
   }
 
-  function renderTimelineList(timeline) {
-    const timelineList = create('ul', { class: 'timelineList' });
-    timeline.forEach((item) => {
-      timelineList.append(create('li', {}, [
-        create('span', { text: item.label }),
-        create('b', { text: fmtShortDate(new Date(item.date)) })
-      ]));
-    });
-    return timelineList;
-  }
+  
 
   function renderSavedTimeline() {
     const target=$('savedTimeline'); if(!target) return; clear(target);
@@ -941,14 +924,7 @@
     toggleCustoms();
   }
 
-  function resetApp() {
-    [...PREF_IDS, 'style', 'flourCount'].forEach((id) => localStorage.removeItem(PREF_PREFIX + id));
-    localStorage.removeItem(LAST_PLAN_KEY);
-    clear($('result'));
-    emptyResult();
-    renderSavedTimeline();
-    renderHomeSavedStep();
-  }
+  
 
   function showPrivacyNotice() {
     const overlay = $('privacyOverlay');
