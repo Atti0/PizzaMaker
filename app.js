@@ -141,14 +141,55 @@
   }
 
   const FLOUR_CATALOG = {
+    'Caputo Aria': { type:'0', protein:13, w:310, lm:'yes' },
     'Caputo Nuvola': { type:'0', protein:12.5, w:280, lm:'no' },
-    'Le Farine Magiche Manitoba per salati': { type:'0', protein:15, w:350, lm:'yes' },
+    'Caputo Nuvola Super': { type:'0', protein:13.5, w:330, lm:'no' },
+    'Caputo A Metro': { type:'00', protein:13.5, w:320, lm:'no' },
+    'Caputo Saccorosso': { type:'00', protein:13, w:310, lm:'no' },
+    'Caputo Pizzeria': { type:'00', protein:12.5, w:270, lm:'no' },
+    'Caputo Tipo 1': { type:'1', protein:null, w:null, lm:'no' },
+    'Caputo Integrale': { type:'integrale', protein:null, w:null, lm:'no' },
+    'Caputo Manitoba Oro': { type:'0', protein:null, w:null, lm:'no' },
+    'Le Farine Magiche Farina per Pizza': { type:'00', protein:null, w:null, lm:'yes' },
+    'Le Farine Magiche Manitoba per salati': { type:'0', protein:null, w:null, lm:'yes' },
+    'Le Farine Magiche Farina per pizza integrale': { type:'integrale', protein:null, w:null, lm:'yes' },
+    'Le Farine Magiche Pane e focaccia': { type:'0', protein:null, w:null, lm:'yes' },
+    'Le Farine Magiche Pizza in padella': { type:'0', protein:null, w:null, lm:'yes' },
+    'Le Farine Magiche Mix di Farine per Pane e Pizza': { type:'0', protein:null, w:null, lm:'yes' },
+    'Le 5 Stagioni Pizza Teglia': { type:'0', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Pizza Teglia Integrale': { type:'integrale', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Pizza & Tradizione Roma': { type:'0', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Ciabatta Romana': { type:'0', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Superiore': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Oro': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Rinforzata': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Classica': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Rustica Tipo 1': { type:'1', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Tipozero': { type:'0', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Pizza Napoletana Rossa': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Pizza Napoletana Verde': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Semola Rimacinata': { type:'semola', protein:null, w:null, lm:'no' },
+    'Molino Vigevano Tramonti': { type:'0', protein:14.5, w:345, lm:'no' },
+    'Molino Vigevano Costiera': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Vigevano Verace': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Vigevano Vesuvio': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Vigevano Oro Fibra Uno': { type:'1', protein:null, w:null, lm:'no' },
+    'Molino Vigevano Farina per Pizza Tipo 1': { type:'1', protein:null, w:null, lm:'yes' },
+    'Molino Magri Route36': { type:'0', protein:null, w:280, lm:'no' },
+    'Molino Magri IN3': { type:'0', protein:null, w:345, lm:'no' },
+    'Molino Magri Doppiaesse': { type:'0', protein:null, w:300, lm:'no' },
+    'Molino Magri Crockizza': { type:'1', protein:null, w:null, lm:'yes' },
+    'Molino Magri Risocrockizza': { type:'1', protein:null, w:null, lm:'yes' },
+    'Molino Piantoni Farina per Pizza': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Piantoni Tradizionale 00LG': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Pasini Pizza Alta e Soffice': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Pasini La Tua Farina - Pizza': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ1': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ2': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ3': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ4': { type:'00', protein:null, w:null, lm:'no' },
     'Molino Casillo La Pizza': { type:'00', protein:12, w:260, lm:'no' },
-    'Molino Casillo Zero M': { type:'0', protein:12, w:290, lm:'no' },
     'Molino Casillo Zero L': { type:'0', protein:12.5, w:340, lm:'no' },
-    'Molino Casillo Zero XL': { type:'0', protein:13.5, w:380, lm:'no' },
-    'Molino Casillo Pizza Ideale': { type:'0', protein:12.5, w:290, lm:'no' },
-    'Molino Casillo Pizza Superiore': { type:'0', protein:13, w:340, lm:'no' },
     'Semola rimacinata generica': { type:'semola', protein:null, w:null, lm:'no' }
   };
 
@@ -162,10 +203,10 @@
     const name = $('flourCatalog' + index)?.value.trim();
     const known = FLOUR_CATALOG[name];
     if (!known) return;
-    $('flourType' + suffix).value = known.type;
+    if (known.type) $('flourType' + suffix).value = known.type;
     if (known.protein !== null) $('protein' + suffix).value = String(known.protein);
     $('flourW' + suffix).value = known.w === null ? '' : String(known.w);
-    $('lmMix' + suffix).value = known.lm;
+    if (known.lm) $('lmMix' + suffix).value = known.lm;
     updateFlourUI('', false);
   }
 
