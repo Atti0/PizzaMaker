@@ -195,7 +195,7 @@ input,select{
   .hero,.card,.resultCard{box-shadow:none}
 }
 
-/* v2.2 compattazione mobile */
+/* Compattazione mobile */
 .homeSavedStep{
   margin:0 0 14px;
   background:#fff7e7;
@@ -236,20 +236,7 @@ input,select{
 }
 
 
-/* v2.5 gestione farine: semplice di default, miscele progressive */
-.flourSummary{
-  min-height:48px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:white;
-  padding:9px 12px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-.flourSummary .fieldLabel{color:var(--green);font-weight:900;font-size:13px;margin-bottom:2px}
-.flourSummary strong{font-family:Arial,sans-serif;font-size:15px;line-height:1.2}
-.flourSummary small{color:var(--muted);font-size:12px;margin-top:3px}
+/* Gestione farine */
 .flourBlend{display:grid;gap:10px}
 .flourItem{border:1px solid var(--line);border-radius:16px;background:white;padding:12px}
 .flourItemHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;color:var(--red)}
@@ -268,7 +255,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 }
 
 
-/* v2.6 flusso mobile compatto */
+/* Flusso mobile compatto */
 .compactLink{
   margin-top:10px;
   padding:7px 0;
@@ -327,9 +314,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 }
 
 
-
-
-/* v4.1 — premium design system esteso */
+/* Design system */
 .premiumHome .sectionTitle{margin:22px 4px 14px}.premiumHome .sectionTitle h2{color:#172036;font:900 clamp(27px,5vw,38px)/1.08 Arial,sans-serif;letter-spacing:-.035em}.premiumHome .sectionTitle .eyebrow{font-family:Arial,sans-serif;font-size:11px}
 .premiumHome .actionGrid.compact{gap:10px}.premiumHome .actionCard{min-height:0;padding:17px;background:#fffefa;border:1px solid #ddd7ca;border-radius:20px;box-shadow:0 8px 26px rgba(49,34,13,.055);display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-rows:auto auto;column-gap:13px;row-gap:3px}.premiumHome .cardIcon{grid-row:1/3;width:40px;height:40px;background:#f4eee2;color:#a94332;font:900 16px/1 Arial,sans-serif}.premiumHome .cardTitle{color:#172036;font:900 18px/1.15 Arial,sans-serif}.premiumHome .cardText{color:#6f716b;font:500 13px/1.35 Arial,sans-serif}.premiumHome .siteLinks{justify-content:center;margin-top:16px;font-family:Arial,sans-serif}.premiumHome .siteLinks a,.premiumHome .siteLinks button{font-size:12px}
 .homeSavedStep{position:relative;margin:0 0 12px;padding:14px 72px 14px 15px;background:#eef0e8;border:1px solid #d8dccf;border-left:0;border-radius:18px;box-shadow:none;font-family:Arial,sans-serif}.homeSavedStep .homeStepLabel{display:block;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.homeSavedStep b{display:block;margin-top:4px;color:#172036;font-size:18px}.homeSavedStep time{display:block;margin-top:3px;color:#6f716b;font-size:12px;font-weight:800}.homeSavedStep .homeStepButton{position:absolute;right:12px;top:50%;transform:translateY(-50%);padding:9px 10px;background:transparent;color:#a94332;border:0;box-shadow:none;font:900 13px/1 Arial,sans-serif}
@@ -340,7 +325,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 @media(max-width:640px){.premiumHome .sectionTitle{margin:17px 4px 12px}.premiumHome .actionGrid.compact{gap:9px}.premiumHome .actionCard{padding:15px;border-radius:18px}.premiumHome .cardTitle{font-size:17px}.premiumFlow{width:100%;max-width:100%;overflow:hidden}.premiumFlow .viewHeader{margin:12px 6px 14px}.premiumFlow .viewHeader h2{font-size:24px}.premiumFlow .twoColumns{display:flex;flex-direction:column}.premiumFlow .flowForm{padding:16px;border-radius:20px}.premiumFlow .flowForm .row{grid-template-columns:1fr}.savedPlan{border-radius:20px}.savedNext{display:grid;gap:5px}.savedDoseGrid{grid-template-columns:1fr}}
 
 
-/* v4.2 — convergenza UI: home, impasto, cottura */
+/* Home, impasto e cottura */
 .footerBar{display:none!important}
 .premiumHome,.premiumFlow{--ui-ink:#172036;--ui-muted:#71736f;--ui-red:#a94332;--ui-green:#526b2d;--ui-line:#ddd7ca;--ui-paper:#fffefa}
 .premiumHome .sectionTitle h2{font:900 clamp(27px,5vw,38px)/1.06 Arial,sans-serif!important;color:var(--ui-ink)!important}
@@ -398,7 +383,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 }
 
 
-/* v4.3 — stato temporale corretto e flussi mobile finalizzati */
+/* Stati temporali e flussi mobile */
 .homeSavedStep{padding-right:78px!important}
 .homeSavedStep .homeNext{display:block;margin-top:5px;color:#5f625e;font:700 11px/1.3 Arial,sans-serif}
 .upNext{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px 17px;background:#f5f1e8;border-top:1px solid #e4dfd5;font-family:Arial,sans-serif}
@@ -420,7 +405,7 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 }
 
 
-/* v4.4 — material polish + cooking mode */
+/* Material polish e cooking mode */
 body{
   background-color:#f4ead6;
   background-image:
@@ -466,7 +451,7 @@ body{
 @media(prefers-reduced-motion:reduce){.cookTimer.timerDone .timerDisplay{animation:none}.premiumHome .actionCard:active{transform:none}}
 
 
-/* v5.0 — timeline visuale, prima iterazione */
+/* Timeline visuale */
 .visualTimeline{list-style:none;margin:0;padding:4px 0 8px;display:grid;gap:10px}
 .visualTimelineStep{position:relative;display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px}
 .visualTimelineRail{position:relative;display:flex;justify-content:center}
@@ -501,7 +486,7 @@ body{
 }
 
 
-/* v5.1 — simulazione effimera e controlli progressivi */
+/* Simulazione e controlli progressivi */
 .premiumCalc #result:not(:empty){margin-top:18px}
 #impasto .doughCheck{padding:0!important;overflow:hidden}
 #impasto .doughCheckSummary{
@@ -526,7 +511,7 @@ body{
 @media(prefers-reduced-motion:reduce){#impasto .summaryChevron{transition:none}}
 
 
-/* v5.3 — azioni impasto salvato in Home */
+/* Azioni impasto salvato */
 .homeStepActions{display:flex;align-items:center;gap:8px;margin-top:10px}
 .homeStepActions .homeStepButton{margin-top:0}
 .homeStepDelete{
@@ -543,7 +528,7 @@ body{
 .homeStepDelete:active{background:#f7e8e2}
 
 
-/* v5.4 — scheda impasto stampabile */
+/* Scheda impasto stampabile */
 .printSheet{display:none}
 .savedPlanActions{padding:0 17px 17px}
 .savedPlanPrint{
@@ -583,7 +568,7 @@ body{
 }
 
 
-/* v5.5 — Home adattiva: creazione senza piano, dashboard con impasto */
+/* Home adattiva */
 .homeActiveState,.homeDoughWorkspace{width:100%}
 .homeActiveState .activeDoughTitle{margin-bottom:12px}
 .homeDoughWorkspace{display:flex;flex-direction:column;gap:12px}
@@ -610,7 +595,7 @@ body{
 }
 @media(prefers-reduced-motion:reduce){.homeToolsSummary .summaryChevron{transition:none}}
 
-/* v5.6 — stessa grammatica visiva della Home con e senza impasto */
+/* Grammatica visiva Home */
 .homeCreateCard{padding:22px 26px 24px;border-radius:20px;background:#fffdf8;border:1px solid rgba(91,72,43,.18);box-shadow:0 7px 24px rgba(49,34,13,.05)}
 .homeCreateCard .flowEyebrow{margin:0 0 9px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
 .homeCreateCard h3{margin:0;color:#172036;font:900 24px/1.08 Arial,sans-serif}
