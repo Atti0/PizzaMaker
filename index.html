@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=45">
+  <link rel="stylesheet" href="styles.css?v=46">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -141,8 +141,10 @@
                 <div class="flourItem" data-flour="1">
                   <div class="flourItemHead"><strong>Farina 1</strong><span id="flour1PctLabel">100%</span></div>
                   <div class="flourFields">
-                    <div><label for="flourType">Tipo</label><select id="flourType"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option></select></div>
+                    <div class="flourCatalogField"><label for="flourCatalog1">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog1" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
+                    <div><label for="flourType">Tipo</label><select id="flourType"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
                     <div><label for="protein">Proteine / 100 g</label><input id="protein" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW">W <span class="optionalLabel">opzionale</span></label><input id="flourW" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
                     <div><label for="lmMix">Lievito madre nella farina?</label><select id="lmMix"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
                   </div>
                 </div>
@@ -150,9 +152,11 @@
                 <div class="flourItem hidden" id="flour2" data-flour="2">
                   <div class="flourItemHead"><strong>Farina 2</strong><button type="button" class="textButton removeFlour" data-remove-flour="2">Rimuovi</button></div>
                   <div class="flourFields">
+                    <div class="flourCatalogField"><label for="flourCatalog2">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog2" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
                     <div><label for="flour2Pct">Percentuale</label><input id="flour2Pct" type="number" value="25" min="1" max="99" step="1" inputmode="decimal"></div>
-                    <div><label for="flourType2">Tipo</label><select id="flourType2"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option></select></div>
+                    <div><label for="flourType2">Tipo</label><select id="flourType2"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
                     <div><label for="protein2">Proteine / 100 g</label><input id="protein2" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW2">W <span class="optionalLabel">opzionale</span></label><input id="flourW2" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
                     <div><label for="lmMix2">Lievito madre nella farina?</label><select id="lmMix2"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
                   </div>
                 </div>
@@ -160,13 +164,26 @@
                 <div class="flourItem hidden" id="flour3" data-flour="3">
                   <div class="flourItemHead"><strong>Farina 3</strong><button type="button" class="textButton removeFlour" data-remove-flour="3">Rimuovi</button></div>
                   <div class="flourFields">
+                    <div class="flourCatalogField"><label for="flourCatalog3">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog3" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
                     <div><label for="flour3Pct">Percentuale</label><input id="flour3Pct" type="number" value="15" min="1" max="98" step="1" inputmode="decimal"></div>
-                    <div><label for="flourType3">Tipo</label><select id="flourType3"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option></select></div>
+                    <div><label for="flourType3">Tipo</label><select id="flourType3"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
                     <div><label for="protein3">Proteine / 100 g</label><input id="protein3" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW3">W <span class="optionalLabel">opzionale</span></label><input id="flourW3" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
                     <div><label for="lmMix3">Lievito madre nella farina?</label><select id="lmMix3"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
                   </div>
                 </div>
 
+              <datalist id="flourCatalogOptions">
+                <option value="Caputo Nuvola"></option>
+                <option value="Le Farine Magiche Manitoba per salati"></option>
+                <option value="Molino Casillo La Pizza"></option>
+                <option value="Molino Casillo Zero M"></option>
+                <option value="Molino Casillo Zero L"></option>
+                <option value="Molino Casillo Zero XL"></option>
+                <option value="Molino Casillo Pizza Ideale"></option>
+                <option value="Molino Casillo Pizza Superiore"></option>
+                <option value="Semola rimacinata generica"></option>
+              </datalist>
               <button type="button" class="secondary addFlourBtn" id="addFlourBtn">+ Aggiungi farina</button>
             </div>
 
@@ -337,6 +354,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=29" defer></script>
+  <script src="app.js?v=30" defer></script>
 </body>
 </html>
