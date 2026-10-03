@@ -1032,13 +1032,20 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    loadPrefs();
+    // La navigazione deve restare disponibile anche se un'inizializzazione secondaria fallisce.
     bindEvents();
-    emptyResult();
-    renderSavedTimeline();
-    renderHomeSavedStep();
-    clear($('cook'));
-    toggleCheckMode();
-    showPrivacyNotice();
+    const initializers = [
+      loadPrefs,
+      emptyResult,
+      renderSavedTimeline,
+      renderHomeSavedStep,
+      () => clear($('cook')),
+      toggleCheckMode,
+      showPrivacyNotice
+    ];
+    initializers.forEach((initialize) => {
+      try { initialize(); }
+      catch (error) { console.error('PizzaMaker init:', error); }
+    });
   });
 })();
