@@ -102,7 +102,10 @@
     $('appHero')?.classList.toggle('hidden',id!=='home');
     if(next){
       next.classList.add('active');
-      if(id==='impasto') renderSavedTimeline();
+      if(id==='impasto'){
+        renderSavedTimeline();
+        $('checkTool')?.classList.add('hidden');
+      }
       if(id==='home') renderHomeSavedStep();
       window.scrollTo({top:0,left:0,behavior:'smooth'});
     document.documentElement.scrollLeft=0;
@@ -120,6 +123,21 @@
     $('doughFields').classList.toggle('hidden', !isDough);
     $('resultFields').classList.toggle('hidden', isDough);
     clear($('adviceOutput'));
+  }
+
+  function openCheckTool(mode = 'dough') {
+    openView('impasto');
+    $('checkMode').value = mode;
+    toggleCheckMode();
+    $('checkTool')?.classList.remove('hidden');
+    $('doughCheck')?.setAttribute('open','');
+    requestAnimationFrame(() => $('checkTool')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  }
+
+  function closeCheckTool() {
+    $('checkTool')?.classList.add('hidden');
+    clear($('adviceOutput'));
+    $('savedTimeline')?.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function baseHydrationFor(protein, type) {
@@ -441,11 +459,7 @@
         const actionButton=create('button',{type:'button',class:'timelineAction',text:action==='check'?'Controlla lo stato →':'Apri guida cottura →'});
         actionButton.addEventListener('click',()=>{
           if(action==='check'){
-            $('checkMode').value='dough';
-            toggleCheckMode();
-            openView('impasto');
-            $('doughCheck')?.setAttribute('open','');
-            $('doughCheck')?.scrollIntoView({behavior:'smooth',block:'start'});
+            openCheckTool('dough');
           } else openView('cottura');
         });
         body.append(actionButton);
@@ -971,9 +985,13 @@
   }
 
   function bindEvents() {
-    $$('[data-open]').forEach((button) => {
+    $('[data-open]').forEach((button) => {
       button.addEventListener('click', () => openView(button.dataset.open));
     });
+    $('[data-open-check]').forEach((button) => {
+      button.addEventListener('click', () => openCheckTool('dough'));
+    });
+    $('closeCheckTool')?.addEventListener('click', closeCheckTool);
 
     $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
     $('calculateBtn')?.addEventListener('click', calculate);
