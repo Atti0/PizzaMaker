@@ -698,3 +698,7 @@ body{
   .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr .9fr 1fr 1.25fr}
   .premiumCalc .flourFields>div:last-child{grid-column:auto}
 }
+
+/* Azioni contestuali timeline */
+.timelineAction{width:max-content;max-width:100%;margin-top:10px;padding:8px 10px;border:1px solid #d8d1c4;border-radius:10px;background:#f8f4eb;color:#a94332;box-shadow:none;font:900 11px/1 Arial,sans-serif}
+.timelineAction:active{background:#f1e8d8}
