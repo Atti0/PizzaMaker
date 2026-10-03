@@ -329,7 +329,7 @@
 
     if (hours <= 12) {
       timeline.push(
-        { label: 'Stesura', date: addMinutes(bake, -75).toISOString(), action: 'cook' },
+        { label: 'Stesura', date: addMinutes(bake, -75).toISOString() },
         { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
@@ -337,7 +337,8 @@
       timeline.push(
         { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115).toISOString() },
         { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
-        { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'cook' },
+        { label: 'Stesura', date: addMinutes(bake, -90).toISOString() },
+        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     }
@@ -368,7 +369,22 @@
   function getLastPlan() {
     try {
       const raw = localStorage.getItem(LAST_PLAN_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      const plan = JSON.parse(raw);
+      if (!Array.isArray(plan.timeline)) return plan;
+      const oldControl = plan.timeline.find((item) => item.label === 'Controllo volume');
+      const oldDecision = plan.timeline.find((item) => item.label === 'Fuori frigo o stesura secondo stato impasto');
+      if (oldControl || oldDecision) {
+        const bake = new Date(plan.bake);
+        const normalized = plan.timeline.filter((item) => item.label !== 'Controllo volume' && item.label !== 'Fuori frigo o stesura secondo stato impasto');
+        normalized.push(
+          { label:'Controlla l’impasto', date:(oldControl?.date || addMinutes(bake,-120).toISOString()), action:'check' },
+          { label:'Stesura', date:(oldDecision?.date || addMinutes(bake,-90).toISOString()) },
+          { label:'Riposo in teglia coperto', date:addMinutes(bake,-60).toISOString() }
+        );
+        plan.timeline = normalized.sort((a,b) => new Date(a.date) - new Date(b.date));
+      }
+      return plan;
     } catch {
       return null;
     }
@@ -380,11 +396,11 @@
     'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
     '1ª piega leggera': { icon:'↪', short:'Fai una piega delicata per dare struttura senza sgonfiare.', duration:'~ 2 min' },
     '2ª piega leggera': { icon:'↪', short:'Ripeti la piega con mani leggere e lascia poi riposare.', duration:'~ 2 min' },
-    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi, senza schiacciare tutto.', duration:'~ 10 min' },
+    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
     'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
     'Frigo coperto dopo le pieghe': { icon:'❄', short:'Copri bene e trasferisci in frigo per la maturazione.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
-    'Cottura': { icon:'♨', short:'Forno ben caldo: segui la guida di stesura e cottura.', duration:'10–15 min' }
+    'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
   };
 
   function renderPremiumTimeline(timeline) {
@@ -407,7 +423,7 @@
         else if(index===nextIndex){state='next';stateLabel='Prossimo';}
       }
       const legacyCheck = item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto';
-      const action = item.action || (legacyCheck ? 'check' : null) || (item.label === 'Cottura' || item.label === 'Stesura' ? 'cook' : null);
+      const action = item.action || (legacyCheck ? 'check' : null) || (item.label === 'Cottura' ? 'cook' : null);
       const legacyMeta = legacyCheck ? { icon:'◎', short:'Verifica lo stato reale dell’impasto prima di decidere come proseguire.', duration:'Controllo' } : null;
       const meta=TIMELINE_VISUALS[item.label]||legacyMeta||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
       const row=create('li',{class:`visualTimelineStep ${state}`});
@@ -422,7 +438,7 @@
       body.append(top,create('strong',{class:'timelineVisualTitle',text:item.label}),create('p',{text:meta.short}));
       if(meta.duration) body.append(create('span',{class:'timelineDuration',text:`◷ ${meta.duration}`}));
       if(action){
-        const actionButton=create('button',{type:'button',class:'timelineAction',text:action==='check'?'Controlla lo stato →':(item.label==='Cottura'?'Apri guida cottura →':'Guida alla stesura →')});
+        const actionButton=create('button',{type:'button',class:'timelineAction',text:action==='check'?'Controlla lo stato →':'Apri guida cottura →'});
         actionButton.addEventListener('click',()=>{
           if(action==='check'){
             $('checkMode').value='dough';
