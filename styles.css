@@ -618,6 +618,33 @@ body{
 .homeCreateCard .savedPlanCta{width:100%;margin:0}
 @media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
 
+/* PREVIEW CALCOLO — componente risultato */
+.doughResult{overflow:hidden;width:100%;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 10px 30px rgba(49,34,13,.07);font-family:Arial,sans-serif}
+.doughResultHead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px}
+.resultEyebrow{display:block;margin-bottom:6px;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.doughResultHead h3{margin:0;color:#172036;font:900 28px/1.04 Arial,sans-serif;letter-spacing:-.025em}
+.resultMeta{margin:7px 0 0;color:#71736f;font-size:13px;line-height:1.35}
+.hydrationBadge{flex:0 0 auto;min-width:72px;padding-left:14px;border-left:1px solid #ddd7ca;text-align:center}
+.hydrationBadge strong{display:block;color:#a94332;font-size:25px;line-height:1;font-weight:900}
+.hydrationBadge span{display:block;margin-top:4px;color:#71736f;font-size:10px}
+.nextAction{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;margin:0 12px;padding:14px 15px;border-radius:16px;background:#eef0e8}
+.nextAction .nextLabel{grid-column:1/-1;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.nextAction strong{color:#172036;font-size:17px;line-height:1.15}.nextAction time{align-self:center;color:#a94332;font-size:12px;font-weight:900;white-space:nowrap}
+.premiumSection{padding:18px 20px;border-bottom:1px solid rgba(111,82,43,.13)}
+.premiumSection h4{margin:0;color:#172036;font-size:16px}
+.sectionBar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}.sectionBar>span{color:#71736f;font-size:11px}
+.doseGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.doseItem{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(111,82,43,.1)}
+.doseItem span{color:#4f514e;font-size:13px}.doseItem strong{color:#172036;font-size:14px}
+.compactSteps{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px}
+.compactSteps li{display:grid;grid-template-columns:25px minmax(0,1fr);gap:9px;align-items:start}
+.compactSteps li>span{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#f1e5cc;color:#a94332;font-size:11px;font-weight:900}
+.compactSteps p{margin:2px 0 0;color:#363b42;font-size:13px;line-height:1.4}
+.doughResult .savedDoseGrid{display:grid;grid-template-columns:1fr;gap:0}.doughResult .savedDose{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #eee9df}
+.doughResult .savedDose span{color:#6f716b;font-size:12px}.doughResult .savedDose strong{color:#172036;font-size:13px;text-align:right}
+.manageDough{width:calc(100% - 40px);min-height:50px;margin:18px 20px 20px;padding:0 16px;border-radius:13px;background:#172036;color:#fff;box-shadow:none;font:900 14px/1 Arial,sans-serif}
+@media(max-width:640px){.doughResultHead{padding:17px 15px 14px}.doughResultHead h3{font-size:26px}.hydrationBadge{min-width:64px;padding-left:10px}.hydrationBadge strong{font-size:22px}.nextAction{margin:0 9px;padding:12px 13px;grid-template-columns:1fr}.nextAction time{margin-top:2px}.premiumSection{padding:16px 15px}.doseGrid{grid-template-columns:1fr}.manageDough{width:calc(100% - 30px);margin:15px}}
+
 /* CALCOLATORE — unica sorgente di stile, mobile-first */
 .premiumCalc{
   --pc-ink:#172036;--pc-muted:#73736d;--pc-accent:#a94332;
