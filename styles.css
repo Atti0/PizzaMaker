@@ -129,9 +129,8 @@ input,select{
 }
 .choice small{display:block;color:var(--muted);font-size:13px;font-weight:700;line-height:1.2}
 .choice input:checked + span{border-color:var(--red);background:#fff0e9;box-shadow:inset 0 0 0 2px rgba(169,43,37,.12)}
-.advancedPanel{border:1px solid var(--line);border-radius:18px;background:#fffaf0;padding:12px;margin:14px 0}
-.advancedPanel summary{cursor:pointer;color:var(--red);font-weight:900}
-.advancedPanel[open] summary{margin-bottom:12px}
+
+
 .formActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .resultStack{display:grid;gap:12px}
 .singleColumn{margin-top:16px}
@@ -148,19 +147,8 @@ input,select{
 .resultCard.warn{background:var(--warn);border-left:8px solid var(--gold)}
 .resultCard.bad{background:var(--bad);border-left:8px solid var(--red)}
 .bigStep{display:block;color:var(--red);font-size:clamp(26px,5vw,44px);font-weight:900;line-height:1;margin:4px 0}
-.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.kpiItem{background:#f8efd9;border:1px solid var(--line);border-radius:16px;padding:10px;text-align:center}
-.kpiItem strong{display:block;color:var(--red);font-size:22px}
-.recipeList,.timelineList,.adviceList{list-style:none;padding:0;margin:0;display:grid;gap:8px}
-.recipeList li,.timelineList li,.adviceList li{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid #efe1c8;
-  padding:8px 0;
-}
-.recipeList li:last-child,.timelineList li:last-child,.adviceList li:last-child{border-bottom:0}
-.recipeList b,.timelineList b{color:var(--red)}
+
+
 .emptyState{color:var(--muted);line-height:1.45}
 .hidden{display:none!important}
 .privacyOverlay{position:fixed;inset:0;background:rgba(23,32,54,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;backdrop-filter:blur(6px)}
@@ -174,7 +162,7 @@ input,select{
   .actionGrid{grid-template-columns:1fr}
   .twoColumns{grid-template-columns:1fr}
   .choiceGrid{grid-template-columns:1fr 1fr}
-  .kpi{grid-template-columns:1fr 1fr}
+  
 }
 @media(max-width:640px){
   .appShell{padding:12px 10px 28px}
@@ -247,7 +235,7 @@ input,select{
 button.textButton{background:transparent;color:var(--red);border:0;box-shadow:none;padding:5px 2px;text-decoration:underline;font-size:13px}
 .addFlourBtn{justify-self:start;box-shadow:none;padding:10px 12px}
 .resetAdvanced{margin-top:10px}
-.advancedCalcRow{margin-top:14px}
+
 .inputError{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(169,43,37,.12)}
 @media(max-width:640px){
   .flourFields,.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:1fr 1fr}
@@ -255,34 +243,6 @@ button.textButton{background:transparent;color:var(--red);border:0;box-shadow:no
 }
 
 
-/* Flusso mobile compatto */
-.compactLink{
-  margin-top:10px;
-  padding:7px 0;
-  background:transparent;
-  color:var(--red);
-  border:0;
-  box-shadow:none;
-  text-decoration:underline;
-}
-.mutedLine{color:var(--muted);font-size:14px;margin-top:6px}
-.savedDetails{
-  background:var(--paper);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
-.savedDetails summary{
-  cursor:pointer;
-  padding:14px 16px;
-  color:var(--red);
-  font-weight:900;
-}
-.savedDetails[open] summary{border-bottom:1px solid var(--line)}
-.savedSection{padding:14px 16px}
-.savedSection + .savedSection{border-top:1px solid var(--line)}
-.savedSection h3{font-size:20px;margin-bottom:8px}
 .adviceRow{padding:11px 0;border-top:1px solid var(--line)}
 .adviceRow:first-of-type{border-top:0}
 .adviceRow strong{display:block;color:var(--red);font-size:16px;margin-bottom:3px}
