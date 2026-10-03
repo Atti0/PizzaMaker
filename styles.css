@@ -702,3 +702,15 @@ body{
 /* Azioni contestuali timeline */
 .timelineAction{width:max-content;max-width:100%;margin-top:10px;padding:8px 10px;border:1px solid #d8d1c4;border-radius:10px;background:#f8f4eb;color:#a94332;box-shadow:none;font:900 11px/1 Arial,sans-serif}
 .timelineAction:active{background:#f1e8d8}
+
+/* Strumento Controlla o correggi separato dalla timeline */
+#impasto .doughWorkspace{display:block!important}
+#impasto #savedTimeline{width:100%!important}
+#impasto .checkTool{width:100%;margin-top:14px}
+#impasto .checkTool.hidden{display:none!important}
+#impasto .checkToolHeader{display:flex;align-items:flex-start;gap:12px;margin:0 6px 12px}
+#impasto .checkToolHeader .ghost{flex:0 0 auto}
+#impasto .checkToolHeader .eyebrow{margin:2px 0 3px}
+#impasto .checkToolHeader h3{margin:0;color:#172036;font:900 22px/1.08 Arial,sans-serif}
+#impasto .checkTool .doughCheck{width:100%;margin:0}
+#impasto .checkTool #adviceOutput{margin-top:12px}
