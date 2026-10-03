@@ -8,8 +8,8 @@
   const LAST_PLAN_KEY = 'tc7_last_plan';
   const PREF_IDS = [
     'w','h','n','start','bake','saltProfile',
-    'flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2',
-    'flour3Pct','flourType3','protein3','lmMix3','hydration','customHyd','customSalt'
+    'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt'
   ];
 
   function clampNumber(id, fallback, min, max) {
@@ -140,7 +140,36 @@
     $('savedTimeline')?.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
-  function baseHydrationFor(protein, type) {
+  const FLOUR_CATALOG = {
+    'Caputo Nuvola': { type:'0', protein:12.5, w:280, lm:'no' },
+    'Le Farine Magiche Manitoba per salati': { type:'0', protein:15, w:350, lm:'yes' },
+    'Molino Casillo La Pizza': { type:'00', protein:12, w:260, lm:'no' },
+    'Molino Casillo Zero M': { type:'0', protein:12, w:290, lm:'no' },
+    'Molino Casillo Zero L': { type:'0', protein:12.5, w:340, lm:'no' },
+    'Molino Casillo Zero XL': { type:'0', protein:13.5, w:380, lm:'no' },
+    'Molino Casillo Pizza Ideale': { type:'0', protein:12.5, w:290, lm:'no' },
+    'Molino Casillo Pizza Superiore': { type:'0', protein:13, w:340, lm:'no' },
+    'Semola rimacinata generica': { type:'semola', protein:null, w:null, lm:'no' }
+  };
+
+  function optionalNumber(id, min, max) {
+    const value = Number.parseFloat($(id)?.value ?? '');
+    return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : null;
+  }
+
+  function applyCatalogFlour(index) {
+    const suffix = index === 1 ? '' : String(index);
+    const name = $('flourCatalog' + index)?.value.trim();
+    const known = FLOUR_CATALOG[name];
+    if (!known) return;
+    $('flourType' + suffix).value = known.type;
+    if (known.protein !== null) $('protein' + suffix).value = String(known.protein);
+    $('flourW' + suffix).value = known.w === null ? '' : String(known.w);
+    $('lmMix' + suffix).value = known.lm;
+    updateFlourUI('', false);
+  }
+
+  function baseHydrationFor(protein, type, w = null) {
     let value;
     if (protein < 10.8) value = 64;
     else if (protein < 11.8) value = 66;
@@ -151,6 +180,14 @@
     if (type === '1') value += 1.5;
     if (type === '2') value += 2.5;
     if (type === 'integrale') value += 4;
+    if (type === 'semola') value += 1.5;
+
+    // W affina la stima senza fingere una conversione diretta W → acqua.
+    if (Number.isFinite(w)) {
+      if (w < 220) value -= 1.5;
+      else if (w >= 320 && w < 370) value += 1;
+      else if (w >= 370) value += 2;
+    }
     return value;
   }
 
@@ -160,6 +197,7 @@
       pct: 100,
       type: $('flourType').value,
       protein: clampNumber('protein', 12.5, 8, 17),
+      w: optionalNumber('flourW', 80, 500),
       lm: $('lmMix').value
     }];
 
@@ -169,6 +207,7 @@
         pct: clampNumber('flour2Pct', 25, 1, 99),
         type: $('flourType2').value,
         protein: clampNumber('protein2', 12.5, 8, 17),
+        w: optionalNumber('flourW2', 80, 500),
         lm: $('lmMix2').value
       });
     }
@@ -178,6 +217,7 @@
         pct: clampNumber('flour3Pct', 15, 1, 98),
         type: $('flourType3').value,
         protein: clampNumber('protein3', 12.5, 8, 17),
+        w: optionalNumber('flourW3', 80, 500),
         lm: $('lmMix3').value
       });
     }
@@ -216,8 +256,8 @@
     return secondary <= 99;
   }
 
-  function updateFlourUI(changedId = '') {
-    normalizeFlourPercentages(changedId);
+  function updateFlourUI(changedId = '', normalize = true) {
+    if (normalize) normalizeFlourPercentages(changedId);
     const flours = activeFlours();
     $('flour1PctLabel').textContent = `${round(flours[0].pct, 0)}%`;
 
@@ -241,7 +281,9 @@
     if (String(index) === '2' && !$('flour3').classList.contains('hidden')) {
       $('flour2Pct').value = $('flour3Pct').value;
       $('flourType2').value = $('flourType3').value;
+      $('flourCatalog2').value = $('flourCatalog3').value;
       $('protein2').value = $('protein3').value;
+      $('flourW2').value = $('flourW3').value;
       $('lmMix2').value = $('lmMix3').value;
       $('flour3').classList.add('hidden');
       $('flour3Pct').value = '15';
@@ -254,17 +296,23 @@
   }
 
   function resetAdvanced() {
+    $('flourCatalog1').value = '';
     $('flourType').value = '0';
     $('protein').value = '12.5';
+    $('flourW').value = '';
     $('lmMix').value = 'no';
     $('flour2').classList.add('hidden');
     $('flour3').classList.add('hidden');
     $('flour2Pct').value = '25';
     $('flour3Pct').value = '15';
+    $('flourCatalog2').value = '';
+    $('flourCatalog3').value = '';
     $('flourType2').value = '0';
     $('flourType3').value = '0';
     $('protein2').value = '12.5';
     $('protein3').value = '12.5';
+    $('flourW2').value = '';
+    $('flourW3').value = '';
     $('lmMix2').value = 'no';
     $('lmMix3').value = 'no';
     $('hydration').value = 'auto';
@@ -278,7 +326,7 @@
   function estimateHydration() {
     const flours = activeFlours();
     let hydration = flours.reduce((sum, item) => {
-      return sum + baseHydrationFor(item.protein, item.type) * item.pct / 100;
+      return sum + baseHydrationFor(item.protein, item.type, item.w) * item.pct / 100;
     }, 0);
 
     const hours = hoursBetween(new Date($('start').value), new Date($('bake').value));
@@ -1010,12 +1058,22 @@
       if (button) removeFlour(button.dataset.removeFlour);
     });
     $('resetAdvancedBtn')?.addEventListener('click', resetAdvanced);
-    ['flourType','protein','lmMix','flour2Pct','flourType2','protein2','lmMix2','flour3Pct','flourType3','protein3','lmMix3']
+    ['flourType','protein','flourW','lmMix','flourType2','protein2','flourW2','lmMix2','flourType3','protein3','flourW3','lmMix3']
       .forEach((id) => {
         const node = $(id);
-        node?.addEventListener('input', () => updateFlourUI(id));
-        node?.addEventListener('change', () => updateFlourUI(id));
+        node?.addEventListener('input', () => updateFlourUI('', false));
+        node?.addEventListener('change', () => updateFlourUI('', false));
       });
+    ['flour2Pct','flour3Pct'].forEach((id) => {
+      const node = $(id);
+      // Durante la digitazione il campo può restare vuoto: normalizziamo solo a modifica conclusa.
+      node?.addEventListener('input', () => updateFlourUI('', false));
+      node?.addEventListener('change', () => updateFlourUI(id, true));
+      node?.addEventListener('blur', () => updateFlourUI(id, true));
+    });
+    [1,2,3].forEach((index) => {
+      $('flourCatalog' + index)?.addEventListener('change', () => applyCatalogFlour(index));
+    });
     $('hydration')?.addEventListener('change', toggleCustoms);
     ['start','bake'].forEach((id)=>$(id)?.addEventListener('change', updateHydrationRecommendation));
 
