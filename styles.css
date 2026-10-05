@@ -723,3 +723,233 @@ body{
   .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.65fr repeat(4,minmax(0,1fr))}
   .premiumCalc .flourCatalogField{grid-column:1/-1}
 }
+
+
+/* GUIDE TECNICHE — pieghe, stesura e cottura */
+.techniqueView{
+  --tech-ink:#172036;
+  --tech-muted:#6f716b;
+  --tech-line:#ddd7ca;
+  --tech-paper:#fffefa;
+  --tech-cream:#f6f1e6;
+  --tech-accent:#a94332;
+  --tech-green:#526b2d;
+}
+.techniqueView .viewHeader{margin-bottom:18px}
+.techniqueLead,.cookVisualGuide{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(320px,1.1fr);
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+.techniqueLeadCopy{
+  padding:24px;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:var(--tech-paper);
+  box-shadow:0 8px 28px rgba(49,34,13,.05);
+}
+.techniqueLeadCopy .flowEyebrow,.techniqueSectionHead .flowEyebrow{
+  display:block;
+  margin:0 0 8px;
+  color:var(--tech-green);
+  font:900 10px/1.1 Arial,sans-serif;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.techniqueLeadCopy h3,.techniqueSectionHead h3{
+  margin:0;
+  color:var(--tech-ink);
+  font:900 26px/1.07 Arial,sans-serif;
+  letter-spacing:-.03em;
+}
+.techniqueLeadCopy>p{
+  margin:10px 0 0;
+  color:var(--tech-muted);
+  font:600 14px/1.55 Arial,sans-serif;
+}
+.techniqueRule{
+  display:grid;
+  gap:4px;
+  margin-top:18px;
+  padding:13px 14px;
+  border-left:4px solid var(--tech-accent);
+  border-radius:10px;
+  background:#f8efe9;
+}
+.techniqueRule strong{color:var(--tech-ink);font:900 12px/1.2 Arial,sans-serif}
+.techniqueRule span{color:#655f58;font:700 12px/1.4 Arial,sans-serif}
+
+.techniqueIllustration{
+  min-height:280px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:linear-gradient(145deg,#f3eadb,#fbf8f1);
+  box-shadow:0 8px 28px rgba(49,34,13,.05);
+}
+.techniqueIllustration svg{display:block;width:100%;height:auto;max-height:340px}
+.techniqueIllustration.wide svg{max-height:320px}
+.techBg{fill:#f3eadc}
+.doughShape{fill:#efc98f;stroke:#bf8655;stroke-width:4}
+.doughCenter{fill:#f8deb4;stroke:#d3a36d;stroke-width:3}
+.techArrow{fill:none;stroke:var(--tech-accent);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.targetDot,.fingerDot{fill:var(--tech-accent)}
+.handMark{fill:none;stroke:#c8845d;stroke-width:12;stroke-linecap:round}
+.forearmLine{fill:none;stroke:#c8845d;stroke-width:18;stroke-linecap:round}
+.trayShape{fill:#38454a;stroke:#1e282d;stroke-width:4}
+.svgLabel{fill:#4e514d;font:800 15px/1 Arial,sans-serif}
+.ovenBody{fill:#ede7dc;stroke:#6e746e;stroke-width:6}
+.ovenRack{fill:none;stroke:#9b958a;stroke-width:4}
+.pizzaBase{fill:#e7ad68;stroke:#a7643c;stroke-width:3}
+.pizzaFinish{fill:#f2c585;stroke:#a7643c;stroke-width:3}
+
+.techniqueSteps{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:0 0 18px;
+}
+.techniqueStep{
+  min-height:172px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:11px;
+  align-content:start;
+  padding:17px;
+  border:1px solid var(--tech-line);
+  border-radius:17px;
+  background:#fff;
+}
+.techniqueStepNo{
+  width:32px;height:32px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  background:var(--tech-accent);
+  color:#fff;
+  font:900 13px/1 Arial,sans-serif;
+}
+.techniqueStep h3{margin:3px 0 7px;color:var(--tech-ink);font:900 15px/1.15 Arial,sans-serif}
+.techniqueStep p{margin:0;color:var(--tech-muted);font:600 12px/1.45 Arial,sans-serif}
+
+.techniqueDecision{
+  margin:0 0 18px;
+  padding:22px;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:#f7f4ed;
+}
+.techniqueSectionHead{margin-bottom:14px}
+.signalGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.signalCard{
+  padding:17px;
+  border:1px solid #dcd5c8;
+  border-top:4px solid #b7a98f;
+  border-radius:15px;
+  background:#fffefa;
+}
+.signalCard.good{border-top-color:#657d42}
+.signalCard.warn{border-top-color:#c78535}
+.signalCard.bad{border-top-color:#a94332}
+.signalState{
+  display:block;margin-bottom:7px;
+  color:#77756e;
+  font:900 10px/1 Arial,sans-serif;
+  letter-spacing:.09em;text-transform:uppercase;
+}
+.signalCard h4{margin:0;color:var(--tech-ink);font:900 15px/1.15 Arial,sans-serif}
+.signalCard p{margin:7px 0 0;color:var(--tech-muted);font:600 12px/1.48 Arial,sans-serif}
+.termNote{
+  margin-top:11px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fff;
+  color:#5f605c;
+  font:600 12px/1.45 Arial,sans-serif;
+}
+.termNote strong{color:var(--tech-ink)}
+
+.troubleGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.techniqueTrouble{
+  border:1px solid #dad4c8;
+  border-radius:14px;
+  background:#fffefa;
+  overflow:hidden;
+}
+.techniqueTrouble summary{
+  list-style:none;
+  cursor:pointer;
+  padding:14px 16px;
+  color:var(--tech-ink);
+  font:900 13px/1.25 Arial,sans-serif;
+}
+.techniqueTrouble summary::-webkit-details-marker{display:none}
+.techniqueTrouble summary::after{content:'+';float:right;color:var(--tech-accent);font-size:18px}
+.techniqueTrouble[open] summary::after{content:'−'}
+.techniqueTrouble p{margin:0;padding:0 16px 15px;color:var(--tech-muted);font:600 12px/1.5 Arial,sans-serif}
+
+.techniqueFooterNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 8px;
+}
+.techniqueFooterNav button{min-height:46px}
+.techniqueFooterNav .secondary{
+  border:0;border-radius:12px;padding:0 16px;
+  background:var(--tech-ink);color:#fff;
+  box-shadow:none;font:900 13px/1 Arial,sans-serif;
+}
+.techniqueFooterNav .ghost{
+  border:1px solid var(--tech-line);border-radius:12px;padding:0 14px;
+  background:#fff;color:var(--tech-ink);box-shadow:none;font:800 12px/1 Arial,sans-serif;
+}
+
+.cookVisualGuide{margin-bottom:12px}
+.ovenIllustration{min-height:260px}
+.cookCheckpoints{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:18px;
+}
+.cookCheckpoints article{
+  padding:16px;
+  border:1px solid var(--tech-line);
+  border-radius:16px;
+  background:#fff;
+}
+.cookCheckpoints span{
+  display:block;margin-bottom:6px;color:var(--tech-green);
+  font:900 10px/1 Arial,sans-serif;letter-spacing:.09em;text-transform:uppercase;
+}
+.cookCheckpoints strong{display:block;color:var(--tech-ink);font:900 14px/1.2 Arial,sans-serif}
+.cookCheckpoints p{margin:7px 0 0;color:var(--tech-muted);font:600 12px/1.45 Arial,sans-serif}
+
+@media(max-width:900px){
+  .techniqueLead,.cookVisualGuide{grid-template-columns:1fr}
+  .techniqueIllustration{min-height:220px}
+  .techniqueSteps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .signalGrid,.cookCheckpoints{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .techniqueLead,.cookVisualGuide{gap:10px;margin-bottom:12px}
+  .techniqueLeadCopy{padding:18px;border-radius:17px}
+  .techniqueLeadCopy h3,.techniqueSectionHead h3{font-size:22px}
+  .techniqueIllustration{min-height:190px;border-radius:17px}
+  .techniqueIllustration svg{max-height:250px}
+  .techniqueSteps{grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+  .techniqueStep{min-height:0;padding:14px;border-radius:14px}
+  .techniqueDecision{padding:17px;border-radius:17px;margin-bottom:12px}
+  .troubleGrid{grid-template-columns:1fr}
+  .techniqueFooterNav{display:grid;grid-template-columns:1fr}
+  .techniqueFooterNav button{width:100%}
+  .cookCheckpoints{gap:8px;margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .techniqueTrouble summary{scroll-behavior:auto}
+}
