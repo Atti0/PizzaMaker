@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=46">
+  <link rel="stylesheet" href="styles.css?v=47">
   <link rel="stylesheet" href="hero.css?v=3">
 </head>
 <body>
@@ -56,8 +56,14 @@
                 <button type="button" class="homeToolAction" data-open-check>
                   <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
                 </button>
+                <button type="button" class="homeToolAction" data-open="pieghe">
+                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="stesura">
+                  <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
+                </button>
                 <button type="button" class="homeToolAction" data-open="cottura">
-                  <span><strong>Stesura e cottura</strong><small>Banco, teglia, condimenti, forno e timer.</small></span><b>→</b>
+                  <span><strong>Cottura</strong><small>Condimenti, posizione nel forno, segnali visivi e timer.</small></span><b>→</b>
                 </button>
               </div>
             </details>
@@ -80,8 +86,14 @@
                 <button type="button" class="homeToolAction" data-open-check>
                   <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
                 </button>
+                <button type="button" class="homeToolAction" data-open="pieghe">
+                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="stesura">
+                  <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
+                </button>
                 <button type="button" class="homeToolAction" data-open="cottura">
-                  <span><strong>Stesura e cottura</strong><small>Banco, teglia, condimenti, forno e timer.</small></span><b>→</b>
+                  <span><strong>Cottura</strong><small>Condimenti, posizione nel forno, segnali visivi e timer.</small></span><b>→</b>
                 </button>
               </div>
             </details>
@@ -355,13 +367,147 @@
         </section>
       </section>
 
-      <section id="cottura" class="view premiumFlow" aria-labelledby="cotturaTitle">
+      <section id="pieghe" class="view premiumFlow techniqueView" aria-labelledby="piegheTitle">
         <div class="viewHeader">
           <button type="button" class="ghost" data-open="home">← Home</button>
           <div>
-            <p class="eyebrow">Stesura e forno</p>
-            <h2 id="cotturaTitle">Guida rapida per cuocere bene</h2>
+            <p class="eyebrow">Tecnica · Pieghe</p>
+            <h2 id="piegheTitle">Dai struttura, poi fermati</h2>
           </div>
+        </div>
+
+        <div class="techniqueLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Obiettivo</span>
+            <h3>Più tenuta, non più lavoro</h3>
+            <p>Una piega serve a organizzare la maglia dell’impasto. Dopo ogni giro copri e lascia riposare: se l’impasto è già liscio, teso il giusto e mantiene forma, un’altra piega può essere inutile.</p>
+            <div class="techniqueRule"><strong>Regola pratica</strong><span>Piega breve → riposo 20–25 min → osserva → decidi.</span></div>
+          </div>
+          <div class="techniqueIllustration" aria-label="Schema dei quattro lembi dell'impasto portati al centro">
+            <svg viewBox="0 0 420 300" role="img" aria-labelledby="foldSvgTitle foldSvgDesc">
+              <title id="foldSvgTitle">Piega a quattro lembi</title>
+              <desc id="foldSvgDesc">Quattro frecce mostrano i bordi dell'impasto portati delicatamente verso il centro.</desc>
+              <rect x="12" y="12" width="396" height="276" rx="28" class="techBg"/>
+              <ellipse cx="210" cy="160" rx="112" ry="78" class="doughShape"/>
+              <ellipse cx="210" cy="160" rx="54" ry="36" class="doughCenter"/>
+              <path d="M210 50v62m-14-18 14 18 14-18M75 160h73m-18-14 18 14-18 14M345 160h-73m18-14-18 14 18 14M210 270v-62m-14 18 14-18 14 18" class="techArrow"/>
+              <circle cx="210" cy="160" r="12" class="targetDot"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="techniqueSteps" aria-label="Come fare una piega">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Inumidisci le mani</h3><p>Acqua o pochissimo olio sulle dita: evita di aggiungere farina dentro l’impasto.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva finché cede</h3><p>Prendi un lembo, allungalo solo finché senti resistenza e portalo verso il centro. Non tirarlo al limite.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Completa i quattro lati</h3><p>Ruota contenitore o impasto e ripeti. Un giro completo basta: non impastare di nuovo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Copri e osserva</h3><p>Aspetta 20–25 minuti. La struttura si valuta dopo il riposo, non mentre stai ancora tirando.</p></div></article>
+        </div>
+
+        <section class="techniqueDecision" aria-labelledby="foldDecisionTitle">
+          <div class="techniqueSectionHead"><span class="flowEyebrow">Leggi l’impasto</span><h3 id="foldDecisionTitle">Serve davvero un’altra piega?</h3></div>
+          <div class="signalGrid">
+            <article class="signalCard warn"><span class="signalState">Poco tenace</span><h4>Si allarga subito e “cola”</h4><p>Se sei ancora all’inizio della fermentazione, fai una piega leggera e poi riposo. Se è già molto gonfio o vicino alla stesura, non provare a ricostruirlo con pieghe forti.</p></article>
+            <article class="signalCard good"><span class="signalState">Giusto</span><h4>Morbido ma mantiene forma</h4><p>La superficie è più liscia, il panetto resta raccolto e si allunga senza strapparsi. Fermati: lascia lavorare tempo e fermentazione.</p></article>
+            <article class="signalCard bad"><span class="signalState">Troppo teso</span><h4>Fa resistenza o si strappa</h4><p>Stop. Copri e aspetta 15–20 minuti. Continuare a piegare un impasto già teso lo rende nervoso e può lesionare la maglia.</p></article>
+          </div>
+          <div class="termNote"><strong>Parole utili:</strong> se torna indietro è molto <em>elastico</em>; se si allunga facilmente è <em>estensibile</em>; se si allunga troppo senza sostenersi è <em>poco tenace</em>.</div>
+        </section>
+
+        <div class="techniqueFooterNav">
+          <button type="button" class="secondary" data-open="stesura">Vai alla stesura →</button>
+          <button type="button" class="ghost" data-open-check>Ho un problema con l’impasto</button>
+        </div>
+      </section>
+
+      <section id="stesura" class="view premiumFlow techniqueView" aria-labelledby="stesuraTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Tecnica · Stesura</p>
+            <h2 id="stesuraTitle">Allarga senza perdere struttura</h2>
+          </div>
+        </div>
+
+        <div class="techniqueLead stretchLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Prima di iniziare</span>
+            <h3>L’impasto deve collaborare</h3>
+            <p>Se è freddo e si ritira, aspetta. Se è molto molle e si allunga da solo, riduci al minimo i movimenti. La stesura non deve correggere la fermentazione: deve accompagnarla.</p>
+            <div class="techniqueRule"><strong>Banco</strong><span>Semola rimacinata quanto basta per non attaccare, senza seppellire l’impasto.</span></div>
+          </div>
+          <div class="techniqueIllustration wide" aria-label="Sequenza di stesura dal banco alla teglia">
+            <svg viewBox="0 0 760 260" role="img" aria-labelledby="stretchSvgTitle stretchSvgDesc">
+              <title id="stretchSvgTitle">Sequenza di stesura</title>
+              <desc id="stretchSvgDesc">Quattro riquadri mostrano impasto sul banco, apertura con polpastrelli, trasferimento e completamento in teglia.</desc>
+              <rect x="8" y="8" width="744" height="244" rx="28" class="techBg"/>
+              <g transform="translate(38 42)"><circle cx="70" cy="75" r="55" class="doughShape"/><path d="M38 28h64" class="handMark"/><text x="70" y="165" text-anchor="middle" class="svgLabel">1 · Banco</text></g>
+              <path d="M176 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(235 42)"><ellipse cx="70" cy="78" rx="67" ry="48" class="doughShape"/><circle cx="48" cy="67" r="7" class="fingerDot"/><circle cx="70" cy="60" r="7" class="fingerDot"/><circle cx="92" cy="67" r="7" class="fingerDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">2 · Polpastrelli</text></g>
+              <path d="M374 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(434 42)"><path d="M18 62c28-32 76-32 104 0l-16 45H34z" class="doughShape"/><path d="M25 118h92" class="forearmLine"/><text x="70" y="165" text-anchor="middle" class="svgLabel">3 · Trasferisci</text></g>
+              <path d="M572 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(625 42)"><rect x="0" y="30" width="100" height="95" rx="9" class="trayShape"/><rect x="10" y="40" width="80" height="75" rx="10" class="doughShape"/><text x="50" y="165" text-anchor="middle" class="svgLabel">4 · Teglia</text></g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="techniqueSteps stretchSteps" aria-label="Passaggi della stesura">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Rovescia senza strappare</h3><p>Porta il lato liscio verso l’alto. Stacca l’impasto dal contenitore con decisione ma senza tirarlo da un punto solo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Pressa, non trascinare</h3><p>Usa i polpastrelli dal centro verso l’esterno. Sposta il gas, non schiacciare tutto fino a rendere la massa piatta e compatta.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Trasferisci sostenendo</h3><p>Quando è già abbastanza larga, sollevala distribuendo il peso su mani e avambracci. Evita di afferrarla per un bordo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Completa in teglia</h3><p>Appoggiala sulla teglia oliata e accompagnala agli angoli. Se oppone resistenza, copri e completa dopo 5–10 minuti.</p></div></article>
+        </div>
+
+        <section class="techniqueDecision" aria-labelledby="stretchDecisionTitle">
+          <div class="techniqueSectionHead"><span class="flowEyebrow">Durante la stesura</span><h3 id="stretchDecisionTitle">Se succede questo, fai così</h3></div>
+          <div class="troubleGrid">
+            <details class="techniqueTrouble"><summary>Si ritira appena la allargo</summary><p>È ancora troppo elastica o fredda. Copri e aspetta 10–15 minuti, poi riprendi. Non vincerla tirando più forte.</p></details>
+            <details class="techniqueTrouble"><summary>Si allunga troppo appena la sollevo</summary><p>È molto estensibile e poco tenace. Smetti di tirare, sostienila con una superficie ampia e trasferiscila con pochi movimenti. Se è anche molto gonfia e fragile, accorcia il riposo in teglia.</p></details>
+            <details class="techniqueTrouble"><summary>Si strappa</summary><p>Fermati. Non rattoppare tirando altro impasto. Copri 10–15 minuti e riprendi delicatamente; se la maglia è già debole, limita al minimo la manipolazione.</p></details>
+            <details class="techniqueTrouble"><summary>Si incolla al banco</summary><p>Alza un lembo con una spatola e aggiungi poca semola solo dove serve. Troppa farina resta attaccata alla base e peggiora texture e sapore.</p></details>
+          </div>
+        </section>
+
+        <div class="techniqueFooterNav">
+          <button type="button" class="secondary" data-open="cottura">Vai alla cottura →</button>
+          <button type="button" class="ghost" data-open="pieghe">← Rivedi le pieghe</button>
+        </div>
+      </section>
+
+      <section id="cottura" class="view premiumFlow techniqueView" aria-labelledby="cotturaTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Tecnica · Cottura</p>
+            <h2 id="cotturaTitle">Cuoci guardando i segnali giusti</h2>
+          </div>
+        </div>
+
+        <div class="cookVisualGuide">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Forno domestico</span>
+            <h3>Prima costruisci il fondo, poi finisci sopra</h3>
+            <p>I minuti sono un riferimento. Il passaggio di fase si decide guardando base e superficie: il fondo deve asciugarsi senza bruciare, mentre mozzarella e finitura arrivano solo dopo.</p>
+            <div class="techniqueRule"><strong>Controllo reale</strong><span>Sollevare un angolo della pizza vale più di seguire il timer alla cieca.</span></div>
+          </div>
+          <div class="techniqueIllustration ovenIllustration">
+            <svg viewBox="0 0 420 300" role="img" aria-labelledby="ovenSvgTitle ovenSvgDesc">
+              <title id="ovenSvgTitle">Cottura in due fasi</title>
+              <desc id="ovenSvgDesc">La teglia parte sul ripiano basso e poi passa al centro per completare la superficie.</desc>
+              <rect x="70" y="22" width="280" height="255" rx="26" class="ovenBody"/>
+              <path d="M100 92h220M100 154h220M100 216h220" class="ovenRack"/>
+              <rect x="118" y="188" width="184" height="24" rx="6" class="pizzaBase"/>
+              <path d="M210 180V126m-15 17 15-17 15 17" class="techArrow"/>
+              <rect x="118" y="126" width="184" height="24" rx="6" class="pizzaFinish"/>
+              <text x="210" y="248" text-anchor="middle" class="svgLabel">1 · basso → 2 · centro</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="cookCheckpoints">
+          <article><span>Prima fase</span><strong>Base asciutta e appena colorita</strong><p>Sollevando un angolo non deve sembrare cruda o molle. La superficie può essere ancora indietro.</p></article>
+          <article><span>Seconda fase</span><strong>Superficie asciutta, bordo ben cotto</strong><p>Sposta al centro o medio-alto. Mozzarella scolata solo negli ultimi minuti.</p></article>
+          <article><span>Uscita</span><strong>Fuori dalla teglia</strong><p>Appoggia subito la pizza su griglia per 1–2 minuti: il vapore non deve ribagnare il fondo.</p></article>
         </div>
 
         <div class="twoColumns cookWorkspace">
@@ -395,6 +541,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=31" defer></script>
+  <script src="app.js?v=32" defer></script>
 </body>
 </html>
