@@ -205,17 +205,34 @@
   function applyCatalogFlour(index) {
     const suffix = index === 1 ? '' : String(index);
     const input = $('flourCatalog' + index);
-    const name = input?.value.trim();
-    const known = FLOUR_CATALOG[name];
+    const name = input?.value.trim() ?? '';
+    const key = Object.keys(FLOUR_CATALOG).find((item) => item.toLocaleLowerCase('it') === name.toLocaleLowerCase('it'));
+    const known = key ? FLOUR_CATALOG[key] : null;
+
     if (!known) {
-      input?.classList.remove('catalogMatched');
+      if (input?.dataset.catalogMatched === 'true') {
+        $('flourType' + suffix).value = '0';
+        $('protein' + suffix).value = '12.5';
+        $('flourW' + suffix).value = '';
+        $('lmMix' + suffix).value = 'no';
+        updateFlourUI('', false);
+      }
+      if (input) {
+        delete input.dataset.catalogMatched;
+        input.classList.remove('catalogMatched');
+      }
       return false;
     }
+
+    if (input && input.value !== key) input.value = key;
     if (known.type) $('flourType' + suffix).value = known.type;
     $('protein' + suffix).value = known.protein === null ? '' : String(known.protein);
     $('flourW' + suffix).value = known.w === null ? '' : String(known.w);
     if (known.lm) $('lmMix' + suffix).value = known.lm;
-    input?.classList.add('catalogMatched');
+    if (input) {
+      input.dataset.catalogMatched = 'true';
+      input.classList.add('catalogMatched');
+    }
     updateFlourUI('', false);
     return true;
   }
