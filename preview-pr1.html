@@ -1,0 +1,2749 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PizzaMaker — Teglia Coach</title>
+  <meta name="description" content="Assistente pratico per pizza in teglia fatta in casa: dosi, timeline, gestione impasto, cottura e problemi comuni.">
+  <meta name="theme-color" content="#a92b25">
+<style>
+:root{
+  --cream:#fff8e8;
+  --paper:#fffdf4;
+  --red:#a92b25;
+  --green:#526b2d;
+  --gold:#d99a34;
+  --ink:#172036;
+  --muted:#6c695f;
+  --line:#e4d6bd;
+  --soft:#f5ead6;
+  --ok:#eef5df;
+  --warn:#fff4d8;
+  --bad:#ffebe7;
+  --shadow:0 14px 38px rgba(49,34,13,.12);
+  --radius:24px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top left, rgba(217,154,52,.22), transparent 32rem),linear-gradient(180deg,var(--cream),#f4e8d2);
+  color:var(--ink);
+  font-family:Georgia,'Times New Roman',serif;
+}
+button,input,select{font:inherit}
+button,a,input,select{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid rgba(169,43,37,.35);outline-offset:3px}
+.appShell{max-width:1160px;margin:auto;padding:16px 14px 28px}
+.hero,.card{
+  background:rgba(255,253,244,.96);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.hero{padding:26px 20px;margin:8px 0 20px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:-72px auto auto -48px;width:190px;height:190px;border-radius:50%;background:var(--gold);opacity:.16}
+.eyebrow{margin:0 0 6px;color:var(--green);font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+h1,h2,h3{line-height:1.03}
+h1{margin:0;color:var(--red);font-size:clamp(40px,7vw,76px);letter-spacing:.3px;text-transform:uppercase}
+h2{margin:0;color:var(--red);font-size:clamp(30px,4.6vw,48px)}
+h3{margin:0 0 12px;color:var(--red);font-size:24px}
+button,.buttonLike{
+  border:0;
+  border-radius:16px;
+  background:var(--green);
+  color:white;
+  padding:13px 15px;
+  font-weight:900;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(0,0,0,.1);
+  text-decoration:none;
+}
+button.secondary,.ghost{
+  background:var(--soft);
+  color:var(--ink);
+  border:1px solid var(--line);
+}
+.ghost{box-shadow:none}
+button:active{transform:translateY(1px)}
+.view{display:none}
+.view.active{display:block}
+.sectionTitle,.viewHeader{margin:18px 0 14px}
+.viewHeader{display:flex;align-items:center;gap:14px}
+.actionGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.actionCard{
+  min-height:190px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  text-align:left;
+  gap:12px;
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  padding:18px;
+}
+.cardIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--red);color:white;font-size:22px;font-weight:900}
+.cardTitle{display:block;color:var(--red);font-size:24px;font-weight:900;line-height:1.05}
+.cardText{font-size:16px;line-height:1.35;color:#22314c}
+.siteLinks{display:flex;gap:12px;flex-wrap:wrap;margin:18px 4px 0;color:var(--muted);align-items:center}
+.siteLinks a,.siteLinks button{
+  color:var(--muted);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:4px 0;
+  font-size:14px;
+  font-weight:800;
+  text-decoration:underline;
+}
+.twoColumns{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:16px;align-items:start}
+.card{overflow:hidden}
+.formCard{padding:18px}
+.formCard h3{margin-top:18px}
+.formCard h3:first-child{margin-top:0}
+.row,.row3{display:grid;gap:12px;margin-bottom:12px}
+.row{grid-template-columns:1fr 1fr}
+.row3{grid-template-columns:repeat(3,1fr)}
+label{display:block;margin:0 0 6px;color:var(--green);font-weight:900}
+input,select{
+  width:100%;
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+  color:var(--ink);
+  padding:10px 12px;
+  font-family:Arial,sans-serif;
+  font-size:16px;
+}
+.choiceGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.choice{cursor:pointer}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice span{
+  min-height:92px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  background:white;
+  color:var(--ink);
+  font-weight:900;
+}
+.choice small{display:block;color:var(--muted);font-size:13px;font-weight:700;line-height:1.2}
+.choice input:checked + span{border-color:var(--red);background:#fff0e9;box-shadow:inset 0 0 0 2px rgba(169,43,37,.12)}
+
+
+.formActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.resultStack{display:grid;gap:12px}
+.singleColumn{margin-top:16px}
+.resultCard{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  padding:16px;
+}
+.resultCard h3{margin-bottom:10px}
+.resultCard.primary{background:#fff7e7;border-left:8px solid var(--gold)}
+.resultCard.ok{background:var(--ok);border-left:8px solid var(--green)}
+.resultCard.warn{background:var(--warn);border-left:8px solid var(--gold)}
+.resultCard.bad{background:var(--bad);border-left:8px solid var(--red)}
+.bigStep{display:block;color:var(--red);font-size:clamp(26px,5vw,44px);font-weight:900;line-height:1;margin:4px 0}
+
+
+.emptyState{color:var(--muted);line-height:1.45}
+.hidden{display:none!important}
+.privacyOverlay{position:fixed;inset:0;background:rgba(23,32,54,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;backdrop-filter:blur(6px)}
+.privacyOverlay.show{display:flex}
+.privacyModal{width:min(560px,100%);background:var(--paper);border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:20px}
+.privacyModal h2{margin:0 0 8px;color:var(--red);font-size:30px}
+.privacyModal p{margin:8px 0;color:var(--ink);font-size:17px;line-height:1.45}
+.privacyActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.privacyActions a{display:inline-block;border-radius:16px;background:#f5ead6;color:var(--ink);border:1px solid var(--line);padding:13px 12px;font-weight:900;text-decoration:none}
+@media(max-width:980px){
+  .actionGrid{grid-template-columns:1fr}
+  .twoColumns{grid-template-columns:1fr}
+  .choiceGrid{grid-template-columns:1fr 1fr}
+  
+}
+@media(max-width:640px){
+  .appShell{padding:12px 10px 28px}
+  .hero{padding:22px 16px}
+  h1{font-size:clamp(42px,13vw,66px)}
+  h2{font-size:clamp(30px,10vw,44px)}
+  .actionCard{min-height:138px}
+  .row,.row3{grid-template-columns:1fr}
+  .choiceGrid{grid-template-columns:1fr}
+  .viewHeader{align-items:flex-start;flex-direction:column}
+}
+@media print{
+  body{background:white}
+  .privacyOverlay,.viewHeader button,button{display:none!important}
+  .appShell{max-width:100%;padding:0}
+  .view{display:block;break-inside:avoid}
+  .view:not(.active){display:none}
+  .hero,.card,.resultCard{box-shadow:none}
+}
+
+/* Compattazione mobile */
+.homeSavedStep{
+  margin:0 0 14px;
+  background:#fff7e7;
+  border:1px solid var(--line);
+  border-left:7px solid var(--gold);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:12px 14px;
+}
+.homeSavedStep b{display:block;color:var(--red);font-size:22px;line-height:1.05}
+.homeSavedStep span{display:block;color:var(--ink);font-weight:800;margin-top:2px}
+.homeSavedStep button{margin-top:10px;padding:10px 12px;box-shadow:none}
+.panLine{
+  display:grid;
+  grid-template-columns:minmax(78px,1fr) auto minmax(78px,1fr) auto minmax(92px,.9fr);
+  gap:8px;
+  align-items:end;
+  margin-bottom:12px;
+}
+.compactField label{font-size:15px;margin-bottom:4px}
+.compactField input{min-height:46px;text-align:center;font-weight:800}
+.fieldJoin,.fieldUnit{align-self:center;color:var(--muted);font-weight:900;padding-top:20px}
+.choiceGrid.compactChoices{grid-template-columns:repeat(5,1fr);gap:7px}
+.compactChoices .choice span{min-height:64px;padding:9px 8px;font-size:15px}
+.compactChoices .choice small{font-size:12px}
+.inlineHint{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.35}
+.resultStack:empty{display:none}
+#cook:empty,#result:empty,#adviceOutput:empty{display:none}
+@media(max-width:640px){
+  .formCard{padding:16px}
+  .formCard h3{font-size:22px;margin-top:16px;margin-bottom:10px}
+  .panLine{grid-template-columns:1fr auto 1fr auto .8fr;gap:6px}
+  .compactField input{min-height:44px;padding:8px}
+  .choiceGrid.compactChoices{grid-template-columns:1fr 1fr}
+  .compactChoices .choice span{min-height:58px}
+  .sectionTitle,.viewHeader{margin:12px 0 12px}
+  .siteLinks{margin-top:12px}
+}
+
+
+/* Gestione farine */
+.flourBlend{display:grid;gap:10px}
+.flourItem{border:1px solid var(--line);border-radius:16px;background:white;padding:12px}
+.flourItemHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;color:var(--red)}
+.flourFields{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr 1fr 1fr 1.35fr}
+.flourFields label{font-size:13px}
+.flourFields input,.flourFields select{min-height:44px;padding:8px 10px;font-size:15px}
+button.textButton{background:transparent;color:var(--red);border:0;box-shadow:none;padding:5px 2px;text-decoration:underline;font-size:13px}
+.addFlourBtn{justify-self:start;box-shadow:none;padding:10px 12px}
+.resetAdvanced{margin-top:10px}
+
+.inputError{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(169,43,37,.12)}
+@media(max-width:640px){
+  .flourFields,.flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:1fr 1fr}
+  .flourItem:not([data-flour="1"]) .flourFields>div:last-child{grid-column:1/-1}
+}
+
+
+.adviceRow{padding:11px 0;border-top:1px solid var(--line)}
+.adviceRow:first-of-type{border-top:0}
+.adviceRow strong{display:block;color:var(--red);font-size:16px;margin-bottom:3px}
+.adviceRow p{margin:0;line-height:1.35}
+.adviceRow.badRow strong{color:var(--red)}
+.adviceRow.okRow strong{color:var(--green)}
+.adviceRow.warnRow strong{color:#9b6718}
+.cookGuide{padding:14px 16px}
+.guideStep{padding:13px 0;border-top:1px solid var(--line)}
+.guideStep:first-of-type{border-top:0;padding-top:2px}
+.guideStepHead{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.guideStepHead strong{color:var(--red);font-size:19px}
+.stepNumber{
+  width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--green);color:white;font-weight:900;
+  flex:0 0 auto;
+}
+.guideStep p{margin:5px 0;line-height:1.35}
+@media(max-width:640px){
+  .resultStack{gap:9px}
+  .resultCard{padding:13px 14px;border-radius:18px}
+  .resultCard h3{font-size:22px;margin-bottom:7px}
+  .bigStep{font-size:28px}
+  .viewHeader h2{font-size:clamp(28px,8.5vw,38px)}
+  #impasto .twoColumns{display:flex;flex-direction:column}
+  #impasto .formCard{order:1;width:100%}
+  #savedTimeline{order:2;width:100%}
+}
+
+
+/* Design system */
+.premiumHome .sectionTitle{margin:22px 4px 14px}.premiumHome .sectionTitle h2{color:#172036;font:900 clamp(27px,5vw,38px)/1.08 Arial,sans-serif;letter-spacing:-.035em}.premiumHome .sectionTitle .eyebrow{font-family:Arial,sans-serif;font-size:11px}
+.premiumHome .actionGrid.compact{gap:10px}.premiumHome .actionCard{min-height:0;padding:17px;background:#fffefa;border:1px solid #ddd7ca;border-radius:20px;box-shadow:0 8px 26px rgba(49,34,13,.055);display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-rows:auto auto;column-gap:13px;row-gap:3px}.premiumHome .cardIcon{grid-row:1/3;width:40px;height:40px;background:#f4eee2;color:#a94332;font:900 16px/1 Arial,sans-serif}.premiumHome .cardTitle{color:#172036;font:900 18px/1.15 Arial,sans-serif}.premiumHome .cardText{color:#6f716b;font:500 13px/1.35 Arial,sans-serif}.premiumHome .siteLinks{justify-content:center;margin-top:16px;font-family:Arial,sans-serif}.premiumHome .siteLinks a,.premiumHome .siteLinks button{font-size:12px}
+.homeSavedStep{position:relative;margin:0 0 12px;padding:14px 72px 14px 15px;background:#eef0e8;border:1px solid #d8dccf;border-left:0;border-radius:18px;box-shadow:none;font-family:Arial,sans-serif}.homeSavedStep .homeStepLabel{display:block;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.homeSavedStep b{display:block;margin-top:4px;color:#172036;font-size:18px}.homeSavedStep time{display:block;margin-top:3px;color:#6f716b;font-size:12px;font-weight:800}.homeSavedStep .homeStepButton{position:absolute;right:12px;top:50%;transform:translateY(-50%);padding:9px 10px;background:transparent;color:#a94332;border:0;box-shadow:none;font:900 13px/1 Arial,sans-serif}
+.premiumFlow,.premiumFlow *{min-width:0}.premiumFlow .viewHeader{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:12px;margin:14px 0 16px}.premiumFlow .viewHeader .ghost{width:44px;height:44px;padding:0;font-size:0;border-radius:50%;background:rgba(255,253,244,.7);border:1px solid #ddd7ca;box-shadow:none}.premiumFlow .viewHeader .ghost::before{content:"←";font:700 21px/1 Arial,sans-serif;color:#172036}.premiumFlow .viewHeader .eyebrow{display:none}.premiumFlow .viewHeader h2{margin:0;color:#172036;font:900 clamp(24px,5vw,32px)/1.08 Arial,sans-serif;letter-spacing:-.035em}
+.premiumFlow .flowForm{padding:18px;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 8px 28px rgba(49,34,13,.055)}.flowEyebrow{display:block;margin:0 0 5px;color:#526b2d;font:900 10px/1.2 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}.premiumFlow .flowForm h3{margin:0 0 17px;color:#172036;font:900 23px/1.08 Arial,sans-serif}.premiumFlow label{font-family:Arial,sans-serif;font-size:13px}.premiumFlow input,.premiumFlow select{background:#fff;border:1.5px solid #c9c7bf;border-radius:13px;color:#172036;font-family:Arial,sans-serif;box-shadow:none}.premiumFlow input:focus,.premiumFlow select:focus{border-color:#a94332;box-shadow:0 0 0 3px rgba(169,67,50,.12);outline:0}.premiumFlow .flowPrimary{width:100%;min-height:52px;margin-top:14px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:#172036;border-radius:13px;box-shadow:none;font-family:Arial,sans-serif}
+.savedPlan{overflow:hidden;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 8px 28px rgba(49,34,13,.055);font-family:Arial,sans-serif}.savedPlan>.flowEyebrow{padding:17px 17px 0}.savedNext{padding:6px 17px 16px;display:flex;justify-content:space-between;gap:12px}.savedNext h3{margin:0;color:#172036;font:900 22px/1.08 Arial,sans-serif}.savedNext p{margin:5px 0 0;color:#6f716b;font-size:12px}.savedNext time{color:#a94332;font-size:13px;font-weight:900;white-space:nowrap}.savedPlanDetails{border-top:1px solid #e4dfd5}.savedPlanDetails>summary{cursor:pointer;padding:14px 17px;color:#a94332;font:900 13px/1 Arial,sans-serif}.savedPlanSection{padding:2px 17px 16px;border-top:1px solid #eee9df}.savedPlanSection h4{margin:14px 0 10px;color:#172036;font:900 14px/1 Arial,sans-serif}.savedPlanSection .premiumTimeline{padding:0}.savedDoseGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.savedDose{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee9df}.savedDose span{color:#6f716b;font-size:12px}.savedDose strong{color:#172036;font-size:13px}.emptyPlan{padding:17px}.emptyPlan>.flowEyebrow{padding:0}.emptyPlan h3{margin:5px 0;color:#172036;font:900 20px/1.1 Arial,sans-serif}.emptyPlan p{margin:7px 0 0;color:#6f716b;font:400 13px/1.4 Arial,sans-serif}
+.premiumFlow #adviceOutput{margin-top:14px}.premiumFlow #adviceOutput .resultCard,.premiumFlow #cook .resultCard{padding:17px;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 8px 28px rgba(49,34,13,.055);font-family:Arial,sans-serif}.premiumFlow #adviceOutput .resultCard h3,.premiumFlow #cook .resultCard h3{color:#172036;font:900 20px/1.1 Arial,sans-serif}.premiumFlow .adviceRow p,.premiumFlow .guideStep p{color:#363b42;font-family:Arial,sans-serif;font-size:14px;line-height:1.4}.premiumFlow .adviceRow strong{font-family:Arial,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.06em}.premiumFlow .guideStepHead strong{color:#172036;font:900 17px/1.15 Arial,sans-serif}.premiumFlow .stepNumber{width:26px;height:26px;background:#526b2d;font:900 12px/1 Arial,sans-serif}
+@media(max-width:640px){.premiumHome .sectionTitle{margin:17px 4px 12px}.premiumHome .actionGrid.compact{gap:9px}.premiumHome .actionCard{padding:15px;border-radius:18px}.premiumHome .cardTitle{font-size:17px}.premiumFlow{width:100%;max-width:100%;overflow:hidden}.premiumFlow .viewHeader{margin:12px 6px 14px}.premiumFlow .viewHeader h2{font-size:24px}.premiumFlow .twoColumns{display:flex;flex-direction:column}.premiumFlow .flowForm{padding:16px;border-radius:20px}.premiumFlow .flowForm .row{grid-template-columns:1fr}.savedPlan{border-radius:20px}.savedNext{display:grid;gap:5px}.savedDoseGrid{grid-template-columns:1fr}}
+
+
+/* Home, impasto e cottura */
+.footerBar{display:none!important}
+.premiumHome,.premiumFlow{--ui-ink:#172036;--ui-muted:#71736f;--ui-red:#a94332;--ui-green:#526b2d;--ui-line:#ddd7ca;--ui-paper:#fffefa}
+.premiumHome .sectionTitle h2{font:900 clamp(27px,5vw,38px)/1.06 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumHome .sectionTitle .eyebrow{color:var(--ui-green)!important;font:900 11px/1.2 Arial,sans-serif!important;letter-spacing:.11em}
+.premiumHome .actionGrid.compact{display:grid;grid-template-columns:1fr;gap:10px}
+.premiumHome .actionCard{
+  text-align:left!important;padding:16px!important;border-radius:18px!important;background:var(--ui-paper)!important;
+  border:1px solid var(--ui-line)!important;box-shadow:0 7px 22px rgba(49,34,13,.045)!important;
+  grid-template-columns:38px minmax(0,1fr) 20px!important;grid-template-rows:auto auto!important;
+}
+.premiumHome .actionCard::after{content:"›";grid-column:3;grid-row:1/3;align-self:center;justify-self:end;color:#aaa59b;font:400 28px/1 Arial,sans-serif}
+.premiumHome .cardIcon{grid-column:1;grid-row:1/3;width:38px;height:38px;background:#f4eee2!important;color:var(--ui-red)!important;font:900 14px/1 Arial,sans-serif!important}
+.premiumHome .cardTitle{grid-column:2;color:var(--ui-ink)!important;font:900 17px/1.15 Arial,sans-serif!important}
+.premiumHome .cardText{grid-column:2;color:var(--ui-muted)!important;font:500 12.5px/1.35 Arial,sans-serif!important}
+.premiumHome .siteLinks{padding:4px 2px 16px;border:0;gap:16px}
+.premiumHome .siteLinks a,.premiumHome .siteLinks button{color:#77736c!important;font:700 11px/1 Arial,sans-serif!important;text-decoration:none}
+.premiumFlow .viewHeader h2{font:900 clamp(24px,5vw,32px)/1.06 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumFlow .viewHeader .eyebrow{display:none!important}
+.premiumFlow .flowForm h3{font:900 22px/1.08 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.premiumFlow .flowForm{background:var(--ui-paper)!important;border:1px solid var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.premiumFlow .flowPrimary{background:var(--ui-ink)!important;color:white!important;font:900 15px/1 Arial,sans-serif!important}
+.premiumFlow label{color:var(--ui-green)!important;font:800 13px/1.2 Arial,sans-serif!important}
+.premiumFlow select,.premiumFlow input{background:#fff!important;color:var(--ui-ink)!important;border:1.5px solid #c9c7bf!important;font-family:Arial,sans-serif!important}
+#impasto .doughWorkspace{display:flex;flex-direction:column;gap:12px}
+#impasto #savedTimeline{order:1}
+#impasto .doughCheck{order:2}
+#impasto #adviceOutput{order:3}
+#impasto .doughCheck{padding:15px!important}
+#impasto .doughCheck .flowEyebrow{margin-bottom:4px}
+#impasto .doughCheck h3{font-size:19px!important;margin-bottom:13px}
+.savedPlan{background:var(--ui-paper)!important;border-color:var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.savedPlan>.flowEyebrow{color:var(--ui-green)!important}
+.savedNext h3{font:900 24px/1.05 Arial,sans-serif!important;color:var(--ui-ink)!important}
+.savedNext time{color:var(--ui-red)!important}
+.savedPlanDetails>summary{color:var(--ui-red)!important;font-family:Arial,sans-serif!important}
+.savedPlanCta{margin-top:14px;width:100%;min-height:48px;background:var(--ui-ink);color:white;border-radius:12px;box-shadow:none;font:900 14px/1 Arial,sans-serif}
+#cottura .cookWorkspace{display:block}
+#cottura .cookSetup{margin-bottom:12px}
+#cottura #cook .cookGuide{background:var(--ui-paper)!important;border:1px solid var(--ui-line)!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+#cottura #cook .cookGuide>h3{font:900 20px/1.1 Arial,sans-serif!important;color:var(--ui-ink)!important}
+#cottura .guideStep{display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:10px;padding:14px 0!important}
+#cottura .guideStepHead{display:contents}
+#cottura .stepNumber{grid-column:1;grid-row:1/3;width:28px;height:28px;background:var(--ui-green)!important;color:#fff}
+#cottura .guideStepHead strong{grid-column:2;color:var(--ui-ink)!important;font:900 17px/1.15 Arial,sans-serif!important}
+#cottura .guideStep p{grid-column:2;margin:5px 0 0!important;color:#363b42!important;font:400 14px/1.42 Arial,sans-serif!important}
+#cottura .guideStep p+p{margin-top:6px!important}
+@media(max-width:640px){
+  .premiumHome .sectionTitle{margin-top:18px}
+  .premiumHome .sectionTitle h2{font-size:29px!important;max-width:330px}
+  .premiumHome .actionCard{padding:15px!important}
+  .premiumHome .siteLinks{justify-content:flex-start;flex-wrap:wrap}
+  #impasto .doughCheck .row{grid-template-columns:1fr}
+  #cottura .cookSetup{padding:15px!important}
+  #cottura .cookSetup h3{font-size:19px!important;margin-bottom:13px}
+}
+
+
+/* Stati temporali e flussi mobile */
+.homeSavedStep{padding-right:78px!important}
+.homeSavedStep .homeNext{display:block;margin-top:5px;color:#5f625e;font:700 11px/1.3 Arial,sans-serif}
+.upNext{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px 17px;background:#f5f1e8;border-top:1px solid #e4dfd5;font-family:Arial,sans-serif}
+.upNext span{color:#526b2d;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.upNext strong{color:#172036;font-size:13px}.upNext time{color:#a94332;font-size:12px;font-weight:900}
+#cottura .cookWorkspace,#cottura .cookSetup,#cottura #cook{width:100%!important;max-width:none!important}
+#cottura .cookSetup{box-sizing:border-box}
+#impasto .doughWorkspace{width:100%}
+#impasto #savedTimeline{order:1!important}
+#impasto .doughCheck{order:2!important}
+#impasto #adviceOutput{order:3!important}
+#impasto .doughCheck{margin-top:0}
+@media(max-width:640px){
+  .appShell:has(.premiumCalc.active) .hero,.appShell:has(.premiumFlow.active) .hero{display:none!important}
+  .premiumCalc.active,.premiumFlow.active{padding-top:4px}
+  #cottura .cookWorkspace{display:block!important}
+  #cottura .cookSetup{width:100%!important;margin:0 0 12px!important}
+  #impasto .doughWorkspace{display:flex!important;flex-direction:column!important}
+  .upNext{grid-template-columns:1fr auto}.upNext span{grid-column:1/-1}
+}
+
+
+/* Material polish e cooking mode */
+body{
+  background-color:#f4ead6;
+  background-image:
+    radial-gradient(circle at 18% 9%,rgba(255,255,255,.58) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 72% 31%,rgba(118,91,50,.055) 0 1px,transparent 1.5px),
+    linear-gradient(115deg,rgba(255,248,229,.76),rgba(240,224,191,.34));
+  background-size:19px 19px,27px 27px,100% 100%;
+}
+.premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.doughResult,#cottura #cook .cookGuide{
+  background:#fffdf8!important;
+  border-color:rgba(91,72,43,.18)!important;
+  box-shadow:0 1px 1px rgba(65,43,15,.04),0 10px 30px rgba(65,43,15,.075)!important;
+}
+.premiumHome .actionCard:active{transform:translateY(1px)}
+.homeSavedStep{background:#eef0e7!important;border-color:#d3d9c8!important;box-shadow:0 7px 20px rgba(65,43,15,.045)!important}
+.premiumFlow input,.premiumFlow select{
+  background:#fff!important;border-color:#c8c5bc!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 2px rgba(45,34,18,.035)!important;
+}
+.premiumFlow input:focus,.premiumFlow select:focus{
+  border-color:#a94332!important;box-shadow:0 0 0 3px rgba(169,67,50,.11)!important;
+}
+#cottura .cookGuide{overflow:hidden}
+#cottura .stepTimer{
+  grid-column:2;width:max-content;max-width:100%;margin-top:10px;padding:9px 12px;border:1px solid #d7d1c5;border-radius:11px;
+  background:#f6f1e7;color:#172036;box-shadow:none;font:800 12px/1 Arial,sans-serif;
+}
+#cottura .stepTimer::before{content:"◷";margin-right:6px;color:#a94332}
+.cookTimer{
+  position:sticky;bottom:12px;z-index:20;margin:14px 0 0;padding:15px 16px 14px;border:1px solid rgba(23,32,54,.14);border-radius:20px;
+  background:rgba(23,32,54,.96);color:#fff;box-shadow:0 18px 45px rgba(23,32,54,.22);backdrop-filter:blur(12px);font-family:Arial,sans-serif;
+}
+.timerTop{display:flex;justify-content:space-between;align-items:flex-start}.timerTop .flowEyebrow{color:#d7dfc4}.timerTop strong{display:block;margin-top:3px;font-size:14px}
+.timerClose{width:34px;height:34px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;box-shadow:none;font-size:21px}
+.timerDisplay{margin:8px 0 12px;font:900 clamp(42px,12vw,62px)/.95 Arial,sans-serif;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.timerActions{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:7px}.timerActions button{min-height:42px;padding:0 10px;border:1px solid rgba(255,255,255,.16);border-radius:11px;background:rgba(255,255,255,.08);color:#fff;box-shadow:none;font:800 12px/1 Arial,sans-serif}.timerActions button:first-child{background:#fff;color:#172036}
+.cookTimer.timerDone{background:rgba(169,67,50,.97)}.cookTimer.timerDone .timerDisplay{animation:timerPulse .8s ease-in-out 2}
+@keyframes timerPulse{50%{transform:scale(1.025)}}
+@media(max-width:640px){
+  body{background-size:17px 17px,25px 25px,100% 100%}
+  .premiumHome .actionCard,.premiumFlow .flowForm,.savedPlan,.doughResult,#cottura #cook .cookGuide{box-shadow:0 1px 1px rgba(65,43,15,.035),0 8px 22px rgba(65,43,15,.06)!important}
+  .cookTimer{bottom:8px;border-radius:18px}
+}
+@media(prefers-reduced-motion:reduce){.cookTimer.timerDone .timerDisplay{animation:none}.premiumHome .actionCard:active{transform:none}}
+
+
+/* Timeline visuale */
+.visualTimeline{list-style:none;margin:0;padding:4px 0 8px;display:grid;gap:10px}
+.visualTimelineStep{position:relative;display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px}
+.visualTimelineRail{position:relative;display:flex;justify-content:center}
+.visualTimelineStep:not(:last-child) .visualTimelineRail:after{content:"";position:absolute;top:30px;bottom:-16px;width:2px;background:#ddd4c3}
+.visualTimelineNumber{position:relative;z-index:1;width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:#f1ede4;border:2px solid #d7cebe;color:#77736a;font:900 12px/1 Arial,sans-serif}
+.visualTimelineStep.done .visualTimelineNumber{background:#526b2d;border-color:#526b2d;color:#fff}
+.visualTimelineStep.current .visualTimelineNumber{background:#b62d29;border-color:#b62d29;color:#fff;box-shadow:0 0 0 4px rgba(182,45,41,.1)}
+.visualTimelineStep.next .visualTimelineNumber{border-color:#a94332;color:#a94332;background:#fffefa}
+.visualTimelineCard{min-width:0;display:grid;grid-template-columns:94px minmax(0,1fr);gap:12px;padding:9px;background:#fffefa;border:1px solid #e1dbcf;border-radius:17px;box-shadow:0 5px 16px rgba(49,34,13,.045)}
+.timelineVisual{min-height:92px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#fbf0dc,#f4e5c9);border:1px solid #eee0c8;overflow:hidden}
+.timelineVisual span{font-size:36px;filter:saturate(.8)}
+.timelineVisualBody{min-width:0;padding:2px 4px 3px 0}
+.timelineVisualTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px}
+.timelineVisualTop time{color:#a94332;font:900 11px/1 Arial,sans-serif;white-space:nowrap}
+.timelineState{color:#71736f;font:900 9px/1 Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em}
+.visualTimelineStep.current .timelineState{color:#b62d29}.visualTimelineStep.next .timelineState{color:#526b2d}
+.timelineVisualTitle{display:block;color:#172036;font:900 15px/1.12 Arial,sans-serif}
+.timelineVisualBody p{margin:5px 0 6px;color:#62645f;font:400 11.5px/1.32 Arial,sans-serif}
+.timelineDuration{display:inline-flex;padding:4px 7px;border-radius:999px;background:#f3efe6;color:#65645e;font:800 9.5px/1 Arial,sans-serif}
+.visualTimelineStep.future .visualTimelineCard{opacity:.72}
+.savedPlanSection .visualTimeline{padding:2px 0 4px}
+.timelineDisclosure .visualTimeline{padding:2px 20px 18px}
+@media(max-width:420px){
+ .visualTimelineStep{grid-template-columns:30px minmax(0,1fr);gap:6px}
+ .visualTimelineNumber{width:27px;height:27px}
+ .visualTimelineStep:not(:last-child) .visualTimelineRail:after{top:28px}
+ .visualTimelineCard{grid-template-columns:78px minmax(0,1fr);gap:9px;padding:8px}
+ .timelineVisual{min-height:84px}
+ .timelineVisual span{font-size:31px}
+ .timelineVisualTitle{font-size:14px}
+ .timelineVisualBody p{font-size:11px}
+}
+
+
+/* Simulazione e controlli progressivi */
+.premiumCalc #result:not(:empty){margin-top:18px}
+#impasto .doughCheck{padding:0!important;overflow:hidden}
+#impasto .doughCheckSummary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:17px 18px;color:#172036;font-family:Arial,sans-serif;
+}
+#impasto .doughCheckSummary::-webkit-details-marker{display:none}
+#impasto .doughCheckSummary small{
+  display:block;margin-bottom:5px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+#impasto .doughCheckSummary strong{display:block;font:900 19px/1.1 Arial,sans-serif}
+#impasto .summaryChevron{color:#a94332;font:900 22px/1 Arial,sans-serif;transition:transform .18s ease}
+#impasto .doughCheck[open] .summaryChevron{transform:rotate(180deg)}
+#impasto .doughCheckBody{padding:2px 18px 18px;border-top:1px solid #e6e0d5}
+#impasto .doughCheckBody>label:first-child{margin-top:15px}
+@media(max-width:640px){
+  .premiumCalc #result:not(:empty){margin-top:16px}
+  #impasto .doughCheckSummary{padding:16px}
+  #impasto .doughCheckBody{padding:2px 16px 16px}
+}
+@media(prefers-reduced-motion:reduce){#impasto .summaryChevron{transition:none}}
+
+
+/* Azioni impasto salvato */
+.homeStepActions{display:flex;align-items:center;gap:8px;margin-top:10px}
+.homeStepActions .homeStepButton{margin-top:0}
+.homeStepDelete{
+  margin:0;
+  padding:8px 10px;
+  min-height:34px;
+  border-radius:10px;
+  background:transparent;
+  color:#7a342c;
+  border:1px solid #d9b9ae;
+  box-shadow:none;
+  font:800 12px/1 Arial,sans-serif;
+}
+.homeStepDelete:active{background:#f7e8e2}
+
+
+/* Scheda impasto stampabile */
+.printSheet{display:none}
+.savedPlanActions{padding:0 17px 17px}
+.savedPlanPrint{
+  width:100%;min-height:44px;padding:0 13px;border:1px solid #d8d1c4;border-radius:12px;
+  background:#f6f1e7;color:#172036;box-shadow:none;font:900 12px/1 Arial,sans-serif;
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff!important;color:#172036!important}
+  body>.privacyOverlay,.appShell>header,.appShell>main{display:none!important}
+  .appShell{max-width:none!important;padding:0!important;margin:0!important}
+  .printSheet{display:block!important;font-family:Arial,sans-serif;color:#172036}
+  .printHead{display:flex;justify-content:space-between;gap:18px;padding-bottom:10mm;border-bottom:2px solid #172036}
+  .printBrand{display:block;margin-bottom:4px;color:#526b2d;font-size:9pt;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+  .printHead h1{margin:0;color:#a94332;font:900 25pt/1 Arial,sans-serif;text-transform:none}
+  .printHead p{margin:5px 0 0;color:#62645f;font-size:9.5pt}
+  .printHydration{min-width:28mm;text-align:center;padding:4mm;border:1px solid #d9d1c3;border-radius:5mm}
+  .printHydration strong{display:block;color:#a94332;font-size:20pt;line-height:1}
+  .printHydration span{display:block;margin-top:2mm;font-size:7.5pt;font-weight:800;text-transform:uppercase}
+  .printFacts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:6mm 0;border:1px solid #ddd6c9;border-radius:3mm;overflow:hidden}
+  .printFacts div{padding:3mm 4mm;border-right:1px solid #ddd6c9}.printFacts div:last-child{border-right:0}
+  .printFacts span{display:block;color:#77736c;font-size:7pt;text-transform:uppercase;font-weight:800}.printFacts strong{display:block;margin-top:1mm;font-size:10pt}
+  .printSection{margin-top:7mm;break-inside:avoid}
+  .printSection h2{margin:0 0 3mm;padding-bottom:2mm;border-bottom:1px solid #d8d1c4;color:#172036;font:900 14pt/1 Arial,sans-serif}
+  .printDoseGrid{display:grid;grid-template-columns:1fr 1fr;column-gap:10mm}
+  .printDose{display:flex;justify-content:space-between;padding:2.2mm 0;border-bottom:1px solid #eee9df;font-size:9pt}
+  .printDose span{color:#62645f}.printDose strong{color:#172036}
+  .printMethod{display:grid;grid-template-columns:1fr 1fr;column-gap:7mm}.printMethod h2{grid-column:1/-1}
+  .printMethodStep{display:grid;grid-template-columns:7mm 1fr;gap:2mm;align-items:start;padding:2mm 0}
+  .printMethodStep>b,.printTimelineNumber{width:6mm;height:6mm;border-radius:50%;display:grid;place-items:center;background:#526b2d;color:#fff;font-size:7.5pt}
+  .printMethodStep p{margin:0;font-size:8.5pt;line-height:1.35}
+  .printTimeline{break-inside:auto}
+  .printTimelineRow{display:grid;grid-template-columns:7mm 23mm 1fr;gap:3mm;align-items:start;padding:2.6mm 0;border-bottom:1px solid #e9e4da;break-inside:avoid}
+  .printTimelineRow time{color:#a94332;font-size:8pt;font-weight:900;padding-top:1mm}
+  .printTimelineRow strong{display:block;font-size:9pt}.printTimelineRow p{margin:1mm 0 0;color:#62645f;font-size:7.8pt;line-height:1.3}
+  .printFooter{margin-top:8mm;padding-top:3mm;border-top:1px solid #d8d1c4;color:#77736c;font-size:7.5pt;text-align:center}
+}
+
+
+/* Home adattiva */
+.homeActiveState,.homeDoughWorkspace{width:100%}
+.homeActiveState .activeDoughTitle{margin-bottom:12px}
+.homeDoughWorkspace{display:flex;flex-direction:column;gap:12px}
+.homeTools{padding:0!important;overflow:hidden;background:#fffdf8!important;border:1px solid rgba(91,72,43,.18)!important;border-radius:20px!important;box-shadow:0 7px 24px rgba(49,34,13,.05)!important}
+.homeToolsSummary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 18px;color:#172036;font-family:Arial,sans-serif}
+.homeToolsSummary::-webkit-details-marker{display:none}
+.homeToolsSummary small{display:block;margin-bottom:5px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.homeToolsSummary strong{display:block;font:900 19px/1.1 Arial,sans-serif}
+.homeToolsSummary .summaryChevron{color:#a94332;font:900 22px/1 Arial,sans-serif;transition:transform .18s ease}
+.homeTools[open] .summaryChevron{transform:rotate(180deg)}
+.homeToolsBody{padding:4px 16px 16px;border-top:1px solid #e6e0d5;display:grid;gap:8px}
+.homeToolAction{width:100%;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;text-align:left;padding:13px 12px;border:1px solid #e1dbcf;border-radius:13px;background:#faf8f2;color:#172036;box-shadow:none}
+.homeToolAction span{display:block}.homeToolAction strong{display:block;font:900 14px/1.15 Arial,sans-serif}.homeToolAction small{display:block;margin-top:4px;color:#71736f;font:600 11px/1.35 Arial,sans-serif}.homeToolAction>b{color:#a94332;font-size:18px}
+.savedPlanActions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.savedPlanDelete{min-height:44px;padding:0 12px;border:1px solid #d9b9ae;border-radius:12px;background:transparent;color:#7a342c;box-shadow:none;font:800 11px/1 Arial,sans-serif}
+.homeActiveState .savedPlan{margin:0}
+.homeActiveState .savedPlan>.flowEyebrow{padding-top:17px}
+.homeEmptyActions .primaryHomeAction{border-color:rgba(169,67,50,.28)!important}
+@media(max-width:640px){
+ .homeActiveState .sectionTitle h2{font-size:27px!important}
+ .homeToolsSummary{padding:16px}
+ .homeToolsBody{padding:4px 14px 14px}
+ .savedPlanActions{grid-template-columns:1fr auto}
+}
+@media(prefers-reduced-motion:reduce){.homeToolsSummary .summaryChevron{transition:none}}
+
+/* Grammatica visiva Home */
+.homeCreateCard{padding:22px 26px 24px;border-radius:20px;background:#fffdf8;border:1px solid rgba(91,72,43,.18);box-shadow:0 7px 24px rgba(49,34,13,.05)}
+.homeCreateCard .flowEyebrow{margin:0 0 9px;color:#526b2d;font:900 10px/1.15 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.homeCreateCard h3{margin:0;color:#172036;font:900 24px/1.08 Arial,sans-serif}
+.homeCreateCard>p:not(.flowEyebrow){margin:9px 0 18px;color:#71736f;font:600 14px/1.45 Arial,sans-serif}
+.homeCreateCard .savedPlanCta{width:100%;margin:0}
+@media(max-width:640px){.homeCreateCard{padding:20px 26px 22px}.homeCreateCard h3{font-size:22px}}
+
+/* PREVIEW CALCOLO — componente risultato */
+.doughResult{overflow:hidden;width:100%;background:#fffefa;border:1px solid #ddd7ca;border-radius:22px;box-shadow:0 10px 30px rgba(49,34,13,.07);font-family:Arial,sans-serif}
+.doughResultHead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px}
+.resultEyebrow{display:block;margin-bottom:6px;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.doughResultHead h3{margin:0;color:#172036;font:900 28px/1.04 Arial,sans-serif;letter-spacing:-.025em}
+.resultMeta{margin:7px 0 0;color:#71736f;font-size:13px;line-height:1.35}
+.hydrationBadge{flex:0 0 auto;min-width:72px;padding-left:14px;border-left:1px solid #ddd7ca;text-align:center}
+.hydrationBadge strong{display:block;color:#a94332;font-size:25px;line-height:1;font-weight:900}
+.hydrationBadge span{display:block;margin-top:4px;color:#71736f;font-size:10px}
+.nextAction{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;margin:0 12px;padding:14px 15px;border-radius:16px;background:#eef0e8}
+.nextAction .nextLabel{grid-column:1/-1;color:#526b2d;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.nextAction strong{color:#172036;font-size:17px;line-height:1.15}.nextAction time{align-self:center;color:#a94332;font-size:12px;font-weight:900;white-space:nowrap}
+.premiumSection{padding:18px 20px;border-bottom:1px solid rgba(111,82,43,.13)}
+.premiumSection h4{margin:0;color:#172036;font-size:16px}
+.sectionBar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}.sectionBar>span{color:#71736f;font-size:11px}
+.doseGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.doseItem{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(111,82,43,.1)}
+.doseItem span{color:#4f514e;font-size:13px}.doseItem strong{color:#172036;font-size:14px}
+.compactSteps{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px}
+.compactSteps li{display:grid;grid-template-columns:25px minmax(0,1fr);gap:9px;align-items:start}
+.compactSteps li>span{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#f1e5cc;color:#a94332;font-size:11px;font-weight:900}
+.compactSteps p{margin:2px 0 0;color:#363b42;font-size:13px;line-height:1.4}
+.doughResult .savedDoseGrid{display:grid;grid-template-columns:1fr;gap:0}.doughResult .savedDose{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #eee9df}
+.doughResult .savedDose span{color:#6f716b;font-size:12px}.doughResult .savedDose strong{color:#172036;font-size:13px;text-align:right}
+.manageDough{width:calc(100% - 40px);min-height:50px;margin:18px 20px 20px;padding:0 16px;border-radius:13px;background:#172036;color:#fff;box-shadow:none;font:900 14px/1 Arial,sans-serif}
+@media(max-width:640px){.doughResultHead{padding:17px 15px 14px}.doughResultHead h3{font-size:26px}.hydrationBadge{min-width:64px;padding-left:10px}.hydrationBadge strong{font-size:22px}.nextAction{margin:0 9px;padding:12px 13px;grid-template-columns:1fr}.nextAction time{margin-top:2px}.premiumSection{padding:16px 15px}.doseGrid{grid-template-columns:1fr}.manageDough{width:calc(100% - 30px);margin:15px}}
+
+/* CALCOLATORE — unica sorgente di stile, mobile-first */
+.premiumCalc{
+  --pc-ink:#172036;--pc-muted:#73736d;--pc-accent:#a94332;
+  --pc-green:#526b2d;--pc-line:#d8d3c8;
+  width:100%;min-width:0;font-family:Arial,sans-serif;
+}
+.premiumCalc *{box-sizing:border-box;min-width:0}
+.premiumCalc .viewHeader{
+  display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;
+  margin:12px 0 16px;
+}
+.premiumCalc .viewHeader .ghost{
+  width:44px;height:44px;padding:0;border:1px solid var(--pc-line);border-radius:50%;
+  background:rgba(255,253,244,.72);box-shadow:none;font-size:0;
+}
+.premiumCalc .viewHeader .ghost::before{content:"←";font:700 21px/1 Arial,sans-serif;color:var(--pc-ink)}
+.premiumCalc .viewHeader .eyebrow{display:none}
+.premiumCalc .viewHeader h2{margin:0;color:var(--pc-ink);font:900 24px/1.08 Arial,sans-serif;letter-spacing:-.035em}
+
+.premiumCalc .twoColumns{display:block;width:100%}
+.premiumCalc .recipeBuilder{
+  width:100%;margin:0;padding:14px;
+  border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;
+}
+.premiumCalc .calculatorSection{
+  width:100%;margin:0 0 18px;border:1px solid var(--pc-line);
+  border-radius:18px;background:#fff;overflow:hidden;
+}
+.premiumCalc .calculatorSection:last-of-type{margin-bottom:0}
+.premiumCalc .calculatorSectionHeader{padding:14px 18px 12px;border-bottom:1px solid var(--pc-line);background:#f6f3eb}
+.premiumCalc .calculatorSectionHeader>span{display:block;color:#6f706d;font:900 11px/1.1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.premiumCalc .calculatorSectionHeader>small{display:block;margin-top:6px;color:#74746f;font:500 12px/1.35 Arial,sans-serif}
+
+.premiumCalc label{display:block;margin:0 0 6px;color:var(--pc-green);font:800 13px/1.2 Arial,sans-serif}
+.premiumCalc input,.premiumCalc select{
+  display:block;width:100%;max-width:100%;min-height:50px;padding:10px 12px;
+  border:1.5px solid #bbb8ae;border-radius:13px;background:#fff;color:var(--pc-ink);
+  box-shadow:0 1px 2px rgba(45,34,18,.045);font:16px/1.2 Arial,sans-serif;
+}
+.premiumCalc input:focus,.premiumCalc select:focus{border-color:var(--pc-accent);box-shadow:0 0 0 3px rgba(169,67,50,.12);outline:0}
+
+.premiumCalc .panLine{
+  display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) minmax(0,.72fr);
+  gap:7px;align-items:end;width:100%;margin:0;padding:16px 18px 18px;
+}
+.premiumCalc .compactField input{text-align:center;font-weight:800}
+.premiumCalc .fieldJoin{padding-bottom:15px;text-align:center;color:var(--pc-muted);font-weight:800}
+.premiumCalc .fieldUnit{display:none}
+.premiumCalc .pans label::after{content:" · n."}
+
+.premiumCalc .choiceGrid.compactChoices{
+  display:grid;width:100%;margin:0;padding:16px 18px 18px;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+}
+.premiumCalc .choice{display:block;width:100%;margin:0;cursor:pointer}
+.premiumCalc .choice input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.premiumCalc .choice span{
+  display:flex;width:100%;min-height:62px;padding:10px 11px;flex-direction:column;
+  justify-content:center;gap:6px;border:1.5px solid #d4d0c6;border-radius:14px;
+  background:#fff;color:var(--pc-ink);font:900 15px/1.15 Arial,sans-serif;
+}
+.premiumCalc .choice small{display:block;color:var(--pc-muted);font:700 12px/1.2 Arial,sans-serif}
+.premiumCalc .choice input:checked+span{border-color:var(--pc-accent);background:#fbf2ed;box-shadow:inset 0 0 0 1px var(--pc-accent)}
+.premiumCalc .compactChoices .choice:nth-child(5){grid-column:1}
+
+.premiumCalc .scheduleEditor>.row{
+  display:grid;grid-template-columns:1fr;gap:12px;width:100%;margin:0;padding:16px 18px 18px;
+}
+.premiumCalc .scheduleEditor>.row>div{width:100%}
+
+.premiumCalc .flourEditor>.flourItem{width:100%;margin:0;padding:16px 18px;border:0;border-radius:0;background:#fff}
+.premiumCalc .flourEditor>.flourItem+.flourItem{border-top:1px solid #e2ddd3}
+.premiumCalc .flourItemHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;color:var(--pc-ink)}
+.premiumCalc .flourItemHead strong{font-size:15px}.premiumCalc .flourItemHead>span{color:var(--pc-accent);font-size:14px;font-weight:900}
+.premiumCalc .flourFields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.premiumCalc .flourFields>div:last-child{grid-column:1/-1}
+.premiumCalc .flourFields label{color:var(--pc-muted);font-size:11px}
+.premiumCalc .flourFields input,.premiumCalc .flourFields select{min-height:43px;padding:7px 9px;font-size:14px}
+.premiumCalc .addFlourBtn{margin:0 18px 16px;padding:9px 11px;border:1px dashed #bdb9af;border-radius:10px;background:#fff;color:var(--pc-ink);box-shadow:none;font:800 13px/1 Arial,sans-serif}
+
+.premiumCalc .calculatorInset{display:grid;gap:12px;width:100%;margin:0;padding:16px 18px 18px}
+.premiumCalc .calculatorInset .fieldHint{display:block;margin:8px 2px 0;color:var(--pc-muted);font:600 11px/1.35 Arial,sans-serif}
+.premiumCalc .resetAdvanced{margin:12px 14px 0}
+.premiumCalc .primaryAction{display:block;margin:18px 14px 0}
+.premiumCalc #calculateBtn{width:100%;min-height:54px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-radius:13px;background:var(--pc-ink);box-shadow:none;font:900 16px/1 Arial,sans-serif}
+.premiumCalc #result{width:100%;max-width:100%}
+.premiumCalc #result:not(:empty){margin-top:18px}
+
+@media(max-width:980px){
+  .appShell{width:100%;max-width:100%;padding:14px 16px 28px}
+}
+@media(min-width:981px){
+  .premiumCalc .viewHeader h2{font-size:32px}
+  .premiumCalc .twoColumns:not(:has(#result:empty)){display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:18px;align-items:start}
+  .premiumCalc .panLine{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 44px minmax(0,.78fr)}
+  .premiumCalc .fieldUnit{display:block;padding-bottom:15px;text-align:center;color:var(--pc-muted);font-weight:800}
+  .premiumCalc .pans label::after{content:""}
+  .premiumCalc .choiceGrid.compactChoices{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .premiumCalc .compactChoices .choice:nth-child(1),
+  .premiumCalc .compactChoices .choice:nth-child(2),
+  .premiumCalc .compactChoices .choice:nth-child(3){grid-column:span 2}
+  .premiumCalc .compactChoices .choice:nth-child(4){grid-column:2/span 2}
+  .premiumCalc .compactChoices .choice:nth-child(5){grid-column:4/span 2}
+  .premiumCalc .scheduleEditor>.row{grid-template-columns:1fr 1fr}
+  .premiumCalc .flourFields{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.7fr .9fr 1fr 1.25fr}
+  .premiumCalc .flourFields>div:last-child{grid-column:auto}
+}
+
+/* Azioni contestuali timeline */
+.timelineAction{width:max-content;max-width:100%;margin-top:10px;padding:8px 10px;border:1px solid #d8d1c4;border-radius:10px;background:#f8f4eb;color:#a94332;box-shadow:none;font:900 11px/1 Arial,sans-serif}
+.timelineAction:active{background:#f1e8d8}
+
+/* Strumento Controlla o correggi separato dalla timeline */
+#impasto .doughWorkspace{display:block!important}
+#impasto #savedTimeline{width:100%!important}
+#impasto .checkTool{width:100%;margin-top:14px}
+#impasto .checkTool.hidden{display:none!important}
+#impasto .checkToolHeader{display:flex;align-items:flex-start;gap:12px;margin:0 6px 12px}
+#impasto .checkToolHeader .ghost{flex:0 0 auto}
+#impasto .checkToolHeader .eyebrow{margin:2px 0 3px}
+#impasto .checkToolHeader h3{margin:0;color:#172036;font:900 22px/1.08 Arial,sans-serif}
+#impasto .checkTool .doughCheck{width:100%;margin:0}
+#impasto .checkTool #adviceOutput{margin-top:12px}
+
+/* Catalogo farine e parametri tecnici */
+.premiumCalc .flourCatalogField{grid-column:1/-1}
+.premiumCalc .optionalLabel{font-weight:600;color:#92918b;text-transform:none;letter-spacing:0}
+@media(min-width:981px){
+  .premiumCalc .flourFields{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .premiumCalc .flourItem:not([data-flour="1"]) .flourFields{grid-template-columns:.65fr repeat(4,minmax(0,1fr))}
+  .premiumCalc .flourCatalogField{grid-column:1/-1}
+}
+
+
+/* GUIDE TECNICHE — pieghe, stesura e cottura */
+.techniqueView{
+  --tech-ink:#172036;
+  --tech-muted:#6f716b;
+  --tech-line:#ddd7ca;
+  --tech-paper:#fffefa;
+  --tech-cream:#f6f1e6;
+  --tech-accent:#a94332;
+  --tech-green:#526b2d;
+}
+.techniqueView .viewHeader{margin-bottom:18px}
+.techniqueLead,.cookVisualGuide{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(320px,1.1fr);
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+.techniqueLeadCopy{
+  padding:24px;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:var(--tech-paper);
+  box-shadow:0 8px 28px rgba(49,34,13,.05);
+}
+.techniqueLeadCopy .flowEyebrow,.techniqueSectionHead .flowEyebrow{
+  display:block;
+  margin:0 0 8px;
+  color:var(--tech-green);
+  font:900 10px/1.1 Arial,sans-serif;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.techniqueLeadCopy h3,.techniqueSectionHead h3{
+  margin:0;
+  color:var(--tech-ink);
+  font:900 26px/1.07 Arial,sans-serif;
+  letter-spacing:-.03em;
+}
+.techniqueLeadCopy>p{
+  margin:10px 0 0;
+  color:var(--tech-muted);
+  font:600 14px/1.55 Arial,sans-serif;
+}
+.techniqueRule{
+  display:grid;
+  gap:4px;
+  margin-top:18px;
+  padding:13px 14px;
+  border-left:4px solid var(--tech-accent);
+  border-radius:10px;
+  background:#f8efe9;
+}
+.techniqueRule strong{color:var(--tech-ink);font:900 12px/1.2 Arial,sans-serif}
+.techniqueRule span{color:#655f58;font:700 12px/1.4 Arial,sans-serif}
+
+.techniqueIllustration{
+  min-height:280px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:linear-gradient(145deg,#f3eadb,#fbf8f1);
+  box-shadow:0 8px 28px rgba(49,34,13,.05);
+}
+.techniqueIllustration svg{display:block;width:100%;height:auto;max-height:340px}
+.techniqueIllustration.wide svg{max-height:320px}
+.techBg{fill:#f3eadc}
+.doughShape{fill:#efc98f;stroke:#bf8655;stroke-width:4}
+.doughCenter{fill:#f8deb4;stroke:#d3a36d;stroke-width:3}
+.techArrow{fill:none;stroke:var(--tech-accent);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.targetDot,.fingerDot{fill:var(--tech-accent)}
+.handMark{fill:none;stroke:#c8845d;stroke-width:12;stroke-linecap:round}
+.forearmLine{fill:none;stroke:#c8845d;stroke-width:18;stroke-linecap:round}
+.trayShape{fill:#38454a;stroke:#1e282d;stroke-width:4}
+.svgLabel{fill:#4e514d;font:800 15px/1 Arial,sans-serif}
+.ovenBody{fill:#ede7dc;stroke:#6e746e;stroke-width:6}
+.ovenRack{fill:none;stroke:#9b958a;stroke-width:4}
+.pizzaBase{fill:#e7ad68;stroke:#a7643c;stroke-width:3}
+.pizzaFinish{fill:#f2c585;stroke:#a7643c;stroke-width:3}
+
+.techniqueSteps{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:0 0 18px;
+}
+.techniqueStep{
+  min-height:172px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:11px;
+  align-content:start;
+  padding:17px;
+  border:1px solid var(--tech-line);
+  border-radius:17px;
+  background:#fff;
+}
+.techniqueStepNo{
+  width:32px;height:32px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  background:var(--tech-accent);
+  color:#fff;
+  font:900 13px/1 Arial,sans-serif;
+}
+.techniqueStep h3{margin:3px 0 7px;color:var(--tech-ink);font:900 15px/1.15 Arial,sans-serif}
+.techniqueStep p{margin:0;color:var(--tech-muted);font:600 12px/1.45 Arial,sans-serif}
+
+.techniqueDecision{
+  margin:0 0 18px;
+  padding:22px;
+  border:1px solid var(--tech-line);
+  border-radius:22px;
+  background:#f7f4ed;
+}
+.techniqueSectionHead{margin-bottom:14px}
+.signalGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.signalCard{
+  padding:17px;
+  border:1px solid #dcd5c8;
+  border-top:4px solid #b7a98f;
+  border-radius:15px;
+  background:#fffefa;
+}
+.signalCard.good{border-top-color:#657d42}
+.signalCard.warn{border-top-color:#c78535}
+.signalCard.bad{border-top-color:#a94332}
+.signalState{
+  display:block;margin-bottom:7px;
+  color:#77756e;
+  font:900 10px/1 Arial,sans-serif;
+  letter-spacing:.09em;text-transform:uppercase;
+}
+.signalCard h4{margin:0;color:var(--tech-ink);font:900 15px/1.15 Arial,sans-serif}
+.signalCard p{margin:7px 0 0;color:var(--tech-muted);font:600 12px/1.48 Arial,sans-serif}
+.termNote{
+  margin-top:11px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fff;
+  color:#5f605c;
+  font:600 12px/1.45 Arial,sans-serif;
+}
+.termNote strong{color:var(--tech-ink)}
+
+.troubleGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.techniqueTrouble{
+  border:1px solid #dad4c8;
+  border-radius:14px;
+  background:#fffefa;
+  overflow:hidden;
+}
+.techniqueTrouble summary{
+  list-style:none;
+  cursor:pointer;
+  padding:14px 16px;
+  color:var(--tech-ink);
+  font:900 13px/1.25 Arial,sans-serif;
+}
+.techniqueTrouble summary::-webkit-details-marker{display:none}
+.techniqueTrouble summary::after{content:'+';float:right;color:var(--tech-accent);font-size:18px}
+.techniqueTrouble[open] summary::after{content:'−'}
+.techniqueTrouble p{margin:0;padding:0 16px 15px;color:var(--tech-muted);font:600 12px/1.5 Arial,sans-serif}
+
+.techniqueFooterNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 8px;
+}
+.techniqueFooterNav button{min-height:46px}
+.techniqueFooterNav .secondary{
+  border:0;border-radius:12px;padding:0 16px;
+  background:var(--tech-ink);color:#fff;
+  box-shadow:none;font:900 13px/1 Arial,sans-serif;
+}
+.techniqueFooterNav .ghost{
+  border:1px solid var(--tech-line);border-radius:12px;padding:0 14px;
+  background:#fff;color:var(--tech-ink);box-shadow:none;font:800 12px/1 Arial,sans-serif;
+}
+
+.cookVisualGuide{margin-bottom:12px}
+.ovenIllustration{min-height:260px}
+.cookCheckpoints{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:18px;
+}
+.cookCheckpoints article{
+  padding:16px;
+  border:1px solid var(--tech-line);
+  border-radius:16px;
+  background:#fff;
+}
+.cookCheckpoints span{
+  display:block;margin-bottom:6px;color:var(--tech-green);
+  font:900 10px/1 Arial,sans-serif;letter-spacing:.09em;text-transform:uppercase;
+}
+.cookCheckpoints strong{display:block;color:var(--tech-ink);font:900 14px/1.2 Arial,sans-serif}
+.cookCheckpoints p{margin:7px 0 0;color:var(--tech-muted);font:600 12px/1.45 Arial,sans-serif}
+
+@media(max-width:900px){
+  .techniqueLead,.cookVisualGuide{grid-template-columns:1fr}
+  .techniqueIllustration{min-height:220px}
+  .techniqueSteps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .signalGrid,.cookCheckpoints{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .techniqueLead,.cookVisualGuide{gap:10px;margin-bottom:12px}
+  .techniqueLeadCopy{padding:18px;border-radius:17px}
+  .techniqueLeadCopy h3,.techniqueSectionHead h3{font-size:22px}
+  .techniqueIllustration{min-height:190px;border-radius:17px}
+  .techniqueIllustration svg{max-height:250px}
+  .techniqueSteps{grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+  .techniqueStep{min-height:0;padding:14px;border-radius:14px}
+  .techniqueDecision{padding:17px;border-radius:17px;margin-bottom:12px}
+  .troubleGrid{grid-template-columns:1fr}
+  .techniqueFooterNav{display:grid;grid-template-columns:1fr}
+  .techniqueFooterNav button{width:100%}
+  .cookCheckpoints{gap:8px;margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .techniqueTrouble summary{scroll-behavior:auto}
+}
+
+.savedPrimaryAction{align-self:center;flex:0 0 auto}
+@media(max-width:640px){
+  .savedNext{flex-wrap:wrap}
+  .savedNext>div{flex:1 1 calc(100% - 110px)}
+  .savedPrimaryAction{flex:1 1 100%;width:100%;text-align:center}
+}
+
+</style>
+<style>
+:root {
+  --hero-pizza: url("data:image/webp;base64,UklGRkQKAABXRUJQVlA4WAoAAAAQAAAAbAAASgAAQUxQSGkFAAABsIZtmyFJ1hvoWdu2bdvWsW3btm3ba9v27th2Y6/t7syI73t/VFVmRGae/xExAWjxrn8du+O9xx2/JYANb7rYTHEGnWzdpi9/9advWMW+i68+deiHfD262gH3rnxvIIUS2Tub8Zltjz5/PdNF2PI9KmRU9tVIqnJtyec2NaZrnPn6WqpGZVUhhZRiWzvFmU7xOI6MTKka9XcA4A0A4zrAGIftnomRqZU3fOa09QBYB1hr22O9994A2HoehemV5Jwv7uSBDY4HYFpiHPquv+mBDzEwZwxCfheHn3E733jYkfCtcMC+7/7Md3790JIVkcLcMTzzXyWVumh7uBZ4bPXbggOFdVVr9RUhlctOxJCB8d6ZphhvccxcMoQQoqiydigSSFT2Rq44EPDotbYRFsCHCgZm1AQVhWN/2QLrvu+756wLmDymx2O9t9xNCtuq5MzvPsWJmbMv2RUuhwVgHM6YSkZliyPJGEqyOAc+AywAvOwFlsI2R0oQkhKLuRfC20QOr5r22DP3PUIK260cHMhPIbE3V7KvKJutlDqVtZAv7ZTEYt3lDCIxsro2YDyujBkYeEMKaz70vCibX5RUplfOGh0uV1SxzvQ4bEUqGx20R5WZo3BkgHMGgLFwwJ+kZMOkJ7FUofCBAQB2Pt8DFlteTWGLtU6sFHllHzPl1L889CL/ftfXcNgcRrZYyBe1UvXIq3ucPZ0kI8l71jKwlSokJXLOU0tE013ZY4GnQ6mMMZLCulJFclDZ+9TPllCTCd8A54aw01dHVNkblbW1itYTrUBSn/vb7cKceiIA7LuIba2mE9e97UpSJ4tkwre7V1386cdGSm1JfyVDQZYLrqIqV66gpiovwH0cLgLbLRwoyqxSvvclw2O3r2RGFW1AXdVkkZ8lYxlylPfGxmUUnvymqOyvaViyMwPnb/RF5UDRNOm1aFrg6In44PCj1D65tRa1YYHzj4Q9Rkb5f1Aj/7EDPE5hwjDaOZH8IuCAPceptVTracsCJ94EbwGcqsrsSgq1PaJ88lB49O4xQs3G8QWFipLUNkTKzzeAR9/thrOpPHnTiJSxp42BTx4DWPTfeiol21phxjJTLPnIFvAGg7/GkGlwSKWaQ8jbNodHxdetEc2mfTRRVo28/uWARdVvMLLNynnPURNp5EcBGFTeaUKkTWSxhok18KNwHnW/RJXmaZXkWvBT8Kjt8NmCpDasuqaJyj9hyNSDw0nLJ0lp1qhIMShtZPlpWIOUU3D54xynNGlsXJlVhXcdDoPEDvv/+tS/sdCmKKdfQ80RhW8DHJIbALs8RgaRBqgqh4cpStVEQl4J45DRGgv3piVsrJCByUs+c6JxBpkNsOXXpz4tjE2gri2iTh2m1hPltK1h0EAHOFxHxmzK4bkyWY7PWJogUn+9JTwaaRzM+ic8QomieXTJNFICEwrnnwoYNHnd35JkzEFOjCvHXlCtIyWv3wHeoMHGAaf847FVVEmnMnUmObqWdYT8HuDQcGMBbPNTMiajFBPK2iK875ovmCE03zkDnPEUS0nFiYJ1NZAfMFgXLTUem91HUhJNxjpCzn0VjEV7PYbe+RAZ09SOHPvIRvBotQFw8lTGbBJKzjwIcGi5cQYb/JEhZFGSfGpHDBl0oAO+SYqki+Szv37DenDoRuPw6p+TkZomcu5RDoBBZ1rgjbNYUlMIHzoExnuDDnUeG/7q3mWTUi9y0Wbw6FwPe/xHx0KtSD0VQ+hgA+BHnAhSKXDkMjh0svF+2z+PLouigwIf2BcOXW2AV773P4yiPSL827rw6G5jAPszkqKM5FcBh0533uDC25aR5GMnwxp0vgW2+dKMse9uAId2AgBWUDggtAQAAFAZAJ0BKm0ASwA/KX6tVK4opCM3u6uJwCUJbCdbZhKPN3FQeo3Ox4JQS8avcQc/B5/7bvrwuuV8qIV4GAtuRSuQuq+RhPjzJcfgE2rC7nXoKRM6PRl+LdBCs2wiOTLWQhYQPgHVhlxTa7coUg+sSEgG/HDwXzANmsteODVjZ9DvcK/0JpEmyXmJ7xK+3kGuV1eHatf+51FrdfBPJhZmVzfnw19MbRV7j6nlaNr9DN8dXK7/WED6awwpggH5gXZRZamgiLve3TReoJkUGz/0t1nFGAAA/vd5jR+Z4UPyCF2aTx3eu6Q5xLCP9ax+ssyCrIqnXhqdTpItcwyFCLtA3Z6AX5akdMoBtfup+oFnPrGRLyNQmUB7v7SPckn5/LS3ogs9Cl9Af8zCCW/JbpObxG2/etukyTKWJCbOfH+2YBB5Mia4lbbLNQR3sU6Cf+hHYCPGTITjRDOSMg5kdzdLCoooWO9eSnjHFTU6b4/7An1m8n8bltwQ/oKQrifYf+A+zp71Cf8l1328LtlwdTj34BIKFLshQtk+xHRWx2s8pal3+1uf5ToM6d3wTXl47/ouhv+qJZg9Pu7qGXw7GbVzG7h6mZWTioiR9MT1OLYNyQSr4djB0Bc05sGDvp3Y2LjQuxex+R7ZK1UevpLOw5MuJqmVBdq3PuUhubTxMMBPAxztZMqVknioW7se8MFUZV2KglmjqrsfOlGIckaPr1w9v88SXKfXLFfv4rwTOYs+8eANfF1oazxu+K659/8aZJsMxdG6cn4i3yTqH+ty1BvtB5ePuINHmTxDkhrl2MPoRcnESK1w+ZWGg7UiUoM1qLcjsXPOqSWTt4b0IDrAq8yXyMPZMw3JxLtf/N/R7IXCNWcPEKM5mOXDuZZWH7eeYO+acaZBTGxZog++Dps79IFAXGZ0G2Z11JrjWatYjnSdVFM97k1VVpWLxU1jpE0cyS2FuNI13+ICIeIbQg2V66ctwSiVn4azzglVCaVMZeWnnz6+SbxnLkTqIuunkbGpndwkTrzD6heEF6BtHYwq/SKuSvxYe1sQtWyIgJHPXsLJgRSOEXz6qIgbIZb49r3GvDjQUTbS3Gnfs+mKWgEPomk3bGU1hnK7WJv79YXVmaZSzaTTbOt8bzfXNoaxjRhvMGreWm6eErn+qcfru/9vHUfNcbiKo0elWkw7SkkbHr+mwDmDYYpZde1YiITH8wr3X30/TuDj6KroZfrcf+lEr2PuWeF/CNLTW8ofz1Ivg3P9iAQntaZNwMa0n7PteDTtfPOTg8Bk22LcfyJW+Y8nF3oTwog+Oqz7P4EqVa//NPitogn9ywtH92ZBhT7VFv0pKy1dBDsG9QiswnqP9jbm91QPCR+F+WFj405KcB+HbU4hoyOi+ZCHaIjd9GE5EHx+3DESCheDeBsrxJIyy6LpuLzA3ZAdmMkkKIeUstQl9IUBsYxvgghY91nWAj17uf4ToFmSRjaFYthFa2UI2hrnogABJ1Tqnj9+q2YlWrLVU/2Scq2zPs2IIGeYbwibh1Wwrvzn7wtyDLz7Dnjs1gkaywH1NwnVD8iG28UW8xtoY98UxcTupE3oh4EHc/qgdNzDSn9UgnsAAAA=");
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.heroVisual {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 clamp(92px, 18vw, 150px);
+  width: clamp(92px, 18vw, 150px);
+  aspect-ratio: 1.16 / 1;
+  border-radius: 22px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.heroVisual::before {
+  content: "";
+  position: absolute;
+  inset: -12% -18% -16% -18%;
+  background-image: var(--hero-pizza);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 11px 14px rgba(55,28,5,.22));
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 18px 16px;
+    gap: 10px;
+  }
+
+  .heroVisual {
+    flex-basis: 98px;
+    width: 98px;
+  }
+
+  .heroVisual::before {
+    inset: -12% -20% -16% -20%;
+  }
+}
+
+@media (max-width: 380px) {
+  .heroVisual {
+    flex-basis: 82px;
+    width: 82px;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div id="privacyOverlay" class="privacyOverlay" role="dialog" aria-modal="true" aria-labelledby="privacyTitle" tabindex="-1">
+    <div class="privacyModal">
+      <h2 id="privacyTitle">Privacy essenziale</h2>
+      <p><strong>PizzaMaker</strong> non usa account, pubblicità, analytics o cookie di profilazione.</p>
+      <p>Salva solo preferenze tecniche nel tuo browser, come teglia, farina, sale, orari e ultima timeline. I dati restano sul tuo dispositivo.</p>
+      <div class="privacyActions">
+        <button type="button" id="acceptPrivacy">Ho capito</button>
+        <a href="#" onclick="return false" aria-disabled="true">Privacy completa</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="appShell">
+    <header class="hero" id="appHero">
+      <div class="heroCopy">
+        <p class="eyebrow">PizzaMaker</p>
+        <h1>Teglia Coach</h1>
+      </div>
+      <div class="heroVisual" aria-hidden="true"></div>
+    </header>
+
+    <main>
+      <section id="home" class="view active premiumHome" aria-labelledby="homeTitle">
+        <div id="homeEmptyState">
+          <div class="sectionTitle">
+            <p class="eyebrow">Il tuo impasto</p>
+            <h2 id="homeTitle">Prepara il tuo prossimo impasto</h2>
+          </div>
+          <div class="homeDoughWorkspace">
+            <section class="card homeCreateCard" aria-labelledby="homeCreateTitle">
+              <p class="flowEyebrow">Nessun impasto pianificato</p>
+              <h3 id="homeCreateTitle">Calcola il tuo prossimo impasto</h3>
+              <p>Dosi, acqua, sale, lievito e una timeline costruita sul tuo orario.</p>
+              <button type="button" class="savedPlanCta" data-open="calc">Calcola un impasto →</button>
+            </section>
+            <details class="card formCard flowForm homeTools">
+              <summary class="homeToolsSummary">
+                <span><small>Consigli</small><strong>Controlla, correggi o cuoci</strong></span>
+                <span class="summaryChevron" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="homeToolsBody">
+                <button type="button" class="homeToolAction" data-open-check>
+                  <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="pieghe">
+                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="stesura">
+                  <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="cottura">
+                  <span><strong>Cottura</strong><small>Condimenti, posizione nel forno, segnali visivi e timer.</small></span><b>→</b>
+                </button>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div id="homeActiveState" class="homeActiveState hidden" aria-live="polite">
+          <div class="sectionTitle activeDoughTitle">
+            <p class="eyebrow">Il tuo impasto</p>
+            <h2>Segui il prossimo passaggio</h2>
+          </div>
+          <div class="homeDoughWorkspace">
+            <div class="resultStack" id="homeSavedPlan"></div>
+            <details class="card formCard flowForm homeTools">
+              <summary class="homeToolsSummary">
+                <span><small>Consigli</small><strong>Controlla, correggi o cuoci</strong></span>
+                <span class="summaryChevron" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="homeToolsBody">
+                <button type="button" class="homeToolAction" data-open-check>
+                  <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="pieghe">
+                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="stesura">
+                  <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="cottura">
+                  <span><strong>Cottura</strong><small>Condimenti, posizione nel forno, segnali visivi e timer.</small></span><b>→</b>
+                </button>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="siteLinks" aria-label="Utility"><a href="#" onclick="return false" aria-disabled="true">Privacy</a></div>
+      </section>
+
+      <section id="calc" class="view premiumCalc" aria-labelledby="calcTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Nuovo impasto</p>
+            <h2 id="calcTitle">Calcola dosi e timeline</h2>
+          </div>
+        </div>
+
+        <div class="twoColumns">
+          <form class="card formCard recipeBuilder" id="recipeForm" novalidate>
+            <div class="calculatorSection panEditor">
+              <div class="calculatorSectionHeader">
+                <span>Teglia</span>
+                <small>Dimensioni interne della teglia che userai.</small>
+              </div>
+              <div class="panLine">
+                <div class="compactField"><label for="w">Larghezza</label><input id="w" type="number" value="37" min="10" max="80" step="0.5" inputmode="decimal"></div>
+                <span class="fieldJoin">×</span>
+                <div class="compactField"><label for="h">Altezza</label><input id="h" type="number" value="26" min="10" max="80" step="0.5" inputmode="decimal"></div>
+                <span class="fieldUnit">cm</span>
+                <div class="compactField pans"><label for="n">Teglie</label><input id="n" type="number" value="1" min="1" max="10" step="1" inputmode="numeric"></div>
+              </div>
+            </div>
+
+            <div class="calculatorSection pizzaTypeEditor">
+              <div class="calculatorSectionHeader">
+                <span>Tipo pizza</span>
+                <small>Scegli altezza e consistenza che vuoi ottenere.</small>
+              </div>
+              <div class="choiceGrid compactChoices" role="radiogroup" aria-label="Tipo pizza">
+                <label class="choice"><input type="radio" name="style" value="0.48"><span>Extra<small>croccante</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.50"><span>Classica<small>bassa</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.54" checked><span>Equilibrata<small>bassa-media</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.58"><span>Contemporanea<small>alveolata</small></span></label>
+                <label class="choice"><input type="radio" name="style" value="0.65"><span>Soffice<small>alta</small></span></label>
+              </div>
+            </div>
+
+            
+
+
+            <div class="calculatorSection flourEditor" id="flourBlend">
+              <div class="calculatorSectionHeader">
+                <span>Farine</span>
+                <small>La prima completa automaticamente il 100%.</small>
+              </div>
+                <div class="flourItem" data-flour="1">
+                  <div class="flourItemHead"><strong>Farina 1</strong><span id="flour1PctLabel">100%</span></div>
+                  <div class="flourFields">
+                    <div class="flourCatalogField"><label for="flourCatalog1">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog1" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
+                    <div><label for="flourType">Tipo</label><select id="flourType"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
+                    <div><label for="protein">Proteine / 100 g</label><input id="protein" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW">W <span class="optionalLabel">opzionale</span></label><input id="flourW" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
+                    <div><label for="lmMix">Lievito madre nella farina?</label><select id="lmMix"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
+                  </div>
+                </div>
+
+                <div class="flourItem hidden" id="flour2" data-flour="2">
+                  <div class="flourItemHead"><strong>Farina 2</strong><button type="button" class="textButton removeFlour" data-remove-flour="2">Rimuovi</button></div>
+                  <div class="flourFields">
+                    <div class="flourCatalogField"><label for="flourCatalog2">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog2" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
+                    <div><label for="flour2Pct">Percentuale</label><input id="flour2Pct" type="number" value="25" min="1" max="99" step="1" inputmode="decimal"></div>
+                    <div><label for="flourType2">Tipo</label><select id="flourType2"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
+                    <div><label for="protein2">Proteine / 100 g</label><input id="protein2" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW2">W <span class="optionalLabel">opzionale</span></label><input id="flourW2" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
+                    <div><label for="lmMix2">Lievito madre nella farina?</label><select id="lmMix2"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
+                  </div>
+                </div>
+
+                <div class="flourItem hidden" id="flour3" data-flour="3">
+                  <div class="flourItemHead"><strong>Farina 3</strong><button type="button" class="textButton removeFlour" data-remove-flour="3">Rimuovi</button></div>
+                  <div class="flourFields">
+                    <div class="flourCatalogField"><label for="flourCatalog3">Farina conosciuta <span class="optionalLabel">opzionale</span></label><input id="flourCatalog3" list="flourCatalogOptions" placeholder="Cerca es. Nuvola"></div>
+                    <div><label for="flour3Pct">Percentuale</label><input id="flour3Pct" type="number" value="15" min="1" max="98" step="1" inputmode="decimal"></div>
+                    <div><label for="flourType3">Tipo</label><select id="flourType3"><option value="00">00</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2 / semi-integrale</option><option value="integrale">Integrale</option><option value="semola">Semola rimacinata</option></select></div>
+                    <div><label for="protein3">Proteine / 100 g</label><input id="protein3" type="number" value="12.5" min="8" max="17" step="0.1" inputmode="decimal"></div>
+                    <div><label for="flourW3">W <span class="optionalLabel">opzionale</span></label><input id="flourW3" type="number" min="80" max="500" step="5" inputmode="numeric" placeholder="es. 280"></div>
+                    <div><label for="lmMix3">Lievito madre nella farina?</label><select id="lmMix3"><option value="no" selected>No</option><option value="yes">Sì</option></select></div>
+                  </div>
+                </div>
+
+              <datalist id="flourCatalogOptions">
+                <option value="Caputo Aria"></option>
+                <option value="Caputo Nuvola"></option>
+                <option value="Caputo Nuvola Super"></option>
+                <option value="Caputo A Metro"></option>
+                <option value="Caputo Saccorosso"></option>
+                <option value="Caputo Pizzeria"></option>
+                <option value="Dallagiovanna Far Pizza E Rosa"></option>
+                <option value="Dallagiovanna Far Pizza N Blu"></option>
+                <option value="Dallagiovanna Far Pizza R Verde"></option>
+                <option value="Dallagiovanna Far Pizza S Rossa"></option>
+                <option value="Dallagiovanna Far Pizza LaNapoletana"></option>
+                <option value="Dallagiovanna Far Pizza LaNapoletana 2.0"></option>
+                <option value="Le 5 Stagioni Pizza Teglia"></option>
+                <option value="Le 5 Stagioni Pizza Teglia Integrale"></option>
+                <option value="Le 5 Stagioni Ciabatta Romana"></option>
+                <option value="Le 5 Stagioni La Superiore"></option>
+                <option value="Le 5 Stagioni La Oro"></option>
+                <option value="Le 5 Stagioni La Rustica Tipo 1"></option>
+                <option value="Petra 0101 HP"></option>
+                <option value="Petra 0102 HP"></option>
+                <option value="Petra 3 HP"></option>
+                <option value="Petra 3"></option>
+                <option value="Petra 5037"></option>
+                <option value="Petra 5063"></option>
+                <option value="Polselli Super"></option>
+                <option value="Polselli Vivace"></option>
+                <option value="Polselli Italiana"></option>
+                <option value="Polselli Classica"></option>
+                <option value="Molini Pizzuti Teglia"></option>
+                <option value="Molini Pizzuti Pala"></option>
+                <option value="Molini Pizzuti Vesuvio"></option>
+                <option value="Molini Pizzuti Costa d'Amalfi"></option>
+                <option value="Molini Pizzuti Tipo 1 ORO"></option>
+                <option value="Molino Magri IN3"></option>
+                <option value="Molino Magri Doppiaesse"></option>
+                <option value="Molino Magri Risocrockizza"></option>
+                <option value="Molino Magri Farrocrockizza"></option>
+                <option value="Molino Magri Integralcrockizza"></option>
+                <option value="Molino Vigevano Pizza in Teglia"></option>
+                <option value="Molino Vigevano Tramonti"></option>
+                <option value="Molino Vigevano Costiera"></option>
+                <option value="Le Farine Magiche Pizza Piuma"></option>
+                <option value="Le Farine Magiche Farina per Pizza"></option>
+                <option value="Le Farine Magiche Manitoba per salati"></option>
+                <option value="Molino Spadoni PZ1"></option>
+                <option value="Molino Spadoni PZ2"></option>
+                <option value="Molino Spadoni PZ4"></option>
+                <option value="Molino Spadoni Gran Mugnaio per pizza"></option>
+                <option value="Molino Pasini Pizza Alta e Soffice"></option>
+                <option value="Molino Casillo Zero L"></option>
+              </datalist>
+              <button type="button" class="secondary addFlourBtn" id="addFlourBtn">+ Aggiungi farina</button>
+            </div>
+
+            <div class="calculatorSection saltEditor">
+              <div class="calculatorSectionHeader"><span>Sale</span><small>Scegli il profilo più adatto al tuo impasto.</small></div>
+              <div class="calculatorInset">
+                <div class="basicField">
+                  <label for="saltProfile">Sale</label>
+                  <select id="saltProfile">
+                    <option value="2.0">Condimento sapido — 2,0%</option>
+                    <option value="2.2">Equilibrato — 2,2%</option>
+                    <option value="2.3" selected>Standard — 2,3%</option>
+                    <option value="2.5">Lunga lievitazione / caldo — 2,5%</option>
+                    <option value="custom">Personalizzato</option>
+                  </select>
+                </div>
+                <div id="customSaltWrap" class="hidden"><label for="customSalt">Sale personalizzato % farina</label><input id="customSalt" type="number" value="2.3" min="1.5" max="3.0" step="0.1" inputmode="decimal"></div>
+              </div>
+            </div>
+            <div class="calculatorSection hydrationEditor">
+              <div class="calculatorSectionHeader"><span>Idratazione</span><small>Adattata alle farine che hai scelto.</small></div>
+              <div class="flourItem calculatorInset">
+                <div class="basicField">
+                  <label for="hydration">Idratazione</label>
+                  <select id="hydration">
+                    <option value="auto" selected>Automatica consigliata</option>
+                    <option value="65">65%</option><option value="68">68%</option><option value="70">70%</option><option value="72">72%</option><option value="75">75%</option>
+                    <option value="custom">Personalizzata</option>
+                  </select>
+                  <small id="autoHydHint" class="fieldHint">Consigliata per queste farine: 68%</small>
+                </div>
+                <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
+              </div>
+            </div>
+            <div class="calculatorSection scheduleEditor">
+              <div class="calculatorSectionHeader">
+                <span>Orari</span>
+                <small>Da quando inizi l’impasto a quando vuoi infornare.</small>
+              </div>
+              <div class="row">
+                <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
+                <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
+              </div>
+            </div>
+            <button type="button" class="textButton resetAdvanced" id="resetAdvancedBtn">Ripristina valori consigliati</button>
+
+            <div class="formActions primaryAction">
+              <button type="button" id="calculateBtn">Calcola il mio impasto <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <div class="resultStack" id="result" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="impasto" class="view premiumFlow" aria-labelledby="impastoTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Timeline e correzioni</p>
+            <h2 id="impastoTitle">Ho già un impasto</h2>
+          </div>
+        </div>
+
+        <div class="twoColumns doughWorkspace">
+          <div class="resultStack" id="savedTimeline" aria-live="polite"></div>
+        </div>
+
+        <section id="checkTool" class="checkTool hidden" aria-labelledby="checkToolTitle">
+          <div class="checkToolHeader">
+            <button type="button" class="ghost" id="closeCheckTool">← Timeline</button>
+            <div>
+              <p class="eyebrow">Consigli</p>
+              <h3 id="checkToolTitle">Controlla o correggi</h3>
+            </div>
+          </div>
+          <details class="card formCard flowForm doughCheck" id="doughCheck" open>
+            <summary class="doughCheckSummary">
+              <span><small>Consigli</small><strong>Controlla o correggi</strong></span>
+              <span class="summaryChevron" aria-hidden="true">⌄</span>
+            </summary>
+            <div class="doughCheckBody">
+            <label for="checkMode">Cosa vuoi valutare?</label>
+            <select id="checkMode">
+              <option value="dough" selected>Impasto prima della cottura</option>
+              <option value="result">Pizza dopo la cottura</option>
+            </select>
+
+            <div id="doughFields">
+              <div class="row">
+                <div><label for="doughPlace">Dove si trova?</label><select id="doughPlace"><option value="frigo">In frigo</option><option value="ta">A temperatura ambiente</option><option value="teglia">Già in teglia</option></select></div>
+                <div><label for="doughTime">Quanto manca?</label><select id="doughTime"><option value="less1">Meno di 1 ora</option><option value="1to3" selected>1–3 ore</option><option value="3to6">3–6 ore</option><option value="over6">Più di 6 ore</option></select></div>
+              </div>
+              <label for="doughState">Com’è l’impasto?</label>
+              <select id="doughState">
+                <option value="indietro">Poco cresciuto</option>
+                <option value="giusto" selected>Gonfio e stabile</option>
+                <option value="triplicato">Triplicato ma bello</option>
+                <option value="collasso">Collassante</option>
+                <option value="rigido">Rigido / si ritira</option>
+                <option value="molle">Molle e appiccicoso</option>
+                <option value="strappa">Si strappa</option>
+              </select>
+            </div>
+
+            <div id="resultFields" class="hidden">
+              <label for="problemType">Cosa è successo?</label>
+              <select id="problemType">
+                <option value="alta">Pizza troppo alta</option>
+                <option value="bassaDura">Pizza bassa e dura</option>
+                <option value="fondoPallido">Fondo pallido</option>
+                <option value="fondoBruciato">Fondo bruciato</option>
+                <option value="sopraBagnata">Sopra bagnata</option>
+                <option value="mozzarellaAcqua">Mozzarella acquosa</option>
+                <option value="patateCrude">Patate crude</option>
+                <option value="noAlveoli">Alveolatura assente</option>
+                <option value="collassato">Impasto collassato</option>
+                <option value="siRitira">Impasto si ritira</option>
+                <option value="siStrappa">Impasto si strappa</option>
+              </select>
+            </div>
+
+            <button type="button" id="adviceBtn" class="flowPrimary">Dimmi cosa fare <span aria-hidden="true">→</span></button>
+            </div>
+          </details>
+
+          <div class="resultStack singleColumn" id="adviceOutput" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section id="pieghe" class="view premiumFlow techniqueView" aria-labelledby="piegheTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Tecnica · Pieghe</p>
+            <h2 id="piegheTitle">Dai struttura, poi fermati</h2>
+          </div>
+        </div>
+
+        <div class="techniqueLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Obiettivo</span>
+            <h3>Più tenuta, non più lavoro</h3>
+            <p>Una piega serve a organizzare la maglia dell’impasto. Dopo ogni giro copri e lascia riposare: se l’impasto è già liscio, teso il giusto e mantiene forma, un’altra piega può essere inutile.</p>
+            <div class="techniqueRule"><strong>Regola pratica</strong><span>Piega breve → riposo 20–25 min → osserva → decidi.</span></div>
+          </div>
+          <div class="techniqueIllustration" aria-label="Schema dei quattro lembi dell'impasto portati al centro">
+            <svg viewBox="0 0 420 300" role="img" aria-labelledby="foldSvgTitle foldSvgDesc">
+              <title id="foldSvgTitle">Piega a quattro lembi</title>
+              <desc id="foldSvgDesc">Quattro frecce mostrano i bordi dell'impasto portati delicatamente verso il centro.</desc>
+              <rect x="12" y="12" width="396" height="276" rx="28" class="techBg"/>
+              <ellipse cx="210" cy="160" rx="112" ry="78" class="doughShape"/>
+              <ellipse cx="210" cy="160" rx="54" ry="36" class="doughCenter"/>
+              <path d="M210 50v62m-14-18 14 18 14-18M75 160h73m-18-14 18 14-18 14M345 160h-73m18-14-18 14 18 14M210 270v-62m-14 18 14-18 14 18" class="techArrow"/>
+              <circle cx="210" cy="160" r="12" class="targetDot"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="techniqueSteps" aria-label="Come fare una piega">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Inumidisci le mani</h3><p>Acqua o pochissimo olio sulle dita: evita di aggiungere farina dentro l’impasto.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva finché cede</h3><p>Prendi un lembo, allungalo solo finché senti resistenza e portalo verso il centro. Non tirarlo al limite.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Completa i quattro lati</h3><p>Ruota contenitore o impasto e ripeti. Un giro completo basta: non impastare di nuovo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Copri e osserva</h3><p>Aspetta 20–25 minuti. La struttura si valuta dopo il riposo, non mentre stai ancora tirando.</p></div></article>
+        </div>
+
+        <section class="techniqueDecision" aria-labelledby="foldDecisionTitle">
+          <div class="techniqueSectionHead"><span class="flowEyebrow">Leggi l’impasto</span><h3 id="foldDecisionTitle">Serve davvero un’altra piega?</h3></div>
+          <div class="signalGrid">
+            <article class="signalCard warn"><span class="signalState">Poco tenace</span><h4>Si allarga subito e “cola”</h4><p>Se sei ancora all’inizio della fermentazione, fai una piega leggera e poi riposo. Se è già molto gonfio o vicino alla stesura, non provare a ricostruirlo con pieghe forti.</p></article>
+            <article class="signalCard good"><span class="signalState">Giusto</span><h4>Morbido ma mantiene forma</h4><p>La superficie è più liscia, il panetto resta raccolto e si allunga senza strapparsi. Fermati: lascia lavorare tempo e fermentazione.</p></article>
+            <article class="signalCard bad"><span class="signalState">Troppo teso</span><h4>Fa resistenza o si strappa</h4><p>Stop. Copri e aspetta 15–20 minuti. Continuare a piegare un impasto già teso lo rende nervoso e può lesionare la maglia.</p></article>
+          </div>
+          <div class="termNote"><strong>Parole utili:</strong> se torna indietro è molto <em>elastico</em>; se si allunga facilmente è <em>estensibile</em>; se si allunga troppo senza sostenersi è <em>poco tenace</em>.</div>
+        </section>
+
+        <div class="techniqueFooterNav">
+          <button type="button" class="secondary" data-open="stesura">Vai alla stesura →</button>
+          <button type="button" class="ghost" data-open-check>Ho un problema con l’impasto</button>
+        </div>
+      </section>
+
+      <section id="stesura" class="view premiumFlow techniqueView" aria-labelledby="stesuraTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Tecnica · Stesura</p>
+            <h2 id="stesuraTitle">Allarga senza perdere struttura</h2>
+          </div>
+        </div>
+
+        <div class="techniqueLead stretchLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Prima di iniziare</span>
+            <h3>L’impasto deve collaborare</h3>
+            <p>Se è freddo e si ritira, aspetta. Se è molto molle e si allunga da solo, riduci al minimo i movimenti. La stesura non deve correggere la fermentazione: deve accompagnarla.</p>
+            <div class="techniqueRule"><strong>Banco</strong><span>Semola rimacinata quanto basta per non attaccare, senza seppellire l’impasto.</span></div>
+          </div>
+          <div class="techniqueIllustration wide" aria-label="Sequenza di stesura dal banco alla teglia">
+            <svg viewBox="0 0 760 260" role="img" aria-labelledby="stretchSvgTitle stretchSvgDesc">
+              <title id="stretchSvgTitle">Sequenza di stesura</title>
+              <desc id="stretchSvgDesc">Quattro riquadri mostrano impasto sul banco, apertura con polpastrelli, trasferimento e completamento in teglia.</desc>
+              <rect x="8" y="8" width="744" height="244" rx="28" class="techBg"/>
+              <g transform="translate(38 42)"><circle cx="70" cy="75" r="55" class="doughShape"/><path d="M38 28h64" class="handMark"/><text x="70" y="165" text-anchor="middle" class="svgLabel">1 · Banco</text></g>
+              <path d="M176 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(235 42)"><ellipse cx="70" cy="78" rx="67" ry="48" class="doughShape"/><circle cx="48" cy="67" r="7" class="fingerDot"/><circle cx="70" cy="60" r="7" class="fingerDot"/><circle cx="92" cy="67" r="7" class="fingerDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">2 · Polpastrelli</text></g>
+              <path d="M374 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(434 42)"><path d="M18 62c28-32 76-32 104 0l-16 45H34z" class="doughShape"/><path d="M25 118h92" class="forearmLine"/><text x="70" y="165" text-anchor="middle" class="svgLabel">3 · Trasferisci</text></g>
+              <path d="M572 112h45m-12-10 12 10-12 10" class="techArrow"/>
+              <g transform="translate(625 42)"><rect x="0" y="30" width="100" height="95" rx="9" class="trayShape"/><rect x="10" y="40" width="80" height="75" rx="10" class="doughShape"/><text x="50" y="165" text-anchor="middle" class="svgLabel">4 · Teglia</text></g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="techniqueSteps stretchSteps" aria-label="Passaggi della stesura">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Rovescia senza strappare</h3><p>Porta il lato liscio verso l’alto. Stacca l’impasto dal contenitore con decisione ma senza tirarlo da un punto solo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Pressa, non trascinare</h3><p>Usa i polpastrelli dal centro verso l’esterno. Sposta il gas, non schiacciare tutto fino a rendere la massa piatta e compatta.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Trasferisci sostenendo</h3><p>Quando è già abbastanza larga, sollevala distribuendo il peso su mani e avambracci. Evita di afferrarla per un bordo.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Completa in teglia</h3><p>Appoggiala sulla teglia oliata e accompagnala agli angoli. Se oppone resistenza, copri e completa dopo 5–10 minuti.</p></div></article>
+        </div>
+
+        <section class="techniqueDecision" aria-labelledby="stretchDecisionTitle">
+          <div class="techniqueSectionHead"><span class="flowEyebrow">Durante la stesura</span><h3 id="stretchDecisionTitle">Se succede questo, fai così</h3></div>
+          <div class="troubleGrid">
+            <details class="techniqueTrouble"><summary>Si ritira appena la allargo</summary><p>È ancora troppo elastica o fredda. Copri e aspetta 10–15 minuti, poi riprendi. Non vincerla tirando più forte.</p></details>
+            <details class="techniqueTrouble"><summary>Si allunga troppo appena la sollevo</summary><p>È molto estensibile e poco tenace. Smetti di tirare, sostienila con una superficie ampia e trasferiscila con pochi movimenti. Se è anche molto gonfia e fragile, accorcia il riposo in teglia.</p></details>
+            <details class="techniqueTrouble"><summary>Si strappa</summary><p>Fermati. Non rattoppare tirando altro impasto. Copri 10–15 minuti e riprendi delicatamente; se la maglia è già debole, limita al minimo la manipolazione.</p></details>
+            <details class="techniqueTrouble"><summary>Si incolla al banco</summary><p>Alza un lembo con una spatola e aggiungi poca semola solo dove serve. Troppa farina resta attaccata alla base e peggiora texture e sapore.</p></details>
+          </div>
+        </section>
+
+        <div class="techniqueFooterNav">
+          <button type="button" class="secondary" data-open="cottura">Vai alla cottura →</button>
+          <button type="button" class="ghost" data-open="pieghe">← Rivedi le pieghe</button>
+        </div>
+      </section>
+
+      <section id="cottura" class="view premiumFlow techniqueView" aria-labelledby="cotturaTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-open="home">← Home</button>
+          <div>
+            <p class="eyebrow">Tecnica · Cottura</p>
+            <h2 id="cotturaTitle">Cuoci guardando i segnali giusti</h2>
+          </div>
+        </div>
+
+        <div class="cookVisualGuide">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Forno domestico</span>
+            <h3>Prima costruisci il fondo, poi finisci sopra</h3>
+            <p>I minuti sono un riferimento. Il passaggio di fase si decide guardando base e superficie: il fondo deve asciugarsi senza bruciare, mentre mozzarella e finitura arrivano solo dopo.</p>
+            <div class="techniqueRule"><strong>Controllo reale</strong><span>Sollevare un angolo della pizza vale più di seguire il timer alla cieca.</span></div>
+          </div>
+          <div class="techniqueIllustration ovenIllustration">
+            <svg viewBox="0 0 420 300" role="img" aria-labelledby="ovenSvgTitle ovenSvgDesc">
+              <title id="ovenSvgTitle">Cottura in due fasi</title>
+              <desc id="ovenSvgDesc">La teglia parte sul ripiano basso e poi passa al centro per completare la superficie.</desc>
+              <rect x="70" y="22" width="280" height="255" rx="26" class="ovenBody"/>
+              <path d="M100 92h220M100 154h220M100 216h220" class="ovenRack"/>
+              <rect x="118" y="188" width="184" height="24" rx="6" class="pizzaBase"/>
+              <path d="M210 180V126m-15 17 15-17 15 17" class="techArrow"/>
+              <rect x="118" y="126" width="184" height="24" rx="6" class="pizzaFinish"/>
+              <text x="210" y="248" text-anchor="middle" class="svgLabel">1 · basso → 2 · centro</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="cookCheckpoints">
+          <article><span>Prima fase</span><strong>Base asciutta e appena colorita</strong><p>Sollevando un angolo non deve sembrare cruda o molle. La superficie può essere ancora indietro.</p></article>
+          <article><span>Seconda fase</span><strong>Superficie asciutta, bordo ben cotto</strong><p>Sposta al centro o medio-alto. Mozzarella scolata solo negli ultimi minuti.</p></article>
+          <article><span>Uscita</span><strong>Fuori dalla teglia</strong><p>Appoggia subito la pizza su griglia per 1–2 minuti: il vapore non deve ribagnare il fondo.</p></article>
+        </div>
+
+        <div class="twoColumns cookWorkspace">
+          <div class="card formCard flowForm cookSetup">
+            <p class="flowEyebrow">Prepara la guida</p>
+            <h3>Come la cuoci?</h3>
+            <div class="row">
+              <div><label for="pizzaType">Pizza</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
+              <div><label for="panType">Teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
+            </div>
+            <button type="button" id="cookBtn" class="flowPrimary">Prepara la guida <span aria-hidden="true">→</span></button>
+          </div>
+
+          <div class="resultStack" id="cook" aria-live="polite"></div>
+          <section id="cookTimer" class="cookTimer hidden" aria-live="polite" aria-label="Timer di cottura">
+            <div class="timerTop">
+              <div><span class="flowEyebrow">Timer cucina</span><strong id="timerLabel">Timer</strong></div>
+              <button type="button" class="timerClose" id="timerClose" aria-label="Chiudi timer">×</button>
+            </div>
+            <div class="timerDisplay" id="timerDisplay">10:00</div>
+            <div class="timerActions">
+              <button type="button" id="timerToggle">Pausa</button>
+              <button type="button" id="timerAdd">+1 min</button>
+              <button type="button" id="timerReset">Azzera</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <section id="printSheet" class="printSheet" aria-hidden="true"></section>
+  </div>
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const $ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  const PREF_PREFIX = 'tc7_';
+  const PRIVACY_KEY = 'tc_privacy_notice_ok';
+  const LAST_PLAN_KEY = 'tc7_last_plan';
+  const PREF_IDS = [
+    'w','h','n','start','bake','saltProfile',
+    'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt'
+  ];
+
+  function clampNumber(id, fallback, min, max) {
+    const node = $(id);
+    const value = Number.parseFloat(node?.value ?? '');
+    const safe = Number.isFinite(value) ? value : fallback;
+    return Math.min(max, Math.max(min, safe));
+  }
+
+  function round(value, digits = 1) {
+    const safe = Number.isFinite(value) ? value : 0;
+    return safe.toFixed(digits).replace('.', ',');
+  }
+
+  function pad(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  function fmtInputDate(date) {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function fmtShortDate(date) {
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+  }
+
+  function hoursBetween(start, end) {
+    return (end - start) / 36e5;
+  }
+
+  function create(tag, attrs = {}, children = []) {
+    const node = document.createElement(tag);
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (key === 'class') node.className = value;
+      else if (key === 'text') node.textContent = value;
+      else node.setAttribute(key, value);
+    });
+    children.forEach((child) => {
+      if (typeof child === 'string') node.append(document.createTextNode(child));
+      else if (child) node.append(child);
+    });
+    return node;
+  }
+
+  function clear(node) {
+    while (node?.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function card(title, className = '') {
+    const node = create('div', { class: `resultCard ${className}`.trim() });
+    node.append(create('h3', { text: title }));
+    return node;
+  }
+
+  function addParagraph(parent, text, className = '') {
+    const p = create('p', { text, class: className });
+    parent.append(p);
+    return p;
+  }
+
+  function getSelectedStyle() {
+    const selected = document.querySelector('input[name="style"]:checked');
+    return Number.parseFloat(selected?.value ?? '0.54');
+  }
+
+  function initDates() {
+    if ($('start')?.value && $('bake')?.value) return;
+    const now = new Date();
+    let start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0);
+    let bake = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 0);
+
+    if (now.getHours() >= 14) {
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 0);
+      bake = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 20, 0);
+    }
+
+    $('start').value = fmtInputDate(start);
+    $('bake').value = fmtInputDate(bake);
+  }
+
+  function openView(id) {
+    // Il calcolatore è una simulazione: rientrando si parte senza un risultato precedente.
+    if (id === 'calc') clear($('result'));
+    document.querySelectorAll('.view').forEach((view)=>view.classList.remove('active'));
+    const next=$(id);
+    $('appHero')?.classList.toggle('hidden',id!=='home');
+    if(next){
+      next.classList.add('active');
+      if(id==='impasto'){
+        renderSavedTimeline();
+        $('checkTool')?.classList.add('hidden');
+      }
+      if(id==='home') renderHomeSavedStep();
+      window.scrollTo({top:0,left:0,behavior:'smooth'});
+    document.documentElement.scrollLeft=0;
+    document.body.scrollLeft=0;
+    }
+  }
+
+  function toggleCustoms() {
+    $('customHydWrap')?.classList.toggle('hidden', $('hydration').value !== 'custom');
+    $('customSaltWrap')?.classList.toggle('hidden', $('saltProfile').value !== 'custom');
+  }
+
+  function toggleCheckMode() {
+    const isDough = $('checkMode').value === 'dough';
+    $('doughFields').classList.toggle('hidden', !isDough);
+    $('resultFields').classList.toggle('hidden', isDough);
+    clear($('adviceOutput'));
+  }
+
+  function openCheckTool(mode = 'dough') {
+    openView('impasto');
+    $('checkMode').value = mode;
+    toggleCheckMode();
+    $('checkTool')?.classList.remove('hidden');
+    $('doughCheck')?.setAttribute('open','');
+    requestAnimationFrame(() => $('checkTool')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  }
+
+  function closeCheckTool() {
+    $('checkTool')?.classList.add('hidden');
+    clear($('adviceOutput'));
+    $('savedTimeline')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  const FLOUR_CATALOG = {
+    'Caputo Aria': { type:'0', protein:13, w:310, lm:'yes' },
+    'Caputo Nuvola': { type:'0', protein:12.5, w:280, lm:'no' },
+    'Caputo Nuvola Super': { type:'0', protein:13.5, w:330, lm:'no' },
+    'Caputo A Metro': { type:'00', protein:13.5, w:320, lm:'no' },
+    'Caputo Saccorosso': { type:'00', protein:13, w:310, lm:'no' },
+    'Caputo Pizzeria': { type:'00', protein:12.5, w:270, lm:'no' },
+    'Dallagiovanna Far Pizza E Rosa': { type:'00', protein:null, w:250, lm:'no' },
+    'Dallagiovanna Far Pizza N Blu': { type:'00', protein:null, w:290, lm:'no' },
+    'Dallagiovanna Far Pizza R Verde': { type:'00', protein:null, w:340, lm:'no' },
+    'Dallagiovanna Far Pizza S Rossa': { type:'00', protein:null, w:390, lm:'no' },
+    'Dallagiovanna Far Pizza LaNapoletana': { type:'00', protein:null, w:310, lm:'no' },
+    'Dallagiovanna Far Pizza LaNapoletana 2.0': { type:'0', protein:null, w:310, lm:'no' },
+    'Le 5 Stagioni Pizza Teglia': { type:'0', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Pizza Teglia Integrale': { type:'integrale', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni Ciabatta Romana': { type:'0', protein:null, w:null, lm:'yes' },
+    'Le 5 Stagioni La Superiore': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Oro': { type:'00', protein:null, w:null, lm:'no' },
+    'Le 5 Stagioni La Rustica Tipo 1': { type:'1', protein:14, w:null, lm:'no' },
+    'Petra 0101 HP': { type:'1', protein:14, w:405, lm:'no' },
+    'Petra 0102 HP': { type:'1', protein:13.5, w:330, lm:'no' },
+    'Petra 3 HP': { type:'1', protein:13.5, w:null, lm:'no' },
+    'Petra 3': { type:'1', protein:13.5, w:null, lm:'no' },
+    'Petra 5037': { type:'0', protein:13.5, w:320, lm:'no' },
+    'Petra 5063': { type:'0', protein:12.7, w:270, lm:'no' },
+    'Polselli Super': { type:'00', protein:null, w:360, lm:'no' },
+    'Polselli Vivace': { type:'00', protein:null, w:290, lm:'no' },
+    'Polselli Italiana': { type:'1', protein:null, w:300, lm:'no' },
+    'Polselli Classica': { type:'00', protein:null, w:270, lm:'no' },
+    'Molini Pizzuti Teglia': { type:'0', protein:null, w:null, lm:'yes' },
+    'Molini Pizzuti Pala': { type:'0', protein:null, w:null, lm:'yes' },
+    'Molini Pizzuti Vesuvio': { type:'0', protein:null, w:350, lm:'no' },
+    'Molini Pizzuti Costa d\'Amalfi': { type:'0', protein:null, w:300, lm:'no' },
+    'Molini Pizzuti Tipo 1 ORO': { type:'1', protein:null, w:300, lm:'no' },
+    'Molino Magri IN3': { type:'2', protein:null, w:345, lm:'no' },
+    'Molino Magri Doppiaesse': { type:'0', protein:null, w:300, lm:'no' },
+    'Molino Magri Risocrockizza': { type:'1', protein:null, w:null, lm:'yes' },
+    'Molino Magri Farrocrockizza': { type:'1', protein:null, w:null, lm:'yes' },
+    'Molino Magri Integralcrockizza': { type:'integrale', protein:null, w:null, lm:'yes' },
+    'Molino Vigevano Pizza in Teglia': { type:'0', protein:14.5, w:350, lm:'no' },
+    'Molino Vigevano Tramonti': { type:'0', protein:14.5, w:345, lm:'no' },
+    'Molino Vigevano Costiera': { type:'0', protein:13.6, w:310, lm:'no' },
+    'Le Farine Magiche Pizza Piuma': { type:'0', protein:14.5, w:null, lm:'no' },
+    'Le Farine Magiche Farina per Pizza': { type:'00', protein:12.4, w:null, lm:'no' },
+    'Le Farine Magiche Manitoba per salati': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ1': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ2': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni PZ4': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Spadoni Gran Mugnaio per pizza': { type:'00', protein:null, w:null, lm:'no' },
+    'Molino Pasini Pizza Alta e Soffice': { type:'0', protein:null, w:null, lm:'no' },
+    'Molino Casillo Zero L': { type:'0', protein:12.5, w:340, lm:'no' }
+  };
+
+  function optionalNumber(id, min, max) {
+    const value = Number.parseFloat($(id)?.value ?? '');
+    return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : null;
+  }
+
+  function applyCatalogFlour(index) {
+    const suffix = index === 1 ? '' : String(index);
+    const name = $('flourCatalog' + index)?.value.trim();
+    const known = FLOUR_CATALOG[name];
+    if (!known) return;
+    if (known.type) $('flourType' + suffix).value = known.type;
+    $('protein' + suffix).value = known.protein === null ? '' : String(known.protein);
+    $('flourW' + suffix).value = known.w === null ? '' : String(known.w);
+    if (known.lm) $('lmMix' + suffix).value = known.lm;
+    updateFlourUI('', false);
+  }
+
+  function baseHydrationFor(protein, type, w = null) {
+    let value;
+    if (protein < 10.8) value = 64;
+    else if (protein < 11.8) value = 66;
+    else if (protein < 12.8) value = 68;
+    else if (protein < 13.7) value = 70;
+    else value = 72;
+
+    if (type === '1') value += 1.5;
+    if (type === '2') value += 2.5;
+    if (type === 'integrale') value += 4;
+    if (type === 'semola') value += 1.5;
+
+    // W affina la stima senza fingere una conversione diretta W → acqua.
+    if (Number.isFinite(w)) {
+      if (w < 220) value -= 1.5;
+      else if (w >= 320 && w < 370) value += 1;
+      else if (w >= 370) value += 2;
+    }
+    return value;
+  }
+
+  function activeFlours() {
+    const items = [{
+      index: 1,
+      pct: 100,
+      type: $('flourType').value,
+      protein: clampNumber('protein', 12.5, 8, 17),
+      w: optionalNumber('flourW', 80, 500),
+      lm: $('lmMix').value
+    }];
+
+    if (!$('flour2').classList.contains('hidden')) {
+      items.push({
+        index: 2,
+        pct: clampNumber('flour2Pct', 25, 1, 99),
+        type: $('flourType2').value,
+        protein: clampNumber('protein2', 12.5, 8, 17),
+        w: optionalNumber('flourW2', 80, 500),
+        lm: $('lmMix2').value
+      });
+    }
+    if (!$('flour3').classList.contains('hidden')) {
+      items.push({
+        index: 3,
+        pct: clampNumber('flour3Pct', 15, 1, 98),
+        type: $('flourType3').value,
+        protein: clampNumber('protein3', 12.5, 8, 17),
+        w: optionalNumber('flourW3', 80, 500),
+        lm: $('lmMix3').value
+      });
+    }
+
+    const secondary = items.slice(1).reduce((sum, item) => sum + item.pct, 0);
+    items[0].pct = Math.max(1, 100 - secondary);
+    return items;
+  }
+
+  function normalizeFlourPercentages(changedId = '') {
+    const flour2Active = !$('flour2').classList.contains('hidden');
+    const flour3Active = !$('flour3').classList.contains('hidden');
+    if (!flour2Active && !flour3Active) return;
+
+    const p2 = $('flour2Pct');
+    const p3 = $('flour3Pct');
+    let v2 = flour2Active ? Number.parseFloat(p2.value) : 0;
+    let v3 = flour3Active ? Number.parseFloat(p3.value) : 0;
+    if (!Number.isFinite(v2)) v2 = 1;
+    if (!Number.isFinite(v3)) v3 = 1;
+
+    v2 = Math.min(99, Math.max(1, v2));
+    v3 = Math.min(98, Math.max(1, v3));
+
+    if (flour2Active && flour3Active && v2 + v3 > 99) {
+      if (changedId === 'flour2Pct') v2 = 99 - v3;
+      else v3 = 99 - v2;
+    }
+
+    if (flour2Active) p2.value = String(Math.max(1, v2));
+    if (flour3Active) p3.value = String(Math.max(1, v3));
+  }
+
+  function flourBlendIsValid() {
+    const secondary = activeFlours().slice(1).reduce((sum, item) => sum + item.pct, 0);
+    return secondary <= 99;
+  }
+
+  function updateFlourUI(changedId = '', normalize = true) {
+    if (normalize) normalizeFlourPercentages(changedId);
+    const flours = activeFlours();
+    $('flour1PctLabel').textContent = `${round(flours[0].pct, 0)}%`;
+
+    ['flour2Pct','flour3Pct'].forEach((id) => $(id)?.classList.remove('inputError'));
+
+    const add = $('addFlourBtn');
+    add.classList.toggle('hidden', flours.length >= 3);
+    updateHydrationRecommendation();
+  }
+
+  function addFlour() {
+    if ($('flour2').classList.contains('hidden')) $('flour2').classList.remove('hidden');
+    else if ($('flour3').classList.contains('hidden')) $('flour3').classList.remove('hidden');
+    updateFlourUI();
+  }
+
+  function removeFlour(index) {
+    const node = $('flour' + index);
+    if (!node) return;
+
+    if (String(index) === '2' && !$('flour3').classList.contains('hidden')) {
+      $('flour2Pct').value = $('flour3Pct').value;
+      $('flourType2').value = $('flourType3').value;
+      $('flourCatalog2').value = $('flourCatalog3').value;
+      $('protein2').value = $('protein3').value;
+      $('flourW2').value = $('flourW3').value;
+      $('lmMix2').value = $('lmMix3').value;
+      $('flour3').classList.add('hidden');
+      $('flour3Pct').value = '15';
+    } else {
+      node.classList.add('hidden');
+      if (String(index) === '2') $('flour2Pct').value = '25';
+      if (String(index) === '3') $('flour3Pct').value = '15';
+    }
+    updateFlourUI();
+  }
+
+  function resetAdvanced() {
+    $('flourCatalog1').value = '';
+    $('flourType').value = '0';
+    $('protein').value = '12.5';
+    $('flourW').value = '';
+    $('lmMix').value = 'no';
+    $('flour2').classList.add('hidden');
+    $('flour3').classList.add('hidden');
+    $('flour2Pct').value = '25';
+    $('flour3Pct').value = '15';
+    $('flourCatalog2').value = '';
+    $('flourCatalog3').value = '';
+    $('flourType2').value = '0';
+    $('flourType3').value = '0';
+    $('protein2').value = '12.5';
+    $('protein3').value = '12.5';
+    $('flourW2').value = '';
+    $('flourW3').value = '';
+    $('lmMix2').value = 'no';
+    $('lmMix3').value = 'no';
+    $('hydration').value = 'auto';
+    $('customHyd').value = '69';
+    $('saltProfile').value = '2.3';
+    $('customSalt').value = '2.3';
+    toggleCustoms();
+    updateFlourUI();
+  }
+
+  function estimateHydration() {
+    const flours = activeFlours();
+    let hydration = flours.reduce((sum, item) => {
+      return sum + baseHydrationFor(item.protein, item.type, item.w) * item.pct / 100;
+    }, 0);
+
+    const hours = hoursBetween(new Date($('start').value), new Date($('bake').value));
+    const weightedProtein = flours.reduce((sum, item) => sum + item.protein * item.pct / 100, 0);
+    if (hours >= 18 && weightedProtein >= 12) hydration += 0.5;
+
+    return Math.max(62, Math.min(76, hydration));
+  }
+
+  function updateHydrationRecommendation() {
+    const value=round(estimateHydration(),1);
+    const option=$('hydration')?.querySelector('option[value="auto"]');
+    if(option) option.textContent=`Automatica consigliata · ${String(value).replace('.',',')}%`;
+    const hint=$('autoHydHint');
+    if(hint) hint.textContent=`Consigliata per queste farine: ${String(value).replace('.',',')}%`;
+  }
+
+  function hydrationValue() {
+    const selected = $('hydration').value;
+    if (selected === 'auto') return estimateHydration();
+    if (selected === 'custom') return clampNumber('customHyd', 69, 55, 85);
+    return Number.parseFloat(selected);
+  }
+
+  function saltValue() {
+    const selected = $('saltProfile').value;
+    if (selected === 'custom') return clampNumber('customSalt', 2.3, 1.5, 3.0);
+    return Number.parseFloat(selected);
+  }
+
+  function yeastPctByHours(hours) {
+    if (hours <= 0) return 0.8;
+    if (hours <= 8) return 0.9;
+    if (hours <= 12) return 0.7;
+    if (hours <= 18) return 0.4;
+    if (hours <= 30) return 0.22;
+    if (hours <= 48) return 0.13;
+    return 0.08;
+  }
+
+  function methodLabel(hours) {
+    if (hours <= 0 || !Number.isFinite(hours)) return 'date da correggere';
+    if (hours <= 12) return 'in giornata';
+    if (hours <= 18) return 'intermedio';
+    if (hours <= 30) return 'giorno dopo / frigo';
+    if (hours <= 48) return 'lunga maturazione';
+    return 'molto lunga';
+  }
+
+  function resultName(load) {
+    if (load <= 0.49) return 'Extra croccante';
+    if (load <= 0.51) return 'Romana classica';
+    if (load <= 0.55) return 'Bassa-media equilibrata';
+    if (load <= 0.59) return 'Romana contemporanea';
+    return 'Più soffice';
+  }
+
+  function buildTimeline(start, bake, hours) {
+    const timeline = [
+      { label: 'Impasto grezzo', date: start.toISOString() },
+      { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
+      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
+      { label: '1ª piega leggera', date: addMinutes(start, 60).toISOString(), action: 'fold' },
+      { label: '2ª piega leggera', date: addMinutes(start, 85).toISOString(), action: 'fold' }
+    ];
+
+    if (hours <= 12) {
+      timeline.push(
+        { label: 'Stesura', date: addMinutes(bake, -75).toISOString(), action: 'stretch' },
+        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
+      );
+    } else {
+      timeline.push(
+        { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115).toISOString() },
+        { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
+        { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'stretch' },
+        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
+      );
+    }
+
+    return timeline;
+  }
+
+  function timelineStatus(timeline) {
+    const now=Date.now();
+    const items=(Array.isArray(timeline)?timeline:[]).map(item=>({...item,time:new Date(item.date).getTime()})).filter(item=>Number.isFinite(item.time));
+    if(!items.length) return { phase:'empty', current:null, next:null };
+    if(now < items[0].time) return { phase:'scheduled', current:null, next:items[0] };
+    const nextIndex=items.findIndex(item=>item.time>now);
+    if(nextIndex<0) return { phase:'finished', current:items[items.length-1], next:null };
+    return { phase:'active', current:items[Math.max(0,nextIndex-1)], next:items[nextIndex] };
+  }
+
+  
+
+  function emptyResult() {
+    clear($('result'));
+  }
+
+  function saveLastPlan(plan) {
+    localStorage.setItem(LAST_PLAN_KEY, JSON.stringify(plan));
+  }
+
+  function getLastPlan() {
+    try {
+      const raw = localStorage.getItem(LAST_PLAN_KEY);
+      if (!raw) return null;
+      const plan = JSON.parse(raw);
+      if (!Array.isArray(plan.timeline)) return plan;
+      const oldControl = plan.timeline.find((item) => item.label === 'Controllo volume');
+      const oldDecision = plan.timeline.find((item) => item.label === 'Fuori frigo o stesura secondo stato impasto');
+      if (oldControl || oldDecision) {
+        const bake = new Date(plan.bake);
+        const normalized = plan.timeline.filter((item) => item.label !== 'Controllo volume' && item.label !== 'Fuori frigo o stesura secondo stato impasto');
+        normalized.push(
+          { label:'Controlla l’impasto', date:(oldControl?.date || addMinutes(bake,-120).toISOString()), action:'check' },
+          { label:'Stesura', date:(oldDecision?.date || addMinutes(bake,-90).toISOString()) },
+          { label:'Riposo in teglia coperto', date:addMinutes(bake,-60).toISOString() }
+        );
+        plan.timeline = normalized.sort((a,b) => new Date(a.date) - new Date(b.date));
+      }
+      return plan;
+    } catch {
+      return null;
+    }
+  }
+
+  const TIMELINE_ACTIONS = {
+    fold: { label:'Apri guida pieghe →', view:'pieghe' },
+    stretch: { label:'Apri guida stesura →', view:'stesura' },
+    check: { label:'Controlla lo stato →', view:'check' },
+    cook: { label:'Apri guida cottura →', view:'cottura' }
+  };
+
+  function timelineActionFor(item) {
+    if (!item) return null;
+    if (item.action) return item.action;
+    if (/piega/i.test(item.label || '')) return 'fold';
+    if (item.label === 'Stesura') return 'stretch';
+    if (item.label === 'Controlla l’impasto' || item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto') return 'check';
+    if (item.label === 'Cottura') return 'cook';
+    return null;
+  }
+
+  function openTimelineAction(action) {
+    const config = TIMELINE_ACTIONS[action];
+    if (!config) return;
+    if (config.view === 'check') openCheckTool('dough');
+    else openView(config.view);
+  }
+
+  const TIMELINE_VISUALS = {
+    'Impasto grezzo': { icon:'🥣', short:'Unisci farine, acqua e lievito fino a ottenere un impasto grezzo.', duration:'~ 10 min' },
+    'Riposo 20 min coperto': { icon:'⏱️', short:'Copri e lascia riposare: l’impasto inizierà a rilassarsi.', duration:'20 min' },
+    'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
+    '1ª piega leggera': { icon:'↪', short:'Fai una piega delicata per dare struttura senza sgonfiare.', duration:'~ 2 min' },
+    '2ª piega leggera': { icon:'↪', short:'Ripeti la piega con mani leggere e lascia poi riposare.', duration:'~ 2 min' },
+    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
+    'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
+    'Frigo coperto dopo le pieghe': { icon:'❄', short:'Copri bene e trasferisci in frigo per la maturazione.', duration:'Riposo' },
+    'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
+    'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
+  };
+
+  function renderPremiumTimeline(timeline) {
+    const status=timelineStatus(timeline);
+    const now=Date.now();
+    const list=create('ol',{class:'visualTimeline','aria-label':'Timeline impasto'});
+
+    timeline.forEach((item,index)=>{
+      const time=new Date(item.date).getTime();
+      let state='future',stateLabel='Più tardi';
+      if(status.phase==='scheduled'){
+        if(index===0){state='next';stateLabel='Inizia qui';}
+      } else if(status.phase==='finished'){
+        state='done';stateLabel='Completato';
+      } else {
+        const currentIndex=timeline.findIndex(step=>step.date===status.current?.date&&step.label===status.current?.label);
+        const nextIndex=timeline.findIndex(step=>step.date===status.next?.date&&step.label===status.next?.label);
+        if(index<currentIndex){state='done';stateLabel='Completato';}
+        else if(index===currentIndex){state='current';stateLabel='Adesso';}
+        else if(index===nextIndex){state='next';stateLabel='Prossimo';}
+      }
+      const legacyCheck = item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto';
+      const action = timelineActionFor(item);
+      const legacyMeta = legacyCheck ? { icon:'◎', short:'Verifica lo stato reale dell’impasto prima di decidere come proseguire.', duration:'Controllo' } : null;
+      const meta=TIMELINE_VISUALS[item.label]||legacyMeta||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
+      const row=create('li',{class:`visualTimelineStep ${state}`});
+      const rail=create('div',{class:'visualTimelineRail','aria-hidden':'true'});
+      rail.append(create('span',{class:'visualTimelineNumber',text:String(index+1)}));
+      const card=create('article',{class:'visualTimelineCard'});
+      const visual=create('div',{class:'timelineVisual','aria-hidden':'true'});
+      visual.append(create('span',{text:meta.icon}));
+      const body=create('div',{class:'timelineVisualBody'});
+      const top=create('div',{class:'timelineVisualTop'});
+      top.append(create('span',{class:'timelineState',text:stateLabel}),create('time',{text:fmtShortDate(new Date(item.date)),datetime:item.date}));
+      body.append(top,create('strong',{class:'timelineVisualTitle',text:item.label}),create('p',{text:meta.short}));
+      if(meta.duration) body.append(create('span',{class:'timelineDuration',text:`◷ ${meta.duration}`}));
+      if(action){
+        const config=TIMELINE_ACTIONS[action];
+        const actionButton=create('button',{type:'button',class:'timelineAction',text:config?.label||'Apri guida →'});
+        actionButton.addEventListener('click',()=>openTimelineAction(action));
+        body.append(actionButton);
+      }
+      card.append(visual,body); row.append(rail,card); list.append(row);
+    });
+    return list;
+  }
+
+  function renderRecipeResult(data) {
+    const target = $('result');
+    clear(target);
+
+    if (data.hours <= 0 || !Number.isFinite(data.hours)) {
+      const error = card('Date da correggere', 'bad');
+      addParagraph(error, 'La cottura deve essere dopo l’inizio impasto.');
+      target.append(error);
+      return;
+    }
+
+    const plan = {
+      createdAt: new Date().toISOString(),
+      pizza: resultName(data.load),
+      method: methodLabel(data.hours),
+      doughPer: data.doughPer,
+      total: data.total,
+      bake: data.bake.toISOString(),
+      timeline: data.timeline,
+      ingredients: {
+        flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
+        yeastG: data.yeastG, honeyG: data.honeyG, hydration: data.hydration,
+        salt: data.salt, flourBlend: data.flourBlend
+      }
+    };
+    const status = timelineStatus(data.timeline);
+    const next = status.phase === 'scheduled' ? status.next : (status.next ?? status.current ?? data.timeline[data.timeline.length - 1]);
+    const shell = create('section', { class: 'doughResult', 'aria-label': 'Il tuo impasto' });
+
+    const head = create('div', { class: 'doughResultHead' });
+    const title = create('div');
+    title.append(
+      create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
+      create('h3', { text: resultName(data.load) }),
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+    );
+    const hydrationBadge = create('div', { class: 'hydrationBadge' });
+    hydrationBadge.append(
+      create('strong', { text: `${round(data.hydration, 0)}%` }),
+      create('span', { text: 'idratazione' })
+    );
+    head.append(title, hydrationBadge);
+    shell.append(head);
+
+    const now = create('div', { class: 'nextAction' });
+    now.append(
+      create('span', { class: 'nextLabel', text: status.phase === 'scheduled' ? 'In programma' : 'Prossimo' }),
+      create('strong', { text: next.label }),
+      create('time', { text: fmtShortDate(new Date(next.date)), datetime: next.date })
+    );
+    shell.append(now);
+
+    const doses = create('div', { class: 'premiumSection' });
+    doses.append(create('div', { class: 'sectionBar' }, [
+      create('h4', { text: 'Dosi' }),
+      create('span', { text: `${round(data.total, 0)} g impasto totale` })
+    ]));
+    const doseGrid = create('div', { class: 'doseGrid' });
+    const rows = [];
+    if (data.flourBlend.length === 1) rows.push(['Farina', `${round(data.flour)} g`]);
+    else data.flourBlend.forEach((item) => rows.push([`Farina ${item.index} · ${round(item.pct, 0)}%`, `${round(item.grams)} g`]));
+    rows.push(
+      ['Acqua', `${round(data.water)} g`],
+      ['Sale', `${round(data.saltG)} g`],
+      ['Olio', `${round(data.oilG)} g`],
+      ['Lievito', `${round(data.yeastG, 1)} g`]
+    );
+    if (data.honeyG > 0) rows.push(['Miele', `${round(data.honeyG, 1)} g`]);
+    rows.forEach(([label,value]) => {
+      const item=create('div',{class:'doseItem'});
+      item.append(create('span',{text:label}),create('strong',{text:value}));
+      doseGrid.append(item);
+    });
+    doses.append(doseGrid);
+    shell.append(doses);
+
+    const firstSteps = create('div', { class: 'premiumSection firstSteps' });
+    firstSteps.append(create('h4', { text: 'Parti così' }));
+    const steps=create('ol',{class:'compactSteps'});
+    [
+      'Mescola farina, lievito e 85–90% dell’acqua.',
+      'Copri e lascia riposare 20 minuti.',
+      'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
+      'Lavora poco: le pieghe strutturali vengono dopo.'
+    ].forEach((text,index)=>{
+      const li=create('li');
+      li.append(create('span',{text:String(index+1)}),create('p',{text}));
+      steps.append(li);
+    });
+    firstSteps.append(steps);
+    shell.append(firstSteps);
+
+    const schedule = create('div', { class: 'premiumSection' });
+    schedule.append(create('div', { class: 'sectionBar' }, [
+      create('h4', { text: 'Programma' }),
+      create('span', { text: 'Anteprima' })
+    ]));
+    const scheduleList = create('div', { class: 'savedDoseGrid' });
+    const previewSteps = [
+      data.timeline[0],
+      data.timeline.find((item) => item.label === 'Stesura' || item.label === 'Fuori frigo o stesura secondo stato impasto'),
+      data.timeline[data.timeline.length - 1]
+    ].filter((item, index, items) => item && items.findIndex((candidate) => candidate.date === item.date && candidate.label === item.label) === index);
+    previewSteps.forEach((item) => scheduleList.append(
+      create('div', { class: 'savedDose' }, [
+        create('span', { text: item.label }),
+        create('strong', { text: fmtShortDate(new Date(item.date)) })
+      ])
+    ));
+    schedule.append(scheduleList);
+    shell.append(schedule);
+
+    const manage = create('button', { class: 'manageDough', type: 'button', text: 'Salva e segui questo impasto →' });
+    manage.addEventListener('click', () => {
+      saveLastPlan(plan);
+      renderSavedTimeline();
+      renderHomeSavedStep();
+      openView('home');
+    });
+    shell.append(manage);
+
+    target.append(shell);
+  }
+
+  
+
+  function renderSavedTimeline() {
+    const target=$('savedTimeline'); if(!target) return; clear(target);
+    const plan=getLastPlan();
+    if(!plan){
+      const empty=create('div',{class:'savedPlan emptyPlan'});
+      empty.append(create('span',{class:'flowEyebrow',text:'Nessun impasto pianificato'}),create('h3',{text:'Calcola il tuo prossimo impasto'}),create('p',{text:'Quando creerai una timeline, qui vedrai stato atteso e prossimo passaggio.'}));
+      const go=create('button',{type:'button',class:'savedPlanCta',text:'Calcola un impasto →'}); go.addEventListener('click',()=>openView('calc')); empty.append(go); target.append(empty); return;
+    }
+    const status=timelineStatus(plan.timeline);
+    const main=create('section',{class:'savedPlan'});
+    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Timeline conclusa':'Stato atteso ora';
+    main.append(create('span',{class:'flowEyebrow',text:label}));
+    const currentBox=create('div',{class:'savedNext'});
+    const primary=status.phase==='scheduled'?status.next:status.current;
+    const primaryTitle=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
+    currentBox.append(create('div',{},[create('h3',{text:primaryTitle}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]));
+    if(primary) {
+      currentBox.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
+      const primaryAction=timelineActionFor(primary);
+      if(primaryAction){
+        const config=TIMELINE_ACTIONS[primaryAction];
+        const go=create('button',{type:'button',class:'timelineAction savedPrimaryAction',text:config?.label||'Apri guida →'});
+        go.addEventListener('click',()=>openTimelineAction(primaryAction));
+        currentBox.append(go);
+      }
+    }
+    main.append(currentBox);
+    if(status.phase==='active'&&status.next){
+      const nextRow=create('div',{class:'upNext'});
+      nextRow.append(create('span',{text:'Prossimo'}),create('strong',{text:status.next.label}),create('time',{text:fmtShortDate(new Date(status.next.date)),datetime:status.next.date}));
+      main.append(nextRow);
+    } else if(status.phase==='scheduled'&&status.next){
+      const nextRow=create('div',{class:'upNext'});
+      nextRow.append(create('span',{text:'Inizia'}),create('strong',{text:status.next.label}),create('time',{text:fmtShortDate(new Date(status.next.date)),datetime:status.next.date}));
+      main.append(nextRow);
+    }
+    const details=create('details',{class:'savedPlanDetails'}); details.append(create('summary',{text:'Timeline e dosi'}));
+    const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
+    const ingredientsSection=create('div',{class:'savedPlanSection'}); ingredientsSection.append(create('h4',{text:'Dosi'}));
+    const list=create('div',{class:'savedDoseGrid'}),rows=[];
+    if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
+    else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
+    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
+    rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
+    ingredientsSection.append(list); details.append(ingredientsSection); main.append(details);
+    const printActions=create('div',{class:'savedPlanActions'});
+    const printButton=create('button',{type:'button',class:'savedPlanPrint',text:'Stampa / salva PDF'});
+    printButton.addEventListener('click',()=>printSavedPlan());
+    const removeButton=create('button',{type:'button',class:'savedPlanDelete',text:'Elimina impasto'});
+    removeButton.addEventListener('click',()=>{
+      if(!window.confirm('Eliminare questo impasto e la sua timeline?')) return;
+      localStorage.removeItem(LAST_PLAN_KEY);
+      renderSavedTimeline();
+      renderHomeSavedStep();
+      openView('home');
+    });
+    printActions.append(printButton,removeButton); main.append(printActions);
+    target.append(main);
+  }
+
+  function renderPrintSheet(plan) {
+    const sheet=$('printSheet'); if(!sheet) return; clear(sheet);
+    const head=create('header',{class:'printHead'});
+    head.append(create('div',{},[
+      create('span',{class:'printBrand',text:'PizzaMaker · Teglia Coach'}),
+      create('h1',{text:plan.pizza||'Il tuo impasto'}),
+      create('p',{text:`${plan.method||''} · cottura ${fmtShortDate(new Date(plan.bake))}`})
+    ]));
+    head.append(create('div',{class:'printHydration'},[
+      create('strong',{text:`${round(plan.ingredients?.hydration||0,0)}%`}),
+      create('span',{text:'idratazione'})
+    ]));
+    sheet.append(head);
+
+    const facts=create('section',{class:'printFacts'});
+    [
+      ['Impasto totale', plan.total ? `${round(plan.total,0)} g` : '—'],
+      ['Per teglia', plan.doughPer ? `${round(plan.doughPer,0)} g` : '—'],
+      ['Sale', plan.ingredients?.salt ? `${round(plan.ingredients.salt,1)}%` : '—'],
+      ['Cottura', fmtShortDate(new Date(plan.bake))]
+    ].forEach(([label,value])=>facts.append(create('div',{},[create('span',{text:label}),create('strong',{text:value})])));
+    sheet.append(facts);
+
+    const doses=create('section',{class:'printSection'});
+    doses.append(create('h2',{text:'Dosi'}));
+    const doseGrid=create('div',{class:'printDoseGrid'}), rows=[];
+    const ing=plan.ingredients||{};
+    if(Array.isArray(ing.flourBlend)&&ing.flourBlend.length>1) ing.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
+    else rows.push(['Farina',`${round(ing.flour)} g`]);
+    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],['Lievito fresco',`${round(ing.yeastG,1)} g`]);
+    if(ing.honeyG>0) rows.push(['Miele',`${round(ing.honeyG,1)} g`]);
+    rows.forEach(([label,value])=>doseGrid.append(create('div',{class:'printDose'},[create('span',{text:label}),create('strong',{text:value})])));
+    doses.append(doseGrid); sheet.append(doses);
+
+    const method=create('section',{class:'printSection printMethod'});
+    method.append(create('h2',{text:'Metodo'}));
+    [
+      'Mescola farine, lievito e 85–90% dell’acqua.',
+      'Copri e lascia riposare 20 minuti.',
+      'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.',
+      'Lavora poco e fai le pieghe previste dalla timeline senza sgonfiare l’impasto.'
+    ].forEach((txt,i)=>method.append(create('div',{class:'printMethodStep'},[create('b',{text:String(i+1)}),create('p',{text:txt})])));
+    sheet.append(method);
+
+    const timeline=create('section',{class:'printSection printTimeline'});
+    timeline.append(create('h2',{text:'Timeline completa'}));
+    (plan.timeline||[]).forEach((item,i)=>{
+      const meta=TIMELINE_VISUALS[item.label]||{short:'Segui questo passaggio della lavorazione.',duration:''};
+      const row=create('div',{class:'printTimelineRow'});
+      row.append(create('b',{class:'printTimelineNumber',text:String(i+1)}),create('time',{text:fmtShortDate(new Date(item.date)),datetime:item.date}),create('div',{},[
+        create('strong',{text:item.label}),
+        create('p',{text:meta.short})
+      ]));
+      timeline.append(row);
+    });
+    sheet.append(timeline);
+
+    sheet.append(create('footer',{class:'printFooter',text:'PizzaMaker · Scheda impasto personale'}));
+  }
+
+  function printSavedPlan() {
+    const plan=getLastPlan();
+    if(!plan) return;
+    renderPrintSheet(plan);
+    window.print();
+  }
+
+  function renderHomeSavedStep() {
+    const plan=getLastPlan();
+    const empty=$('homeEmptyState'), active=$('homeActiveState'), mount=$('homeSavedPlan');
+    if(!empty||!active||!mount) return;
+    if(!plan){
+      empty.classList.remove('hidden');
+      active.classList.add('hidden');
+      clear(mount);
+      return;
+    }
+    empty.classList.add('hidden');
+    active.classList.remove('hidden');
+    const original=$('savedTimeline');
+    const proxyId=original?.id;
+    if(original) original.id='savedTimelineOffscreen';
+    mount.id='savedTimeline';
+    renderSavedTimeline();
+    mount.id='homeSavedPlan';
+    if(original) original.id=proxyId;
+  }
+
+  function calculate() {
+    initDates();
+
+    const width = clampNumber('w', 37, 10, 80);
+    const height = clampNumber('h', 26, 10, 80);
+    const pans = Math.round(clampNumber('n', 1, 1, 10));
+    const load = getSelectedStyle();
+    const start = new Date($('start').value);
+    const bake = new Date($('bake').value);
+    const hours = hoursBetween(start, bake);
+    if (!flourBlendIsValid()) {
+      const target = $('result');
+      clear(target);
+      const error = card('Percentuali da correggere', 'bad');
+      addParagraph(error, 'Farina 2 e Farina 3 insieme devono lasciare almeno l’1% alla Farina 1.');
+      target.append(error);
+      return;
+    }
+    const hydration = hydrationValue();
+    const salt = saltValue();
+    const oil = 2.5;
+    const yeast = yeastPctByHours(hours);
+    const honey = hours > 0 && hours <= 12 ? 0.5 : 0;
+    const area = width * height;
+    const doughPer = area * load;
+    const total = doughPer * pans;
+    const flour = total / (1 + hydration / 100 + salt / 100 + oil / 100 + yeast / 100 + honey / 100);
+    const water = flour * hydration / 100;
+    const saltG = flour * salt / 100;
+    const oilG = flour * oil / 100;
+    const yeastG = flour * yeast / 100;
+    const honeyG = flour * honey / 100;
+    const timeline = buildTimeline(start, bake, hours);
+    const flourBlend = activeFlours().map((item) => ({
+      ...item,
+      grams: flour * item.pct / 100
+    }));
+
+    renderRecipeResult({
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey,
+      area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
+    });
+  }
+
+  function doughAdviceText(place, state, time) {
+    const context = place === 'frigo' ? 'dal frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
+
+    const rules = {
+      indietro: ['Portalo a temperatura ambiente e aspetta finché diventa più gonfio e rilassato.', 'Non forzare stesura o pieghe aggressive se è duro e poco sviluppato.', 'Ricontrolla tra 45–60 minuti.'],
+      giusto: ['Non toccarlo troppo. Stendi quando è rilassato, poi riposo in teglia coperto.', 'Non aggiungere pieghe “per sicurezza”.', time === 'less1' ? 'Stendi ora e fai un riposo breve.' : 'Prepara banco, semola e teglia.'],
+      triplicato: ['Niente pieghe. Stendi delicato e accorcia il riposo in teglia.', 'Non ristrutturare: se è bello e gonfio, va accompagnato.', time === 'over6' ? 'Se manca molto, rimettilo al fresco dopo una gestione minima.' : 'Fuori frigo 20–30 minuti, poi stesura delicata.'],
+      collasso: [time === 'over6' || time === '3to6' ? 'Fai una sola piega di salvataggio molto morbida e rimettilo in frigo.' : 'Stendi quasi subito, riposo breve in teglia e cuoci.', 'Non fare tre pieghe forti: peggiori strappi e perdita di gas.', time === 'less1' ? 'Teglia e forno subito.' : 'Controlla dopo 30 minuti.'],
+      rigido: ['Copri e aspetta. Se si ritira, è tensione: serve riposo, non forza.', 'Non tirarlo fino a strapparlo e non aggiungere farina sul banco a caso.', 'Riprova tra 10–20 minuti.'],
+      molle: [time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Una piega morbida può ridare struttura, poi riposo coperto.', 'Non sommergerlo di farina: rischi una crosta secca e irregolare.', 'Valuta consistenza dopo il riposo.'],
+      strappa: ['Stop. Copri e lascia rilassare. Poi riprendi con tocchi leggeri.', 'Non insistere con pieghe aggressive: l’impasto è in tensione o indebolito.', 'Aspetta 15–20 minuti.']
+    };
+
+    const [doNow, avoid, next] = rules[state] ?? rules.giusto;
+    return { context, doNow, avoid, next };
+  }
+
+  const problemRules = {
+    alta: ['Troppo impasto per la teglia, riposo in teglia lungo o impasto già molto avanti.', 'Cuoci bene sotto e taglia porzioni più piccole.', 'Scendi a 0,48–0,54 g/cm² o accorcia il riposo in teglia.'],
+    bassaDura: ['Troppo poco impasto, poca fermentazione, stesura aggressiva o cottura troppo lunga.', 'Evita altra cottura; usa condimento umido o olio a crudo.', 'Aumenta leggermente carico impasto e non schiacciare tutta l’aria.'],
+    fondoPallido: ['Forno non abbastanza preriscaldato, ripiano troppo alto, teglia poco conduttiva o troppa umidità.', 'Sposta in basso e prolunga la prima fase.', 'Preriscalda 40–45 minuti e limita acqua dei condimenti.'],
+    fondoBruciato: ['Teglia molto conduttiva, ripiano troppo basso troppo a lungo o forno aggressivo sotto.', 'Sposta medio-alto e completa sopra.', 'Riduci minuti in basso o usa teglia meno aggressiva.'],
+    sopraBagnata: ['Pomodoro/mozzarella troppo acquosi, verdure non asciutte o mozzarella messa troppo presto.', 'Rifinisci brevemente ventilato/grill controllando a vista.', 'Scola mozzarella, usa pomodoro denso e aggiungi latticini alla fine.'],
+    mozzarellaAcqua: ['Mozzarella non scolata o messa troppo presto.', 'Rifinitura breve medio-alta; non prolungare troppo o secchi la base.', 'Taglia e scola 3–6 ore prima, usane meno.'],
+    patateCrude: ['Taglio troppo spesso o patate non asciugate/pretrattate.', 'Prolunga medio-alto se la base lo permette.', 'Taglio 1–1,5 mm, asciuga bene; se spesse, sbollenta 2 minuti.'],
+    noAlveoli: ['Impasto schiacciato in stesura, fermentazione scarsa, farina debole o troppa manipolazione.', 'Non puoi creare alveoli in cottura, ma puoi salvare croccantezza.', 'Meno pressione, più riposo, pieghe leggere e farina adatta.'],
+    collassato: ['Lievitazione troppo avanti o gestione troppo aggressiva.', 'Se manca poco, stendi delicato e cuoci. Se manca molto, piega morbida e frigo.', 'Riduci lievito o tempo a temperatura ambiente.'],
+    siRitira: ['Impasto in tensione, freddo o lavorato troppo.', 'Copri e aspetta 10–20 minuti.', 'Non forzare: stendi in due tempi.'],
+    siStrappa: ['Maglia indebolita, olio incorporato male, troppa forza o idratazione non gestita.', 'Stop, copri, riposo. Riprendi con mani unte e tocchi minimi.', 'Olio dopo sale ma prima delle pieghe strutturali, poco lavoro e riposo.']
+  };
+
+  function adviceRow(label, text, tone = '') {
+    const row = create('div', { class: `adviceRow ${tone}`.trim() });
+    row.append(create('strong', { text: label }), create('p', { text }));
+    return row;
+  }
+
+  function renderAdvice() {
+    const target = $('adviceOutput');
+    clear(target);
+    const panel = card('Indicazioni', 'compactResult');
+
+    if ($('checkMode').value === 'dough') {
+      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
+      panel.append(
+        adviceRow('Adesso', `${advice.doNow} Situazione: impasto ${advice.context}.`, 'primaryRow'),
+        adviceRow('Evita', advice.avoid, 'badRow'),
+        adviceRow('Poi', advice.next, 'okRow')
+      );
+    } else {
+      const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
+      panel.append(
+        adviceRow('Possibile causa', cause, 'warnRow'),
+        adviceRow('Adesso', now, 'primaryRow'),
+        adviceRow('Prossima volta', next, 'okRow')
+      );
+    }
+    target.append(panel);
+  }
+
+  function guideStep(number, title, texts) {
+    const step = create('div', { class: 'guideStep' });
+    const head = create('div', { class: 'guideStepHead' });
+    head.append(create('span', { class: 'stepNumber', text: String(number) }), create('strong', { text: title }));
+    step.append(head);
+    texts.forEach((text) => step.append(create('p', { text })));
+    return step;
+  }
+
+  function renderCookGuide() {
+    const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
+    clear(target); closeCookTimer();
+    const panel=card('Guida operativa','cookGuide');
+    const stretchLink=create('button',{type:'button',class:'timelineAction',text:'Serve aiuto con la stesura? Apri la guida →'});
+    stretchLink.addEventListener('click',()=>openView('stesura'));
+    panel.append(stretchLink);
+
+    const panText=pan==='leccarda'
+      ? 'Leccarda: prima fase ben in basso; conduce meno di ferro e alluminio.'
+      : 'Teglia più conduttiva: controlla il fondo prima perché può colorire più velocemente.';
+    panel.append(guideStep(1,'Preriscalda',[panText,'Forno statico a 250 °C per 40–45 minuti.']));
+    const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer preriscaldo · 40 min'});
+    preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo forno')); panel.lastElementChild.append(preheat);
+
+    if(pizza==='margherita'){
+      panel.append(guideStep(2,'Prima cottura',['Pomodoro denso 110–130 g per una 37×26. Cuoci sul ripiano basso.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer prima cottura · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
+      panel.append(guideStep(3,'Completa',['Aggiungi 120–140 g di mozzarella ben scolata. Sposta medio-alto e termina la cottura.']));
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer mozzarella · 3 min'}); finish.addEventListener('click',()=>startCookTimer(3,'Mozzarella')); panel.lastElementChild.append(finish);
+    }else if(pizza==='rossa'){
+      panel.append(guideStep(2,'Cottura',['Pomodoro denso e olio moderato. Parti in basso e controlla il fondo prima di proseguire.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer controllo · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
+    }else{
+      panel.append(guideStep(2,'Patate e cottura',['Patate sottilissime, sciacquate e asciugate bene. Condiscile prima e cuoci in basso.']));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Timer primo controllo · 11 min'}); first.addEventListener('click',()=>startCookTimer(11,'Patate · primo controllo')); panel.lastElementChild.append(first);
+      panel.append(guideStep(3,'Completa',['Sposta medio-alto per finire. Lardo fuori forno o negli ultimi secondi.']));
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer finitura · 4 min'}); finish.addEventListener('click',()=>startCookTimer(4,'Finitura')); panel.lastElementChild.append(finish);
+    }
+    const finalNo= pizza==='rossa'?3:4;
+    panel.append(guideStep(finalNo,'Sforna e asciuga',['Fondo dorato e superficie asciutta? Togli subito la pizza dalla teglia e appoggiala su griglia.']));
+    target.append(panel);
+  }
+
+
+  let timerState={remaining:0,initial:0,running:false,label:'Timer',interval:null,deadline:0};
+  function formatTimer(seconds){
+    const safe=Math.max(0,Math.ceil(seconds));
+    return `${pad(Math.floor(safe/60))}:${pad(safe%60)}`;
+  }
+  function paintTimer(){
+    if(!$('cookTimer'))return;
+    $('timerDisplay').textContent=formatTimer(timerState.remaining);
+    $('timerLabel').textContent=timerState.label;
+    $('timerToggle').textContent=timerState.running?'Pausa':timerState.remaining<=0?'Ricomincia':'Riprendi';
+    $('cookTimer').classList.toggle('timerDone',timerState.remaining<=0);
+    document.title=timerState.running?`${formatTimer(timerState.remaining)} · PizzaMaker`:'PizzaMaker — Teglia Coach';
+  }
+  function stopTimer(){
+    if(timerState.interval){window.clearInterval(timerState.interval);timerState.interval=null;}
+    timerState.running=false;paintTimer();
+  }
+  function tickTimer(){
+    if(!timerState.running)return;
+    timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+    if(timerState.remaining===0){
+      stopTimer();
+      if('vibrate' in navigator)navigator.vibrate([180,90,180]);
+    }
+    paintTimer();
+  }
+  function startCookTimer(minutes,label){
+    if(timerState.interval)window.clearInterval(timerState.interval);
+    timerState.initial=Math.max(1,Math.round(minutes*60));
+    timerState.remaining=timerState.initial;
+    timerState.label=label;timerState.running=true;
+    timerState.deadline=Date.now()+timerState.remaining*1000;
+    $('cookTimer').classList.remove('hidden');
+    timerState.interval=window.setInterval(tickTimer,250);
+    paintTimer();$('cookTimer').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function toggleCookTimer(){
+    if(timerState.remaining<=0)timerState.remaining=timerState.initial;
+    timerState.running=!timerState.running;
+    if(timerState.running){
+      timerState.deadline=Date.now()+timerState.remaining*1000;
+      if(!timerState.interval)timerState.interval=window.setInterval(tickTimer,250);
+    }else if(timerState.interval){
+      timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+      window.clearInterval(timerState.interval);timerState.interval=null;
+    }
+    paintTimer();
+  }
+  function closeCookTimer(){
+    stopTimer();$('cookTimer')?.classList.add('hidden');
+    document.title='PizzaMaker — Teglia Coach';
+  }
+
+  function savePrefs(showConfirmation = true) {
+    PREF_IDS.forEach((id) => {
+      const node = $(id);
+      if (node) localStorage.setItem(PREF_PREFIX + id, node.value);
+    });
+    localStorage.setItem(PREF_PREFIX + 'flourCount', String(activeFlours().length));
+    const style = document.querySelector('input[name="style"]:checked')?.value;
+    if (style) localStorage.setItem(PREF_PREFIX + 'style', style);
+    if (showConfirmation) alert('Preferenze salvate in questo browser.');
+  }
+
+  function loadPrefs() {
+    initDates();
+    PREF_IDS.forEach((id) => {
+      const saved = localStorage.getItem(PREF_PREFIX + id);
+      const node = $(id);
+      if (saved !== null && node) node.value = saved;
+    });
+    const flourCount = Number.parseInt(localStorage.getItem(PREF_PREFIX + 'flourCount') ?? '1', 10);
+    $('flour2').classList.toggle('hidden', flourCount < 2);
+    $('flour3').classList.toggle('hidden', flourCount < 3);
+    updateFlourUI();
+    const savedStyle = localStorage.getItem(PREF_PREFIX + 'style');
+    if (savedStyle) {
+      const styleNode = $('input[name="style"]').find((node) => node.value === savedStyle);
+      if (styleNode) styleNode.checked = true;
+    }
+    toggleCustoms();
+  }
+
+  
+
+  function showPrivacyNotice() {
+    const overlay = $('privacyOverlay');
+    if (overlay && localStorage.getItem(PRIVACY_KEY) !== 'yes') {
+      overlay.classList.add('show');
+      overlay.focus();
+    }
+  }
+
+  function acceptPrivacyNotice() {
+    localStorage.setItem(PRIVACY_KEY, 'yes');
+    $('privacyOverlay')?.classList.remove('show');
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('[data-open]').forEach((button) => {
+      button.addEventListener('click', () => openView(button.dataset.open));
+    });
+    document.querySelectorAll('[data-open-check]').forEach((button) => {
+      button.addEventListener('click', () => openCheckTool('dough'));
+    });
+    $('closeCheckTool')?.addEventListener('click', closeCheckTool);
+
+    $('acceptPrivacy')?.addEventListener('click', acceptPrivacyNotice);
+    $('calculateBtn')?.addEventListener('click', calculate);
+    $('adviceBtn')?.addEventListener('click', renderAdvice);
+    $('cookBtn')?.addEventListener('click', renderCookGuide);
+    $('timerToggle')?.addEventListener('click', toggleCookTimer);
+    $('timerAdd')?.addEventListener('click', ()=>{timerState.remaining+=60; if(timerState.running)timerState.deadline+=60000; paintTimer();});
+    $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
+    $('timerClose')?.addEventListener('click', closeCookTimer);
+    $('checkMode')?.addEventListener('change', toggleCheckMode);
+
+    $('saltProfile')?.addEventListener('change', toggleCustoms);
+    $('addFlourBtn')?.addEventListener('click', addFlour);
+    $('flourBlend')?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-remove-flour]');
+      if (button) removeFlour(button.dataset.removeFlour);
+    });
+    $('resetAdvancedBtn')?.addEventListener('click', resetAdvanced);
+    ['flourType','protein','flourW','lmMix','flourType2','protein2','flourW2','lmMix2','flourType3','protein3','flourW3','lmMix3']
+      .forEach((id) => {
+        const node = $(id);
+        node?.addEventListener('input', () => updateFlourUI('', false));
+        node?.addEventListener('change', () => updateFlourUI('', false));
+      });
+    ['flour2Pct','flour3Pct'].forEach((id) => {
+      const node = $(id);
+      // Durante la digitazione il campo può restare vuoto: normalizziamo solo a modifica conclusa.
+      node?.addEventListener('input', () => updateFlourUI('', false));
+      node?.addEventListener('change', () => updateFlourUI(id, true));
+      node?.addEventListener('blur', () => updateFlourUI(id, true));
+    });
+    [1,2,3].forEach((index) => {
+      $('flourCatalog' + index)?.addEventListener('change', () => applyCatalogFlour(index));
+    });
+    $('hydration')?.addEventListener('change', toggleCustoms);
+    ['start','bake'].forEach((id)=>$(id)?.addEventListener('change', updateHydrationRecommendation));
+
+    $('recipeForm')?.addEventListener('change', () => savePrefs(false));
+    $('recipeForm')?.addEventListener('input', (event) => {
+      if (event.target.matches('input[type="number"], input[type="datetime-local"]')) savePrefs(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && $('privacyOverlay')?.classList.contains('show')) {
+        acceptPrivacyNotice();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // La navigazione deve restare disponibile anche se un'inizializzazione secondaria fallisce.
+    bindEvents();
+    const initializers = [
+      loadPrefs,
+      emptyResult,
+      renderSavedTimeline,
+      renderHomeSavedStep,
+      () => clear($('cook')),
+      toggleCheckMode,
+      showPrivacyNotice
+    ];
+    initializers.forEach((initialize) => {
+      try { initialize(); }
+      catch (error) { console.error('PizzaMaker init:', error); }
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
