@@ -1238,7 +1238,10 @@
     document.querySelectorAll('[data-open]').forEach((button) => {
       button.addEventListener('click', () => {
         const target=button.dataset.open;
-        if(target==='pieghe'||target==='stesura'||target==='cottura') openTechniqueFromHome(target);
+        const isTechniqueTarget=target==='pieghe'||target==='stesura'||target==='cottura';
+        const activeTechnique=document.querySelector('.techniqueView.active');
+        if(isTechniqueTarget && activeTechnique) openView(target);
+        else if(isTechniqueTarget) openTechniqueFromHome(target);
         else openView(target);
       });
     });
