@@ -12,6 +12,9 @@
     'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt'
   ];
 
+  let techniqueOrigin = { view:'home', step:null, action:null };
+
+
   function clampNumber(id, fallback, min, max) {
     const node = $(id);
     const value = Number.parseFloat(node?.value ?? '');
@@ -94,7 +97,7 @@
     $('bake').value = fmtInputDate(bake);
   }
 
-  function openView(id) {
+  function openView(id, options = {}) {
     // Il calcolatore è una simulazione: rientrando si parte senza un risultato precedente.
     if (id === 'calc') clear($('result'));
     document.querySelectorAll('.view').forEach((view)=>view.classList.remove('active'));
@@ -107,9 +110,10 @@
         $('checkTool')?.classList.add('hidden');
       }
       if(id==='home') renderHomeSavedStep();
-      window.scrollTo({top:0,left:0,behavior:'smooth'});
-    document.documentElement.scrollLeft=0;
-    document.body.scrollLeft=0;
+      if(id==='pieghe'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
+      if(!options.preserveScroll) window.scrollTo({top:0,left:0,behavior:'smooth'});
+      document.documentElement.scrollLeft=0;
+      document.body.scrollLeft=0;
     }
   }
 
@@ -514,11 +518,92 @@
     return null;
   }
 
-  function openTimelineAction(action) {
+  function openTimelineAction(action, item = null) {
     const config = TIMELINE_ACTIONS[action];
     if (!config) return;
+    techniqueOrigin = { view:'impasto', step:item, action };
     if (config.view === 'check') openCheckTool('dough');
     else openView(config.view);
+  }
+
+  function openTechniqueFromHome(view) {
+    techniqueOrigin = { view:'home', step:null, action:null };
+    openView(view);
+  }
+
+  function goBackFromTechnique() {
+    if (techniqueOrigin.view === 'impasto') {
+      openView('impasto');
+      requestAnimationFrame(() => {
+        const target = techniqueOrigin.step?.label
+          ? document.querySelector(`[data-step-label="${CSS.escape(techniqueOrigin.step.label)}"]`)
+          : $('savedTimeline');
+        target?.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+    } else {
+      openView('home');
+    }
+  }
+
+  function planSummary(plan) {
+    if (!plan) return null;
+    const tray = plan.tray || {};
+    const width = Number(tray.width);
+    const height = Number(tray.height);
+    const pans = Number(tray.pans) || 1;
+    const area = Number.isFinite(width) && Number.isFinite(height) ? width * height : null;
+    return { width, height, pans, area };
+  }
+
+  function renderTechniqueContext(id) {
+    const plan=getLastPlan();
+    const step=techniqueOrigin.step;
+    const summary=planSummary(plan);
+    const fromTimeline=techniqueOrigin.view==='impasto' && plan && step;
+
+    if(id==='pieghe'){
+      const box=$('foldContext');
+      box?.classList.toggle('hidden',!fromTimeline);
+      if(fromTimeline){
+        $('foldContextTitle').textContent=step.label;
+        const hyd=plan.ingredients?.hydration;
+        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${plan.pizza}. Fai un solo giro leggero, poi valuta la tenuta prima di decidere se ripetere.`;
+      }
+    }
+
+    if(id==='stesura'){
+      const box=$('stretchContext');
+      box?.classList.toggle('hidden',!fromTimeline);
+      if(fromTimeline){
+        $('stretchContextTitle').textContent=summary?.area?`${round(summary.width,0)} × ${round(summary.height,0)} cm · ${round(plan.doughPer,0)} g`:'Stesura del tuo impasto';
+        $('stretchContextMeta').textContent=`${plan.pizza} · ${round(plan.ingredients?.hydration||0,0)}% idratazione. Se l'impasto non collabora, fermati e usa i segnali sotto prima di forzarlo.`;
+      }
+    }
+
+    if(id==='cottura') renderCookPlanContext(fromTimeline ? plan : null);
+  }
+
+  function renderCookPlanContext(plan) {
+    const box=$('cookPlanContext');
+    const summary=planSummary(plan);
+    const hasTray=Boolean(plan&&summary?.area);
+    box?.classList.toggle('hidden',!hasTray);
+    if(hasTray){
+      clear(box);
+      box.append(
+        create('span',{class:'flowEyebrow',text:'Dalla tua ricetta'}),
+        create('strong',{text:`${round(summary.width,0)} × ${round(summary.height,0)} cm · ${round(plan.doughPer,0)} g per teglia`}),
+        create('p',{text:`${plan.pizza} · ${round(plan.ingredients?.hydration||0,0)}% idratazione. Le quantità sotto vengono adattate alla tua teglia.`})
+      );
+      $('cookSetupEyebrow').textContent='Completa due dettagli';
+      $('cookSetupTitle').textContent='Condimento e teglia';
+      $('cookSetupHint').textContent='Dimensioni e peso impasto sono già recuperati dalla tua ricetta.';
+      renderCookGuide();
+    } else {
+      $('cookSetupEyebrow').textContent='Due scelte';
+      $('cookSetupTitle').textContent='Adatta la cottura';
+      $('cookSetupHint').textContent='Scegli condimento e materiale della teglia.';
+    }
   }
 
   const TIMELINE_VISUALS = {
@@ -557,7 +642,7 @@
       const action = timelineActionFor(item);
       const legacyMeta = legacyCheck ? { icon:'◎', short:'Verifica lo stato reale dell’impasto prima di decidere come proseguire.', duration:'Controllo' } : null;
       const meta=TIMELINE_VISUALS[item.label]||legacyMeta||{icon:'•',short:'Segui questo passaggio della lavorazione.',duration:''};
-      const row=create('li',{class:`visualTimelineStep ${state}`});
+      const row=create('li',{class:`visualTimelineStep ${state}`,'data-step-label':item.label});
       const rail=create('div',{class:'visualTimelineRail','aria-hidden':'true'});
       rail.append(create('span',{class:'visualTimelineNumber',text:String(index+1)}));
       const card=create('article',{class:'visualTimelineCard'});
@@ -571,7 +656,7 @@
       if(action){
         const config=TIMELINE_ACTIONS[action];
         const actionButton=create('button',{type:'button',class:'timelineAction',text:config?.label||'Apri guida →'});
-        actionButton.addEventListener('click',()=>openTimelineAction(action));
+        actionButton.addEventListener('click',()=>openTimelineAction(action,item));
         body.append(actionButton);
       }
       card.append(visual,body); row.append(rail,card); list.append(row);
@@ -597,6 +682,7 @@
       doughPer: data.doughPer,
       total: data.total,
       bake: data.bake.toISOString(),
+      tray: { width:data.width, height:data.height, pans:data.pans },
       timeline: data.timeline,
       ingredients: {
         flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
@@ -714,21 +800,36 @@
       const go=create('button',{type:'button',class:'savedPlanCta',text:'Calcola un impasto →'}); go.addEventListener('click',()=>openView('calc')); empty.append(go); target.append(empty); return;
     }
     const status=timelineStatus(plan.timeline);
-    const main=create('section',{class:'savedPlan'});
-    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Timeline conclusa':'Stato atteso ora';
+    const main=create('section',{class:`savedPlan ${status.phase==='finished'?'finishedPlan':''}`});
+    const label=status.phase==='scheduled'?'Impasto pianificato':status.phase==='finished'?'Ultimo impasto':'Stato atteso ora';
     main.append(create('span',{class:'flowEyebrow',text:label}));
     const currentBox=create('div',{class:'savedNext'});
     const primary=status.phase==='scheduled'?status.next:status.current;
-    const primaryTitle=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
-    currentBox.append(create('div',{},[create('h3',{text:primaryTitle}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]));
-    if(primary) {
-      currentBox.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
-      const primaryAction=timelineActionFor(primary);
-      if(primaryAction){
-        const config=TIMELINE_ACTIONS[primaryAction];
-        const go=create('button',{type:'button',class:'timelineAction savedPrimaryAction',text:config?.label||'Apri guida →'});
-        go.addEventListener('click',()=>openTimelineAction(primaryAction));
-        currentBox.append(go);
+
+    if(status.phase==='finished'){
+      currentBox.append(create('div',{},[
+        create('h3',{text:plan.pizza||'Impasto completato'}),
+        create('p',{text:`Completato · cottura ${fmtShortDate(new Date(plan.bake))}`})
+      ]));
+      const finishedActions=create('div',{class:'finishedActions'});
+      const remake=create('button',{type:'button',class:'finishedPrimary',text:'Nuovo impasto'});
+      remake.addEventListener('click',()=>openView('calc'));
+      const feedback=create('button',{type:'button',class:'finishedSecondary',text:'Com’è venuta?'});
+      feedback.addEventListener('click',()=>openCheckTool('result'));
+      finishedActions.append(remake,feedback);
+      currentBox.append(finishedActions);
+    } else {
+      const primaryTitle=status.phase==='scheduled'?'Non ancora iniziato':primary?.label||'Timeline conclusa';
+      currentBox.append(create('div',{},[create('h3',{text:primaryTitle}),create('p',{text:`${plan.pizza} · cottura ${fmtShortDate(new Date(plan.bake))}`})]));
+      if(primary) {
+        currentBox.append(create('time',{text:fmtShortDate(new Date(primary.date)),datetime:primary.date}));
+        const primaryAction=timelineActionFor(primary);
+        if(primaryAction){
+          const config=TIMELINE_ACTIONS[primaryAction];
+          const go=create('button',{type:'button',class:'timelineAction savedPrimaryAction',text:config?.label||'Apri guida →'});
+          go.addEventListener('click',()=>openTimelineAction(primaryAction,primary));
+          currentBox.append(go);
+        }
       }
     }
     main.append(currentBox);
@@ -741,15 +842,16 @@
       nextRow.append(create('span',{text:'Inizia'}),create('strong',{text:status.next.label}),create('time',{text:fmtShortDate(new Date(status.next.date)),datetime:status.next.date}));
       main.append(nextRow);
     }
-    const details=create('details',{class:'savedPlanDetails'}); details.append(create('summary',{text:'Timeline e dosi'}));
-    const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
-    const ingredientsSection=create('div',{class:'savedPlanSection'}); ingredientsSection.append(create('h4',{text:'Dosi'}));
+    const details=create('details',{class:'savedPlanDetails'}); details.append(create('summary',{text:'Dosi e timeline'}));
+    const ingredientsSection=create('div',{class:'savedPlanSection savedDosesSection'}); ingredientsSection.append(create('h4',{text:'Dosi'}));
     const list=create('div',{class:'savedDoseGrid'}),rows=[];
     if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
     rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
     rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
-    ingredientsSection.append(list); details.append(ingredientsSection); main.append(details);
+    ingredientsSection.append(list); details.append(ingredientsSection);
+    const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
+    main.append(details);
     const printActions=create('div',{class:'savedPlanActions'});
     const printButton=create('button',{type:'button',class:'savedPlanPrint',text:'Stampa / salva PDF'});
     printButton.addEventListener('click',()=>printSavedPlan());
@@ -844,6 +946,8 @@
     }
     empty.classList.add('hidden');
     active.classList.remove('hidden');
+    const status=timelineStatus(plan.timeline);
+    if($('homeActiveTitle')) $('homeActiveTitle').textContent=status.phase==='finished'?'Il tuo ultimo impasto':'Segui il prossimo passaggio';
     const original=$('savedTimeline');
     const proxyId=original?.id;
     if(original) original.id='savedTimelineOffscreen';
@@ -969,37 +1073,68 @@
   function renderCookGuide() {
     const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
     clear(target); closeCookTimer();
+
+    const plan=techniqueOrigin.view==='impasto'?getLastPlan():null;
+    const summary=planSummary(plan);
+    const area=summary?.area || (37*26);
+    const tomato=Math.round(area*0.125/5)*5;
+    const mozzarella=Math.round(area*0.135/5)*5;
+    const sizeLabel=summary?.area?`${round(summary.width,0)}×${round(summary.height,0)}`:'37×26';
+
     const panel=card('Guida operativa','cookGuide');
     const stretchLink=create('button',{type:'button',class:'timelineAction',text:'Serve aiuto con la stesura? Apri la guida →'});
-    stretchLink.addEventListener('click',()=>openView('stesura'));
+    stretchLink.addEventListener('click',()=>{
+      techniqueOrigin={view:techniqueOrigin.view,step:{label:'Stesura'},action:'stretch'};
+      openView('stesura');
+    });
     panel.append(stretchLink);
 
     const panText=pan==='leccarda'
       ? 'Leccarda: prima fase ben in basso; conduce meno di ferro e alluminio.'
-      : 'Teglia più conduttiva: controlla il fondo prima perché può colorire più velocemente.';
+      : pan==='ferro'
+        ? 'Ferro blu: controlla presto il fondo, perché trasmette calore rapidamente.'
+        : pan==='alluminio'
+          ? 'Alluminio: buona conduzione; controlla il fondo prima del timer se il forno spinge molto sotto.'
+          : 'Antiaderente: conduzione più moderata; privilegia un buon preriscaldo e il ripiano basso.';
     panel.append(guideStep(1,'Preriscalda',[panText,'Forno statico a 250 °C per 40–45 minuti.']));
     const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer preriscaldo · 40 min'});
     preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo forno')); panel.lastElementChild.append(preheat);
 
     if(pizza==='margherita'){
-      panel.append(guideStep(2,'Prima cottura',['Pomodoro denso 110–130 g per una 37×26. Cuoci sul ripiano basso.']));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Timer prima cottura · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
-      panel.append(guideStep(3,'Completa',['Aggiungi 120–140 g di mozzarella ben scolata. Sposta medio-alto e termina la cottura.']));
-      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer mozzarella · 3 min'}); finish.addEventListener('click',()=>startCookTimer(3,'Mozzarella')); panel.lastElementChild.append(finish);
+      panel.append(guideStep(2,'Prima cottura',[
+        `Per ${sizeLabel}: circa ${tomato} g di pomodoro denso. Parti sul ripiano basso.`,
+        'Non aspettare un numero esatto: controlla quando il fondo è asciutto e appena colorito.'
+      ]));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 8 min'});
+      first.addEventListener('click',()=>startCookTimer(8,'Controlla il fondo')); panel.lastElementChild.append(first);
+      panel.append(guideStep(3,'Completa',[
+        `Aggiungi circa ${mozzarella} g di mozzarella ben scolata.`,
+        'Sposta al centro o medio-alto e termina appena la superficie è asciutta e il bordo ben cotto.'
+      ]));
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Controlla mozzarella · 2 min'});
+      finish.addEventListener('click',()=>startCookTimer(2,'Controlla la superficie')); panel.lastElementChild.append(finish);
     }else if(pizza==='rossa'){
-      panel.append(guideStep(2,'Cottura',['Pomodoro denso e olio moderato. Parti in basso e controlla il fondo prima di proseguire.']));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Timer controllo · 10 min'}); first.addEventListener('click',()=>startCookTimer(10,'Prima cottura')); panel.lastElementChild.append(first);
+      panel.append(guideStep(2,'Cottura',[
+        `Per ${sizeLabel}: circa ${tomato} g di pomodoro denso e olio moderato.`,
+        'Parti in basso e passa alla finitura solo quando il fondo è asciutto.'
+      ]));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 8 min'});
+      first.addEventListener('click',()=>startCookTimer(8,'Controlla il fondo')); panel.lastElementChild.append(first);
     }else{
-      panel.append(guideStep(2,'Patate e cottura',['Patate sottilissime, sciacquate e asciugate bene. Condiscile prima e cuoci in basso.']));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Timer primo controllo · 11 min'}); first.addEventListener('click',()=>startCookTimer(11,'Patate · primo controllo')); panel.lastElementChild.append(first);
+      panel.append(guideStep(2,'Patate e cottura',[
+        'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima e distribuiscile senza creare strati spessi.',
+        'Parti in basso e controlla insieme fondo e cottura delle patate.'
+      ]));
+      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 9 min'});
+      first.addEventListener('click',()=>startCookTimer(9,'Controlla fondo e patate')); panel.lastElementChild.append(first);
       panel.append(guideStep(3,'Completa',['Sposta medio-alto per finire. Lardo fuori forno o negli ultimi secondi.']));
-      const finish=create('button',{type:'button',class:'stepTimer',text:'Timer finitura · 4 min'}); finish.addEventListener('click',()=>startCookTimer(4,'Finitura')); panel.lastElementChild.append(finish);
+      const finish=create('button',{type:'button',class:'stepTimer',text:'Controlla finitura · 3 min'});
+      finish.addEventListener('click',()=>startCookTimer(3,'Controlla la finitura')); panel.lastElementChild.append(finish);
     }
-    const finalNo= pizza==='rossa'?3:4;
-    panel.append(guideStep(finalNo,'Sforna e asciuga',['Fondo dorato e superficie asciutta? Togli subito la pizza dalla teglia e appoggiala su griglia.']));
+    const finalNo=pizza==='rossa'?3:4;
+    panel.append(guideStep(finalNo,'Sforna e asciuga',['Fondo dorato e superficie asciutta? Togli subito la pizza dalla teglia e appoggiala su griglia per 1–2 minuti.']));
     target.append(panel);
   }
-
 
   let timerState={remaining:0,initial:0,running:false,label:'Timer',interval:null,deadline:0};
   function formatTimer(seconds){
@@ -1101,7 +1236,14 @@
 
   function bindEvents() {
     document.querySelectorAll('[data-open]').forEach((button) => {
-      button.addEventListener('click', () => openView(button.dataset.open));
+      button.addEventListener('click', () => {
+        const target=button.dataset.open;
+        if(target==='pieghe'||target==='stesura'||target==='cottura') openTechniqueFromHome(target);
+        else openView(target);
+      });
+    });
+    document.querySelectorAll('[data-tech-back]').forEach((button) => {
+      button.addEventListener('click', goBackFromTechnique);
     });
     document.querySelectorAll('[data-open-check]').forEach((button) => {
       button.addEventListener('click', () => openCheckTool('dough'));
