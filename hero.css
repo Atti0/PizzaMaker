@@ -60,3 +60,28 @@
     width: 82px;
   }
 }
+
+
+/* Hero mobile più compatto: lascia spazio al compito corrente */
+@media (max-width:640px){
+  .hero{
+    min-height:0;
+    padding:14px 16px;
+    margin:4px 0 14px;
+    border-radius:20px;
+  }
+  .heroCopy .eyebrow{font-size:11px;margin-bottom:3px}
+  .heroCopy h1{font-size:42px;line-height:.9;letter-spacing:-1px}
+  .heroVisual{
+    flex-basis:78px;
+    width:78px;
+  }
+  .heroVisual::before{
+    inset:-8% -16% -12% -16%;
+    filter:drop-shadow(0 7px 10px rgba(55,28,5,.18));
+  }
+}
+@media (max-width:380px){
+  .heroCopy h1{font-size:37px}
+  .heroVisual{flex-basis:68px;width:68px}
+}
