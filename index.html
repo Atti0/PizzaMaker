@@ -8,8 +8,8 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=47">
-  <link rel="stylesheet" href="hero.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
   <div id="privacyOverlay" class="privacyOverlay" role="dialog" aria-modal="true" aria-labelledby="privacyTitle" tabindex="-1">
@@ -73,7 +73,7 @@
         <div id="homeActiveState" class="homeActiveState hidden" aria-live="polite">
           <div class="sectionTitle activeDoughTitle">
             <p class="eyebrow">Il tuo impasto</p>
-            <h2>Segui il prossimo passaggio</h2>
+            <h2 id="homeActiveTitle">Segui il prossimo passaggio</h2>
           </div>
           <div class="homeDoughWorkspace">
             <div class="resultStack" id="homeSavedPlan"></div>
@@ -369,11 +369,17 @@
 
       <section id="pieghe" class="view premiumFlow techniqueView" aria-labelledby="piegheTitle">
         <div class="viewHeader">
-          <button type="button" class="ghost" data-open="home">← Home</button>
+          <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
             <p class="eyebrow">Tecnica · Pieghe</p>
             <h2 id="piegheTitle">Dai struttura, poi fermati</h2>
           </div>
+        </div>
+
+        <div id="foldContext" class="techContext hidden" aria-live="polite">
+          <span class="flowEyebrow" id="foldContextEyebrow">Dalla tua timeline</span>
+          <strong id="foldContextTitle"></strong>
+          <p id="foldContextMeta"></p>
         </div>
 
         <div class="techniqueLead">
@@ -383,15 +389,32 @@
             <p>Una piega serve a organizzare la maglia dell’impasto. Dopo ogni giro copri e lascia riposare: se l’impasto è già liscio, teso il giusto e mantiene forma, un’altra piega può essere inutile.</p>
             <div class="techniqueRule"><strong>Regola pratica</strong><span>Piega breve → riposo 20–25 min → osserva → decidi.</span></div>
           </div>
-          <div class="techniqueIllustration" aria-label="Schema dei quattro lembi dell'impasto portati al centro">
-            <svg viewBox="0 0 420 300" role="img" aria-labelledby="foldSvgTitle foldSvgDesc">
-              <title id="foldSvgTitle">Piega a quattro lembi</title>
-              <desc id="foldSvgDesc">Quattro frecce mostrano i bordi dell'impasto portati delicatamente verso il centro.</desc>
-              <rect x="12" y="12" width="396" height="276" rx="28" class="techBg"/>
-              <ellipse cx="210" cy="160" rx="112" ry="78" class="doughShape"/>
-              <ellipse cx="210" cy="160" rx="54" ry="36" class="doughCenter"/>
-              <path d="M210 50v62m-14-18 14 18 14-18M75 160h73m-18-14 18 14-18 14M345 160h-73m18-14-18 14 18 14M210 270v-62m-14 18 14-18 14 18" class="techArrow"/>
-              <circle cx="210" cy="160" r="12" class="targetDot"/>
+          <div class="techniqueIllustration foldSequence" aria-label="Sequenza pratica di una piega dell'impasto">
+            <svg viewBox="0 0 760 280" role="img" aria-labelledby="foldSvgTitle foldSvgDesc">
+              <title id="foldSvgTitle">Solleva, ripiega e ruota</title>
+              <desc id="foldSvgDesc">Tre passaggi mostrano le mani che sollevano un lembo, lo riportano al centro e ruotano l'impasto per ripetere sugli altri lati.</desc>
+              <rect x="8" y="8" width="744" height="264" rx="28" class="techBg"/>
+              <g transform="translate(32 42)">
+                <ellipse cx="90" cy="92" rx="76" ry="48" class="doughShape"/>
+                <path d="M47 58c12-26 74-28 88 0" class="foldLift"/>
+                <path d="M38 34c18 12 28 20 38 34M142 34c-18 12-28 20-38 34" class="handOutline"/>
+                <path d="M90 22v34m-11-12 11 12 11-12" class="techArrow"/>
+                <text x="90" y="184" text-anchor="middle" class="svgLabel">1 · Solleva il lembo</text>
+              </g>
+              <path d="M211 134h54m-14-11 14 11-14 11" class="techArrow"/>
+              <g transform="translate(278 42)">
+                <ellipse cx="90" cy="98" rx="76" ry="46" class="doughShape"/>
+                <path d="M47 54c17-31 69-31 86 0l-17 61H64z" class="foldFlap"/>
+                <path d="M90 25v57m-12-15 12 15 12-15" class="techArrow"/>
+                <text x="90" y="184" text-anchor="middle" class="svgLabel">2 · Porta al centro</text>
+              </g>
+              <path d="M457 134h54m-14-11 14 11-14 11" class="techArrow"/>
+              <g transform="translate(524 42)">
+                <ellipse cx="90" cy="96" rx="74" ry="50" class="doughShape"/>
+                <path d="M42 71c18-28 74-35 103-5" class="rotationArrow"/>
+                <path d="M137 51l10 16-20 2" class="rotationArrow"/>
+                <text x="90" y="184" text-anchor="middle" class="svgLabel">3 · Ruota e ripeti</text>
+              </g>
             </svg>
           </div>
         </div>
@@ -421,11 +444,17 @@
 
       <section id="stesura" class="view premiumFlow techniqueView" aria-labelledby="stesuraTitle">
         <div class="viewHeader">
-          <button type="button" class="ghost" data-open="home">← Home</button>
+          <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
             <p class="eyebrow">Tecnica · Stesura</p>
             <h2 id="stesuraTitle">Allarga senza perdere struttura</h2>
           </div>
+        </div>
+
+        <div id="stretchContext" class="techContext hidden" aria-live="polite">
+          <span class="flowEyebrow">La tua stesura</span>
+          <strong id="stretchContextTitle"></strong>
+          <p id="stretchContextMeta"></p>
         </div>
 
         <div class="techniqueLead stretchLead">
@@ -444,7 +473,7 @@
               <path d="M176 112h45m-12-10 12 10-12 10" class="techArrow"/>
               <g transform="translate(235 42)"><ellipse cx="70" cy="78" rx="67" ry="48" class="doughShape"/><circle cx="48" cy="67" r="7" class="fingerDot"/><circle cx="70" cy="60" r="7" class="fingerDot"/><circle cx="92" cy="67" r="7" class="fingerDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">2 · Polpastrelli</text></g>
               <path d="M374 112h45m-12-10 12 10-12 10" class="techArrow"/>
-              <g transform="translate(434 42)"><path d="M18 62c28-32 76-32 104 0l-16 45H34z" class="doughShape"/><path d="M25 118h92" class="forearmLine"/><text x="70" y="165" text-anchor="middle" class="svgLabel">3 · Trasferisci</text></g>
+              <g transform="translate(434 42)"><path d="M14 66c24-30 88-30 112 0l-16 34c-24 14-56 14-80 0z" class="doughShape"/><path d="M22 112h45M73 112h45" class="forearmLine"/><circle cx="18" cy="112" r="9" class="handDot"/><circle cx="122" cy="112" r="9" class="handDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">3 · Sostieni sotto</text></g>
               <path d="M572 112h45m-12-10 12 10-12 10" class="techArrow"/>
               <g transform="translate(625 42)"><rect x="0" y="30" width="100" height="95" rx="9" class="trayShape"/><rect x="10" y="40" width="80" height="75" rx="10" class="doughShape"/><text x="50" y="165" text-anchor="middle" class="svgLabel">4 · Teglia</text></g>
             </svg>
@@ -476,7 +505,7 @@
 
       <section id="cottura" class="view premiumFlow techniqueView" aria-labelledby="cotturaTitle">
         <div class="viewHeader">
-          <button type="button" class="ghost" data-open="home">← Home</button>
+          <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
             <p class="eyebrow">Tecnica · Cottura</p>
             <h2 id="cotturaTitle">Cuoci guardando i segnali giusti</h2>
@@ -497,9 +526,10 @@
               <rect x="70" y="22" width="280" height="255" rx="26" class="ovenBody"/>
               <path d="M100 92h220M100 154h220M100 216h220" class="ovenRack"/>
               <rect x="118" y="188" width="184" height="24" rx="6" class="pizzaBase"/>
-              <path d="M210 180V126m-15 17 15-17 15 17" class="techArrow"/>
-              <rect x="118" y="126" width="184" height="24" rx="6" class="pizzaFinish"/>
-              <text x="210" y="248" text-anchor="middle" class="svgLabel">1 · basso → 2 · centro</text>
+              <rect x="118" y="126" width="184" height="24" rx="6" class="pizzaGhost"/>
+              <path d="M210 180V142m-15 17 15-17 15 17" class="techArrow"/>
+              <text x="210" y="238" text-anchor="middle" class="svgLabel">Parti in basso</text>
+              <text x="210" y="258" text-anchor="middle" class="svgLabel mutedSvgLabel">poi sposta al centro</text>
             </svg>
           </div>
         </div>
@@ -510,15 +540,18 @@
           <article><span>Uscita</span><strong>Fuori dalla teglia</strong><p>Appoggia subito la pizza su griglia per 1–2 minuti: il vapore non deve ribagnare il fondo.</p></article>
         </div>
 
+        <div id="cookPlanContext" class="cookPlanContext hidden" aria-live="polite"></div>
+
         <div class="twoColumns cookWorkspace">
           <div class="card formCard flowForm cookSetup">
-            <p class="flowEyebrow">Prepara la guida</p>
-            <h3>Come la cuoci?</h3>
+            <p class="flowEyebrow" id="cookSetupEyebrow">Due scelte</p>
+            <h3 id="cookSetupTitle">Adatta la cottura</h3>
+            <p class="cookSetupHint" id="cookSetupHint">Scegli condimento e materiale della teglia. Se arrivi dalla tua timeline, dimensioni e quantità vengono recuperate dall’impasto.</p>
             <div class="row">
-              <div><label for="pizzaType">Pizza</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
-              <div><label for="panType">Teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
+              <div><label for="pizzaType">Condimento</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
+              <div><label for="panType">Materiale teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
             </div>
-            <button type="button" id="cookBtn" class="flowPrimary">Prepara la guida <span aria-hidden="true">→</span></button>
+            <button type="button" id="cookBtn" class="flowPrimary">Mostra i passaggi <span aria-hidden="true">→</span></button>
           </div>
 
           <div class="resultStack" id="cook" aria-live="polite"></div>
@@ -541,6 +574,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=32" defer></script>
+  <script src="app.js?v=33" defer></script>
 </body>
 </html>
