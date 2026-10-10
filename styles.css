@@ -960,3 +960,97 @@ body{
   .savedNext>div{flex:1 1 calc(100% - 110px)}
   .savedPrimaryAction{flex:1 1 100%;width:100%;text-align:center}
 }
+
+
+/* UX v3 — stato impasto, timeline compatta e guide contestuali */
+.techContext,.cookPlanContext{
+  margin:0 0 12px;
+  padding:14px 16px;
+  border:1px solid #d7ddca;
+  border-radius:15px;
+  background:#eef2e8;
+  color:#172036;
+  font-family:Arial,sans-serif;
+}
+.techContext .flowEyebrow,.cookPlanContext .flowEyebrow{margin-bottom:5px}
+.techContext strong,.cookPlanContext strong{display:block;font:900 16px/1.2 Arial,sans-serif}
+.techContext p,.cookPlanContext p{margin:6px 0 0;color:#60665c;font:600 12px/1.45 Arial,sans-serif}
+.cookSetupHint{margin:-7px 0 15px;color:#6f716b;font:600 12px/1.45 Arial,sans-serif}
+
+/* Un passaggio completato deve occupare poco: dettagli e illustrazione restano per corrente/prossimo. */
+.visualTimelineStep.done{grid-template-columns:30px minmax(0,1fr);gap:6px}
+.visualTimelineStep.done .visualTimelineCard{
+  display:block;
+  padding:9px 11px;
+  border-radius:13px;
+  box-shadow:none;
+  background:rgba(255,254,250,.68);
+}
+.visualTimelineStep.done .timelineVisual{display:none}
+.visualTimelineStep.done .timelineVisualBody{padding:0}
+.visualTimelineStep.done .timelineVisualBody>p,
+.visualTimelineStep.done .timelineDuration{display:none}
+.visualTimelineStep.done .timelineVisualTop{margin:0 0 3px}
+.visualTimelineStep.done .timelineVisualTitle{font-size:13px}
+.visualTimelineStep.done .timelineAction{margin-top:6px;padding:6px 8px;font-size:10px}
+.visualTimelineStep.done:not(:last-child) .visualTimelineRail:after{bottom:-12px}
+
+/* L'impasto concluso diventa storico, non un finto prossimo step. */
+.finishedPlan>.flowEyebrow{color:#74766f}
+.finishedPlan .savedNext{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  padding-bottom:17px;
+}
+.finishedPlan .savedNext h3{font-size:24px}
+.finishedPlan .savedNext p{font-size:13px}
+.finishedActions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.finishedActions button{min-height:44px;margin:0;border-radius:12px;box-shadow:none;font:900 12px/1 Arial,sans-serif}
+.finishedPrimary{background:#172036;color:#fff}
+.finishedSecondary{background:#fffefa;color:#a94332;border:1px solid #d8c9bc}
+.savedDosesSection{background:#fbf8f1}
+
+/* Disegni più didattici */
+.foldLift,.handOutline,.rotationArrow{
+  fill:none;stroke:#b86543;stroke-width:7;stroke-linecap:round;stroke-linejoin:round
+}
+.foldFlap{fill:#f5d6a6;stroke:#bf8655;stroke-width:4}
+.handOutline{stroke:#c8845d;stroke-width:11}
+.handDot{fill:#c8845d}
+.pizzaGhost{fill:#f2c585;stroke:#a7643c;stroke-width:3;opacity:.24;stroke-dasharray:8 6}
+.mutedSvgLabel{opacity:.66}
+
+/* Le guide tecniche devono sembrare un manuale operativo, non una pila di card. */
+.techniqueView{padding-bottom:20px}
+.techniqueView .techniqueLeadCopy{box-shadow:none}
+.techniqueView .techniqueIllustration{box-shadow:none}
+.cookPlanContext+ .cookWorkspace{margin-top:0}
+
+@media(max-width:640px){
+  .techContext,.cookPlanContext{margin:0 2px 10px;padding:13px 14px;border-radius:13px}
+  .techniqueSteps{gap:0;border-top:1px solid #ded8cc}
+  .techniqueStep{
+    grid-template-columns:36px minmax(0,1fr);
+    gap:10px;
+    padding:15px 4px;
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    background:transparent;
+  }
+  .techniqueStepNo{width:32px;height:32px;border-radius:50%}
+  .techniqueDecision{background:rgba(247,244,237,.72);border-radius:15px}
+  .techniqueLeadCopy{border-radius:15px}
+  .techniqueIllustration{border-radius:15px;background:#f4ecdd}
+  .cookCheckpoints{display:block}
+  .cookCheckpoints article{
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    padding:14px 4px;
+    background:transparent;
+  }
+  .cookCheckpoints article:last-child{border-bottom:0}
+  .finishedActions{grid-template-columns:1fr}
+}
