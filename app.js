@@ -7,7 +7,7 @@
   const PRIVACY_KEY = 'tc_privacy_notice_ok';
   const LAST_PLAN_KEY = 'tc7_last_plan';
   const PREF_IDS = [
-    'w','h','n','start','bake','saltProfile',
+    'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
     'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt'
   ];
@@ -204,14 +204,31 @@
 
   function applyCatalogFlour(index) {
     const suffix = index === 1 ? '' : String(index);
-    const name = $('flourCatalog' + index)?.value.trim();
+    const input = $('flourCatalog' + index);
+    const name = input?.value.trim();
     const known = FLOUR_CATALOG[name];
-    if (!known) return;
+    if (!known) {
+      input?.classList.remove('catalogMatched');
+      return false;
+    }
     if (known.type) $('flourType' + suffix).value = known.type;
     $('protein' + suffix).value = known.protein === null ? '' : String(known.protein);
     $('flourW' + suffix).value = known.w === null ? '' : String(known.w);
     if (known.lm) $('lmMix' + suffix).value = known.lm;
+    input?.classList.add('catalogMatched');
     updateFlourUI('', false);
+    return true;
+  }
+
+  function setStartNow() {
+    const now = new Date();
+    $('start').value = fmtInputDate(now);
+    const bake = new Date($('bake').value);
+    if (!Number.isFinite(bake.getTime()) || bake <= now) {
+      $('bake').value = fmtInputDate(addMinutes(now, 7 * 60));
+    }
+    updateHydrationRecommendation();
+    savePrefs(false);
   }
 
   function baseHydrationFor(protein, type, w = null) {
@@ -1284,8 +1301,11 @@
       node?.addEventListener('blur', () => updateFlourUI(id, true));
     });
     [1,2,3].forEach((index) => {
-      $('flourCatalog' + index)?.addEventListener('change', () => applyCatalogFlour(index));
+      const field=$('flourCatalog' + index);
+      field?.addEventListener('input', () => applyCatalogFlour(index));
+      field?.addEventListener('change', () => applyCatalogFlour(index));
     });
+    $('startNowBtn')?.addEventListener('click', setStartNow);
     $('hydration')?.addEventListener('change', toggleCustoms);
     ['start','bake'].forEach((id)=>$(id)?.addEventListener('change', updateHydrationRecommendation));
 
