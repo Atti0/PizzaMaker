@@ -1054,3 +1054,31 @@ body{
   .cookCheckpoints article:last-child{border-bottom:0}
   .finishedActions{grid-template-columns:1fr}
 }
+
+
+/* Correzioni UX — catalogo farine e orario rapido */
+.dateShortcut{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+}
+.dateShortcutBtn{
+  min-height:50px;
+  padding:0 14px;
+  border:1px solid #c8c5bc;
+  border-radius:12px;
+  background:#f6f1e7;
+  color:#172036;
+  box-shadow:none;
+  font:900 12px/1 Arial,sans-serif;
+}
+.dateShortcutBtn:active{background:#eee7da}
+.premiumCalc .flourCatalogField input.catalogMatched{
+  border-color:#6c824b;
+  box-shadow:0 0 0 3px rgba(82,107,45,.10);
+}
+@media(max-width:520px){
+  .dateShortcut{grid-template-columns:1fr}
+  .dateShortcutBtn{width:100%;min-height:44px}
+}

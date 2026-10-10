@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="stylesheet" href="styles.css?v=49">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -277,7 +277,13 @@
                 <small>Da quando inizi l’impasto a quando vuoi infornare.</small>
               </div>
               <div class="row">
-                <div><label for="start">Inizio impasto</label><input id="start" type="datetime-local"></div>
+                <div>
+                  <label for="start">Inizio impasto</label>
+                  <div class="dateShortcut">
+                    <input id="start" type="datetime-local">
+                    <button type="button" id="startNowBtn" class="dateShortcutBtn" aria-label="Imposta l'inizio impasto ad adesso">Adesso</button>
+                  </div>
+                </div>
                 <div><label for="bake">Inizio cottura</label><input id="bake" type="datetime-local"></div>
               </div>
             </div>
@@ -574,6 +580,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=33" defer></script>
+  <script src="app.js?v=34" defer></script>
 </body>
 </html>
