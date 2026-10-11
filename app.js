@@ -476,8 +476,8 @@
       { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() }
     ];
 
-    const firstCheckMinutes = kneadMethod === 'hand' ? 60 : 55;
-    const secondCheckMinutes = kneadMethod === 'hand' ? 85 : 80;
+    const firstCheckMinutes = 60;
+    const secondCheckMinutes = 85;
 
     timeline.push(
       { label: 'Controlla la struttura', date: addMinutes(start, firstCheckMinutes).toISOString(), action: 'fold' },
@@ -492,7 +492,7 @@
       );
     } else {
       timeline.push(
-        { label: 'Frigo coperto', date: addMinutes(start, kneadMethod === 'hand' ? 110 : 100).toISOString() },
+        { label: 'Frigo coperto', date: addMinutes(start, 110).toISOString() },
         { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'stretch' },
         { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
