@@ -991,7 +991,7 @@
       'Mescola farine, lievito e 85–90% dell’acqua.',
       'Copri e lascia riposare 20 minuti.',
       'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.',
-      'Lavora poco e fai le pieghe previste dalla timeline senza sgonfiare l’impasto.'
+      'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.'
     ].forEach((txt,i)=>method.append(create('div',{class:'printMethodStep'},[create('b',{text:String(i+1)}),create('p',{text:txt})])));
     sheet.append(method);
 
