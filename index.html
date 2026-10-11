@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=49">
+  <link rel="stylesheet" href="styles.css?v=50">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -271,6 +271,29 @@
                 <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
               </div>
             </div>
+            <div class="calculatorSection kneadEditor">
+              <div class="calculatorSectionHeader">
+                <span>Metodo d’impasto</span>
+                <small>Aiuta a capire quanto sviluppo può essere già arrivato dalla lavorazione iniziale.</small>
+              </div>
+              <div class="calculatorInset">
+                <div class="basicField">
+                  <label for="kneadMethod">Come impasti?</label>
+                  <select id="kneadMethod">
+                    <option value="hand" selected>A mano</option>
+                    <option value="planetary">Planetaria</option>
+                    <option value="spiral">Impastatrice a spirale</option>
+                  </select>
+                  <small class="fieldHint">Non determina un numero fisso di pieghe: PizzaMaker ti farà controllare la struttura prima di decidere.</small>
+                </div>
+                <div class="basicField">
+                  <label for="doughTemp">Temperatura impasto a fine lavoro <span class="optionalLabel">opzionale</span></label>
+                  <input id="doughTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="es. 23">
+                  <small class="fieldHint">Se la misuri, 22–24 °C è un riferimento pratico; serve per capire quanto fidarsi dei tempi.</small>
+                </div>
+              </div>
+            </div>
+
             <div class="calculatorSection scheduleEditor">
               <div class="calculatorSectionHeader">
                 <span>Orari</span>
@@ -377,8 +400,8 @@
         <div class="viewHeader">
           <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
-            <p class="eyebrow">Tecnica · Pieghe</p>
-            <h2 id="piegheTitle">Dai struttura, poi fermati</h2>
+            <p class="eyebrow">Tecnica · Struttura</p>
+            <h2 id="piegheTitle">Controlla la struttura, poi decidi</h2>
           </div>
         </div>
 
@@ -388,59 +411,52 @@
           <p id="foldContextMeta"></p>
         </div>
 
-        <div class="techniqueLead">
-          <div class="techniqueLeadCopy">
-            <span class="flowEyebrow">Obiettivo</span>
-            <h3>Più tenuta, non più lavoro</h3>
-            <p>Una piega serve a organizzare la maglia dell’impasto. Dopo ogni giro copri e lascia riposare: se l’impasto è già liscio, teso il giusto e mantiene forma, un’altra piega può essere inutile.</p>
-            <div class="techniqueRule"><strong>Regola pratica</strong><span>Piega breve → riposo 20–25 min → osserva → decidi.</span></div>
+        <section class="structureGate" aria-labelledby="structureGateTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Prima di piegare</span>
+            <h3 id="structureGateTitle">Com’è la struttura adesso?</h3>
           </div>
-          <div class="techniqueIllustration foldSequence" aria-label="Sequenza pratica di una piega dell'impasto">
-            <svg viewBox="0 0 760 280" role="img" aria-labelledby="foldSvgTitle foldSvgDesc">
-              <title id="foldSvgTitle">Solleva, ripiega e ruota</title>
-              <desc id="foldSvgDesc">Tre passaggi mostrano le mani che sollevano un lembo, lo riportano al centro e ruotano l'impasto per ripetere sugli altri lati.</desc>
-              <rect x="8" y="8" width="744" height="264" rx="28" class="techBg"/>
-              <g transform="translate(32 42)">
-                <ellipse cx="90" cy="92" rx="76" ry="48" class="doughShape"/>
-                <path d="M47 58c12-26 74-28 88 0" class="foldLift"/>
-                <path d="M38 34c18 12 28 20 38 34M142 34c-18 12-28 20-38 34" class="handOutline"/>
-                <path d="M90 22v34m-11-12 11 12 11-12" class="techArrow"/>
-                <text x="90" y="184" text-anchor="middle" class="svgLabel">1 · Solleva il lembo</text>
-              </g>
-              <path d="M211 134h54m-14-11 14 11-14 11" class="techArrow"/>
-              <g transform="translate(278 42)">
-                <ellipse cx="90" cy="98" rx="76" ry="46" class="doughShape"/>
-                <path d="M47 54c17-31 69-31 86 0l-17 61H64z" class="foldFlap"/>
-                <path d="M90 25v57m-12-15 12 15 12-15" class="techArrow"/>
-                <text x="90" y="184" text-anchor="middle" class="svgLabel">2 · Porta al centro</text>
-              </g>
-              <path d="M457 134h54m-14-11 14 11-14 11" class="techArrow"/>
-              <g transform="translate(524 42)">
-                <ellipse cx="90" cy="96" rx="74" ry="50" class="doughShape"/>
-                <path d="M42 71c18-28 74-35 103-5" class="rotationArrow"/>
-                <path d="M137 51l10 16-20 2" class="rotationArrow"/>
-                <text x="90" y="184" text-anchor="middle" class="svgLabel">3 · Ruota e ripeti</text>
-              </g>
-            </svg>
+          <p class="structureGateIntro">Non fare una piega solo perché è in calendario. Confronta il comportamento reale dell’impasto e scegli l’azione più prudente.</p>
+          <div class="structureChoices">
+            <article class="structureChoice good">
+              <span>Struttura sufficiente</span>
+              <h4>Mantiene forma e si solleva in blocco</h4>
+              <p><strong>Fermati.</strong> Passa al riposo e alla fermentazione.</p>
+            </article>
+            <article class="structureChoice warn">
+              <span>Può servire rinforzo</span>
+              <h4>Si allarga lentamente ma resta compatto</h4>
+              <p>Un altro ciclo leggero dopo circa 20 minuti può essere utile.</p>
+            </article>
+            <article class="structureChoice stop">
+              <span>Troppa tensione</span>
+              <h4>Si lacera quando provi ad allungarlo</h4>
+              <p><strong>Non forzare.</strong> Copri e aspetta 15–20 minuti.</p>
+            </article>
+            <article class="structureChoice danger">
+              <span>Prima cerca la causa</span>
+              <h4>Cola, è caldo e si sfalda</h4>
+              <p>Controlla temperatura e fermentazione: altre pieghe da sole potrebbero non risolvere.</p>
+            </article>
+          </div>
+        </section>
+
+        <div class="techniqueLead foldHowToLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Se serve rinforzo</span>
+            <h3>Un ciclo a quattro lembi</h3>
+            <p>Bagna leggermente le dita. Solleva un lembo dal bordo solo finché offre una resistenza elastica moderata, poi ripiegalo verso il centro. Ripeti sui quattro lati: quattro lembi fanno un solo ciclo.</p>
+            <div class="techniqueRule"><strong>Dopo il ciclo</strong><span>Copri, riposa circa 20 minuti e ricontrolla. Se la massa è già raccolta e stabile, fermati.</span></div>
           </div>
         </div>
 
         <div class="techniqueSteps" aria-label="Come fare una piega">
           <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Inumidisci le mani</h3><p>Acqua o pochissimo olio sulle dita: evita di aggiungere farina dentro l’impasto.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva finché cede</h3><p>Prendi un lembo, allungalo solo finché senti resistenza e portalo verso il centro. Non tirarlo al limite.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva fino alla prima resistenza</h3><p>Prendi un lembo largo dal bordo. Sollevalo solo finché senti una resistenza elastica moderata, poi portalo verso il centro.</p></div></article>
           <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Completa i quattro lati</h3><p>Ruota contenitore o impasto e ripeti. Un giro completo basta: non impastare di nuovo.</p></div></article>
           <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Copri e osserva</h3><p>Aspetta 20–25 minuti. La struttura si valuta dopo il riposo, non mentre stai ancora tirando.</p></div></article>
         </div>
 
-        <section class="techniqueDecision" aria-labelledby="foldDecisionTitle">
-          <div class="techniqueSectionHead"><span class="flowEyebrow">Leggi l’impasto</span><h3 id="foldDecisionTitle">Serve davvero un’altra piega?</h3></div>
-          <div class="signalGrid">
-            <article class="signalCard warn"><span class="signalState">Poco tenace</span><h4>Si allarga subito e “cola”</h4><p>Se sei ancora all’inizio della fermentazione, fai una piega leggera e poi riposo. Se è già molto gonfio o vicino alla stesura, non provare a ricostruirlo con pieghe forti.</p></article>
-            <article class="signalCard good"><span class="signalState">Giusto</span><h4>Morbido ma mantiene forma</h4><p>La superficie è più liscia, il panetto resta raccolto e si allunga senza strapparsi. Fermati: lascia lavorare tempo e fermentazione.</p></article>
-            <article class="signalCard bad"><span class="signalState">Troppo teso</span><h4>Fa resistenza o si strappa</h4><p>Stop. Copri e aspetta 15–20 minuti. Continuare a piegare un impasto già teso lo rende nervoso e può lesionare la maglia.</p></article>
-          </div>
-          <div class="termNote"><strong>Parole utili:</strong> se torna indietro è molto <em>elastico</em>; se si allunga facilmente è <em>estensibile</em>; se si allunga troppo senza sostenersi è <em>poco tenace</em>.</div>
-        </section>
 
         <div class="techniqueFooterNav">
           <button type="button" class="secondary" data-open="stesura">Vai alla stesura →</button>
@@ -580,6 +596,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=34" defer></script>
+  <script src="app.js?v=35" defer></script>
 </body>
 </html>
