@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=50">
+  <link rel="stylesheet" href="styles.css?v=51">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -479,45 +479,85 @@
           <p id="stretchContextMeta"></p>
         </div>
 
-        <div class="techniqueLead stretchLead">
-          <div class="techniqueLeadCopy">
-            <span class="flowEyebrow">Prima di iniziare</span>
-            <h3>L’impasto deve collaborare</h3>
-            <p>Se è freddo e si ritira, aspetta. Se è molto molle e si allunga da solo, riduci al minimo i movimenti. La stesura non deve correggere la fermentazione: deve accompagnarla.</p>
-            <div class="techniqueRule"><strong>Banco</strong><span>Semola rimacinata quanto basta per non attaccare, senza seppellire l’impasto.</span></div>
+        <section class="stretchGate" aria-labelledby="stretchGateTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Prima di stendere</span>
+            <h3 id="stretchGateTitle">Com’è l’impasto adesso?</h3>
           </div>
-          <div class="techniqueIllustration wide" aria-label="Sequenza di stesura dal banco alla teglia">
-            <svg viewBox="0 0 760 260" role="img" aria-labelledby="stretchSvgTitle stretchSvgDesc">
-              <title id="stretchSvgTitle">Sequenza di stesura</title>
-              <desc id="stretchSvgDesc">Quattro riquadri mostrano impasto sul banco, apertura con polpastrelli, trasferimento e completamento in teglia.</desc>
-              <rect x="8" y="8" width="744" height="244" rx="28" class="techBg"/>
-              <g transform="translate(38 42)"><circle cx="70" cy="75" r="55" class="doughShape"/><path d="M38 28h64" class="handMark"/><text x="70" y="165" text-anchor="middle" class="svgLabel">1 · Banco</text></g>
-              <path d="M176 112h45m-12-10 12 10-12 10" class="techArrow"/>
-              <g transform="translate(235 42)"><ellipse cx="70" cy="78" rx="67" ry="48" class="doughShape"/><circle cx="48" cy="67" r="7" class="fingerDot"/><circle cx="70" cy="60" r="7" class="fingerDot"/><circle cx="92" cy="67" r="7" class="fingerDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">2 · Polpastrelli</text></g>
-              <path d="M374 112h45m-12-10 12 10-12 10" class="techArrow"/>
-              <g transform="translate(434 42)"><path d="M14 66c24-30 88-30 112 0l-16 34c-24 14-56 14-80 0z" class="doughShape"/><path d="M22 112h45M73 112h45" class="forearmLine"/><circle cx="18" cy="112" r="9" class="handDot"/><circle cx="122" cy="112" r="9" class="handDot"/><text x="70" y="165" text-anchor="middle" class="svgLabel">3 · Sostieni sotto</text></g>
-              <path d="M572 112h45m-12-10 12 10-12 10" class="techArrow"/>
-              <g transform="translate(625 42)"><rect x="0" y="30" width="100" height="95" rx="9" class="trayShape"/><rect x="10" y="40" width="80" height="75" rx="10" class="doughShape"/><text x="50" y="165" text-anchor="middle" class="svgLabel">4 · Teglia</text></g>
-            </svg>
+          <p class="structureGateIntro">La stesura funziona bene solo se la massa è abbastanza rilassata. Scegli il comportamento che gli assomiglia di più.</p>
+          <div class="stretchStateChoices" role="group" aria-label="Stato dell'impasto prima della stesura">
+            <button type="button" class="stretchStateChoice" data-stretch-state="ready">
+              <span>Pronto</span>
+              <strong>Morbido, vivo, mantiene volume</strong>
+              <small>Si lascia allargare senza strapparsi.</small>
+            </button>
+            <button type="button" class="stretchStateChoice" data-stretch-state="tight">
+              <span>Troppo teso</span>
+              <strong>Si ritira appena lo allarghi</strong>
+              <small>È freddo o ancora troppo elastico.</small>
+            </button>
+            <button type="button" class="stretchStateChoice" data-stretch-state="fragile">
+              <span>Molto avanti</span>
+              <strong>Gonfio, debole, si allunga da solo</strong>
+              <small>Richiede pochissimi movimenti.</small>
+            </button>
+            <button type="button" class="stretchStateChoice" data-stretch-state="tear">
+              <span>Stop</span>
+              <strong>Si lacera durante l’allargamento</strong>
+              <small>Non vincerlo con più forza.</small>
+            </button>
           </div>
-        </div>
-
-        <div class="techniqueSteps stretchSteps" aria-label="Passaggi della stesura">
-          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Rovescia senza strappare</h3><p>Porta il lato liscio verso l’alto. Stacca l’impasto dal contenitore con decisione ma senza tirarlo da un punto solo.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Pressa, non trascinare</h3><p>Usa i polpastrelli dal centro verso l’esterno. Sposta il gas, non schiacciare tutto fino a rendere la massa piatta e compatta.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Trasferisci sostenendo</h3><p>Quando è già abbastanza larga, sollevala distribuendo il peso su mani e avambracci. Evita di afferrarla per un bordo.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Completa in teglia</h3><p>Appoggiala sulla teglia oliata e accompagnala agli angoli. Se oppone resistenza, copri e completa dopo 5–10 minuti.</p></div></article>
-        </div>
-
-        <section class="techniqueDecision" aria-labelledby="stretchDecisionTitle">
-          <div class="techniqueSectionHead"><span class="flowEyebrow">Durante la stesura</span><h3 id="stretchDecisionTitle">Se succede questo, fai così</h3></div>
-          <div class="troubleGrid">
-            <details class="techniqueTrouble"><summary>Si ritira appena la allargo</summary><p>È ancora troppo elastica o fredda. Copri e aspetta 10–15 minuti, poi riprendi. Non vincerla tirando più forte.</p></details>
-            <details class="techniqueTrouble"><summary>Si allunga troppo appena la sollevo</summary><p>È molto estensibile e poco tenace. Smetti di tirare, sostienila con una superficie ampia e trasferiscila con pochi movimenti. Se è anche molto gonfia e fragile, accorcia il riposo in teglia.</p></details>
-            <details class="techniqueTrouble"><summary>Si strappa</summary><p>Fermati. Non rattoppare tirando altro impasto. Copri 10–15 minuti e riprendi delicatamente; se la maglia è già debole, limita al minimo la manipolazione.</p></details>
-            <details class="techniqueTrouble"><summary>Si incolla al banco</summary><p>Alza un lembo con una spatola e aggiungi poca semola solo dove serve. Troppa farina resta attaccata alla base e peggiora texture e sapore.</p></details>
+          <div id="stretchStateAdvice" class="stretchStateAdvice" aria-live="polite">
+            <strong>Scegli uno stato</strong>
+            <p>Ti dirò se stendere subito, aspettare o ridurre la manipolazione.</p>
           </div>
         </section>
+
+        <div class="techniqueLead stretchLead compactTechniqueLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Obiettivo</span>
+            <h3>Distribuisci il gas, non spingerlo tutto ai bordi</h3>
+            <p>La pizza in teglia deve restare viva anche al centro. Usa una superficie ampia delle dita, pressioni progressive e piccoli allargamenti: niente mattarello, niente trascinamenti violenti.</p>
+            <div class="techniqueRule"><strong>Banco</strong><span>Semola rimacinata o poca farina quanto basta per non attaccare. L’eccesso va eliminato prima della teglia.</span></div>
+          </div>
+        </div>
+
+        <div class="techniqueSteps stretchSteps stretchStepsSix" aria-label="Passaggi della stesura">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Esci dal contenitore senza tirare</h3><p>Stacca i bordi con il tarocco e rovescia lentamente il contenitore. Non trascinare l’impasto prendendolo da un solo punto.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Preforma solo se serve</h3><p>Se devi dividere, fai un taglio netto e pesa. Ricomponi delicatamente un rettangolo, senza stringere fino a sgonfiarlo, poi lascia rilassare coperto.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Premi in sequenza</h3><p>Con i polpastrelli quasi paralleli lavora dal centro verso i bordi, poi continua con piccoli allargamenti. Distribuisci il gas: non evacuare tutto verso il perimetro.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Avvicinati alla misura</h3><p>Alterna pressioni e allargamenti finché il rettangolo è poco più piccolo della teglia. Se torna indietro, fermati invece di tirare più forte.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">5</span><div><h3>Sostieni da sotto</h3><p>Inserisci entrambe le mani sotto la massa e distribuisci il peso su mani, dorso e avambracci. Usa la gravità il minimo indispensabile e lascia cadere la semola in eccesso.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">6</span><div><h3>Adagia e completa in teglia</h3><p>Posa il centro, accompagna verso angoli e bordi senza trascinare. Se oppone resistenza, copri 10–15 minuti e completa in un secondo passaggio.</p></div></article>
+        </div>
+
+        <section class="stretchSignals" aria-labelledby="stretchSignalsTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Controllo rapido</span>
+            <h3 id="stretchSignalsTitle">Quando fermarti</h3>
+          </div>
+          <div class="stretchSignalGrid">
+            <article><strong>Va bene</strong><p>Spessore abbastanza uniforme, massa ancora gonfia, centro non trasparente, angoli raggiungibili senza strappi.</p></article>
+            <article><strong>Troppa pressione</strong><p>Il centro diventa piatto o trasparente, perdi quasi tutto il volume o compaiono strappi.</p></article>
+            <article><strong>Serve riposo</strong><p>Il lato già steso si riaccartoccia con forza o gli angoli si svuotano appena togli le mani.</p></article>
+          </div>
+        </section>
+
+        <section class="techniqueDecision" aria-labelledby="stretchDecisionTitle">
+          <div class="techniqueSectionHead"><span class="flowEyebrow">Casi pratici</span><h3 id="stretchDecisionTitle">Se succede questo, fai così</h3></div>
+          <div class="troubleGrid">
+            <details class="techniqueTrouble"><summary>Si ritira appena la allargo</summary><p>Copri e aspetta 10–15 minuti. Se resta molto elastico, fai un secondo breve riposo. La correzione è rilassare la struttura, non aumentare la forza.</p></details>
+            <details class="techniqueTrouble"><summary>Si allunga troppo appena la sollevo</summary><p>Sostienila con più superficie possibile e riduci i movimenti. Se è anche molto gonfia e fragile, trasferisci rapidamente e accorcia o salta il lungo riposo finale in teglia.</p></details>
+            <details class="techniqueTrouble"><summary>Si strappa</summary><p>Fermati. Non rattoppare tirando altra pasta. Copri 10–15 minuti e riprendi con mani più larghe; se continua a cedere, limita la manipolazione e passa in teglia.</p></details>
+            <details class="techniqueTrouble"><summary>Si incolla al banco</summary><p>Usa il tarocco e aggiungi poca semola solo sotto la zona che aderisce. Prima del trasferimento elimina gli accumuli: non devono diventare una crosta sulla base.</p></details>
+          </div>
+        </section>
+
+        <div class="stretchTrayNote">
+          <span class="flowEyebrow">Riposo in teglia</span>
+          <strong>È utile solo se l’impasto ha ancora tensione.</strong>
+          <p>Come riferimento: 15–30 minuti coperto. A caldo controlla prima. Il pomodoro va messo poco prima di infornare, non all’inizio di un riposo lungo.</p>
+        </div>
 
         <div class="techniqueFooterNav">
           <button type="button" class="secondary" data-open="cottura">Vai alla cottura →</button>
@@ -596,6 +636,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=35" defer></script>
+  <script src="app.js?v=36" defer></script>
 </body>
 </html>
