@@ -640,11 +640,16 @@
       const box=$('stretchContext');
       box?.classList.toggle('hidden',!fromTimeline);
       if(fromTimeline){
-        $('stretchContextTitle').textContent=summary?.area?`${round(summary.width,0)} × ${round(summary.height,0)} cm · ${round(plan.doughPer,0)} g`:'Stesura del tuo impasto';
-        $('stretchContextMeta').textContent=`${plan.pizza} · ${round(plan.ingredients?.hydration||0,0)}% idratazione. Se l'impasto non collabora, fermati e usa i segnali sotto prima di forzarlo.`;
+        $('stretchContextTitle').textContent=summary?.area
+          ? round(summary.width,0) + ' × ' + round(summary.height,0) + ' cm · ' + round(plan.doughPer,0) + ' g'
+          : 'Stesura del tuo impasto';
+        const oilMin=summary?.area ? Math.max(3, summary.area*0.0062) : null;
+        const oilMax=summary?.area ? Math.max(5, summary.area*0.0092) : null;
+        $('stretchContextMeta').textContent=summary?.area
+          ? plan.pizza + ' · ' + round(plan.ingredients?.hydration||0,0) + '% idratazione · teglia leggermente unta con circa ' + round(oilMin,0) + '–' + round(oilMax,0) + ' g di olio. Se si ritira, riposo; se è fragile, meno movimenti.'
+          : plan.pizza + ' · ' + round(plan.ingredients?.hydration||0,0) + '% idratazione. Se l’impasto non collabora, fermati prima di forzarlo.';
       }
     }
-
     if(id==='cottura') renderCookPlanContext(fromTimeline ? plan : null);
   }
 
