@@ -9,7 +9,7 @@
   const PREF_IDS = [
     'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
-    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod'
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod','doughTemp'
   ];
 
   let techniqueOrigin = { view:'home', step:null, action:null };
@@ -398,6 +398,8 @@
     $('customHyd').value = '69';
     $('saltProfile').value = '2.3';
     $('customSalt').value = '2.3';
+    $('kneadMethod').value = 'hand';
+    $('doughTemp').value = '';
     toggleCustoms();
     updateFlourUI();
   }
@@ -529,6 +531,23 @@
       if (!raw) return null;
       const plan = JSON.parse(raw);
       if (!Array.isArray(plan.timeline)) return plan;
+      let migratedStructure = false;
+      plan.timeline = plan.timeline.map((item) => {
+        if (item.label === '1ª piega leggera') {
+          migratedStructure = true;
+          return { ...item, label:'Controlla la struttura', action:'fold' };
+        }
+        if (item.label === '2ª piega leggera') {
+          migratedStructure = true;
+          return { ...item, label:'Ricontrolla dopo il riposo', action:'fold' };
+        }
+        if (item.label === 'Frigo coperto dopo le pieghe') {
+          migratedStructure = true;
+          return { ...item, label:'Frigo coperto' };
+        }
+        return item;
+      });
+      if (migratedStructure && !plan.kneadMethod) plan.kneadMethod = 'hand';
       const oldControl = plan.timeline.find((item) => item.label === 'Controllo volume');
       const oldDecision = plan.timeline.find((item) => item.label === 'Fuori frigo o stesura secondo stato impasto');
       if (oldControl || oldDecision) {
@@ -548,7 +567,7 @@
   }
 
   const TIMELINE_ACTIONS = {
-    fold: { label:'Apri guida pieghe →', view:'pieghe' },
+    fold: { label:'Controlla la struttura →', view:'pieghe' },
     stretch: { label:'Apri guida stesura →', view:'stesura' },
     check: { label:'Controlla lo stato →', view:'check' },
     cook: { label:'Apri guida cottura →', view:'cottura' }
@@ -613,7 +632,7 @@
       if(fromTimeline){
         $('foldContextTitle').textContent=step.label;
         const hyd=plan.ingredients?.hydration;
-        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${plan.pizza}. Fai un solo giro leggero, poi valuta la tenuta prima di decidere se ripetere.`;
+        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${kneadMethodLabel(plan.kneadMethod)} · ${plan.pizza}. Prima osserva la struttura: il rinforzo è un'opzione, non un passaggio obbligatorio.`;
       }
     }
 
@@ -730,6 +749,7 @@
       bake: data.bake.toISOString(),
       tray: { width:data.width, height:data.height, pans:data.pans },
       kneadMethod: data.kneadMethod || 'hand',
+      doughTemp: Number.isFinite(data.doughTemp) ? data.doughTemp : null,
       timeline: data.timeline,
       ingredients: {
         flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
@@ -746,7 +766,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
@@ -755,6 +775,21 @@
     );
     head.append(title, hydrationBadge);
     shell.append(head);
+
+    if (Number.isFinite(data.doughTemp)) {
+      const tempStatus = data.doughTemp < 22
+        ? ['Impasto fresco', 'Sotto 22 °C: fermentazione più lenta; usa la timeline come riferimento e guarda soprattutto i segnali reali.']
+        : data.doughTemp <= 24
+          ? ['Temperatura in zona utile', '22–24 °C è un riferimento pratico per una gestione domestica controllabile.']
+          : ['Impasto caldo', 'Sopra 24 °C la fermentazione accelera: riduci le attese automatiche e controlla prima volume e struttura.'];
+      const tempNote=create('div',{class:'processNote'});
+      tempNote.append(
+        create('span',{class:'resultEyebrow',text:'Temperatura finale'}),
+        create('strong',{text:`${round(data.doughTemp,1)} °C · ${tempStatus[0]}`}),
+        create('p',{text:tempStatus[1]})
+      );
+      shell.append(tempNote);
+    }
 
     const now = create('div', { class: 'nextAction' });
     now.append(
@@ -795,7 +830,9 @@
       'Mescola farina, lievito e 85–90% dell’acqua.',
       'Copri e lascia riposare 20 minuti.',
       'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
-      'Lavora poco: le pieghe strutturali vengono dopo.'
+      data.kneadMethod === 'hand'
+        ? 'Lavora poco: dopo il riposo controllerai se serve un rinforzo.'
+        : 'Porta l’impasto a uno sviluppo ordinato, poi controlla la struttura prima di aggiungere altre pieghe.'
     ].forEach((text,index)=>{
       const li=create('li');
       li.append(create('span',{text:String(index+1)}),create('p',{text}));
@@ -1037,6 +1074,7 @@
     const yeastG = flour * yeast / 100;
     const honeyG = flour * honey / 100;
     const kneadMethod = $('kneadMethod')?.value || 'hand';
+    const doughTemp = optionalNumber('doughTemp', 10, 40);
     const timeline = buildTimeline(start, bake, hours, kneadMethod);
     const flourBlend = activeFlours().map((item) => ({
       ...item,
@@ -1044,7 +1082,7 @@
     }));
 
     renderRecipeResult({
-      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod,
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, doughTemp,
       area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
@@ -1056,9 +1094,9 @@
       indietro: ['Portalo a temperatura ambiente e aspetta finché diventa più gonfio e rilassato.', 'Non forzare stesura o pieghe aggressive se è duro e poco sviluppato.', 'Ricontrolla tra 45–60 minuti.'],
       giusto: ['Non toccarlo troppo. Stendi quando è rilassato, poi riposo in teglia coperto.', 'Non aggiungere pieghe “per sicurezza”.', time === 'less1' ? 'Stendi ora e fai un riposo breve.' : 'Prepara banco, semola e teglia.'],
       triplicato: ['Niente pieghe. Stendi delicato e accorcia il riposo in teglia.', 'Non ristrutturare: se è bello e gonfio, va accompagnato.', time === 'over6' ? 'Se manca molto, rimettilo al fresco dopo una gestione minima.' : 'Fuori frigo 20–30 minuti, poi stesura delicata.'],
-      collasso: [time === 'over6' || time === '3to6' ? 'Fai una sola piega di salvataggio molto morbida e rimettilo in frigo.' : 'Stendi quasi subito, riposo breve in teglia e cuoci.', 'Non fare tre pieghe forti: peggiori strappi e perdita di gas.', time === 'less1' ? 'Teglia e forno subito.' : 'Controlla dopo 30 minuti.'],
+      collasso: [time === 'less1' ? 'Stendi quasi subito, fai un riposo breve in teglia e cuoci.' : 'Riduci la manipolazione e riportalo al fresco se manca ancora molto.', 'Non cercare di ricostruirlo con pieghe ripetute: caldo, sovrafermentazione o struttura degradata possono essere la causa.', time === 'less1' ? 'Teglia e forno subito.' : 'Ricontrolla stato e temperatura prima di decidere altro.'],
       rigido: ['Copri e aspetta. Se si ritira, è tensione: serve riposo, non forza.', 'Non tirarlo fino a strapparlo e non aggiungere farina sul banco a caso.', 'Riprova tra 10–20 minuti.'],
-      molle: [time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Una piega morbida può ridare struttura, poi riposo coperto.', 'Non sommergerlo di farina: rischi una crosta secca e irregolare.', 'Valuta consistenza dopo il riposo.'],
+      molle: [time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Se è ancora all’inizio e non è molto gonfio, un rinforzo leggero può aiutare; se è caldo o molto fermentato, prima controlla quello.', 'Non sommergerlo di farina e non sommare pieghe senza capire la causa.', 'Valuta consistenza dopo 15–20 minuti di riposo.'],
       strappa: ['Stop. Copri e lascia rilassare. Poi riprendi con tocchi leggeri.', 'Non insistere con pieghe aggressive: l’impasto è in tensione o indebolito.', 'Aspetta 15–20 minuti.']
     };
 
