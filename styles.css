@@ -1082,3 +1082,63 @@ body{
   .dateShortcut{grid-template-columns:1fr}
   .dateShortcutBtn{width:100%;min-height:44px}
 }
+
+
+/* Controllo struttura e temperatura impasto */
+.structureGate{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#fffefa;
+}
+.structureGateIntro{
+  margin:8px 0 14px;
+  color:var(--tech-muted);
+  font:600 13px/1.48 Arial,sans-serif;
+}
+.structureChoices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.structureChoice{
+  padding:14px 15px;
+  border:1px solid #ddd7ca;
+  border-left:4px solid #a8a092;
+  border-radius:13px;
+  background:#fff;
+}
+.structureChoice.good{border-left-color:#657d42}
+.structureChoice.warn{border-left-color:#c78535}
+.structureChoice.stop{border-left-color:#a94332}
+.structureChoice.danger{border-left-color:#7b3840}
+.structureChoice>span{
+  display:block;
+  margin-bottom:5px;
+  color:#77756e;
+  font:900 9.5px/1 Arial,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.structureChoice h4{margin:0;color:#172036;font:900 14px/1.2 Arial,sans-serif}
+.structureChoice p{margin:6px 0 0;color:#65665f;font:600 12px/1.42 Arial,sans-serif}
+.foldHowToLead{grid-template-columns:1fr!important}
+.foldHowToLead .techniqueLeadCopy{max-width:none}
+
+.processNote{
+  margin:0 9px 12px;
+  padding:13px 14px;
+  border:1px solid #d8ddcf;
+  border-radius:14px;
+  background:#f0f3ea;
+  font-family:Arial,sans-serif;
+}
+.processNote strong{display:block;color:#172036;font:900 14px/1.2 Arial,sans-serif}
+.processNote p{margin:5px 0 0;color:#60655d;font:600 12px/1.42 Arial,sans-serif}
+
+@media(max-width:640px){
+  .structureGate{padding:16px;border-radius:15px}
+  .structureChoices{grid-template-columns:1fr}
+  .processNote{margin:0 0 12px}
+}
