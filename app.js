@@ -9,7 +9,7 @@
   const PREF_IDS = [
     'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
-    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt'
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod'
   ];
 
   let techniqueOrigin = { view:'home', step:null, action:null };
@@ -455,6 +455,12 @@
     return 'molto lunga';
   }
 
+  function kneadMethodLabel(value) {
+    if (value === 'planetary') return 'planetaria';
+    if (value === 'spiral') return 'spirale';
+    return 'a mano';
+  }
+
   function resultName(load) {
     if (load <= 0.49) return 'Extra croccante';
     if (load <= 0.51) return 'Romana classica';
@@ -463,14 +469,20 @@
     return 'Più soffice';
   }
 
-  function buildTimeline(start, bake, hours) {
+  function buildTimeline(start, bake, hours, kneadMethod = 'hand') {
     const timeline = [
       { label: 'Impasto grezzo', date: start.toISOString() },
       { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
-      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
-      { label: '1ª piega leggera', date: addMinutes(start, 60).toISOString(), action: 'fold' },
-      { label: '2ª piega leggera', date: addMinutes(start, 85).toISOString(), action: 'fold' }
+      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() }
     ];
+
+    const firstCheckMinutes = kneadMethod === 'hand' ? 60 : 55;
+    const secondCheckMinutes = kneadMethod === 'hand' ? 85 : 80;
+
+    timeline.push(
+      { label: 'Controlla la struttura', date: addMinutes(start, firstCheckMinutes).toISOString(), action: 'fold' },
+      { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, secondCheckMinutes).toISOString(), action: 'fold' }
+    );
 
     if (hours <= 12) {
       timeline.push(
@@ -480,7 +492,7 @@
       );
     } else {
       timeline.push(
-        { label: 'Frigo coperto dopo le pieghe', date: addMinutes(start, 115).toISOString() },
+        { label: 'Frigo coperto', date: addMinutes(start, kneadMethod === 'hand' ? 110 : 100).toISOString() },
         { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'stretch' },
         { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
@@ -545,7 +557,7 @@
   function timelineActionFor(item) {
     if (!item) return null;
     if (item.action) return item.action;
-    if (/piega/i.test(item.label || '')) return 'fold';
+    if (/piega|struttura|ricontrolla/i.test(item.label || '')) return 'fold';
     if (item.label === 'Stesura') return 'stretch';
     if (item.label === 'Controlla l’impasto' || item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto') return 'check';
     if (item.label === 'Cottura') return 'cook';
@@ -644,11 +656,11 @@
     'Impasto grezzo': { icon:'🥣', short:'Unisci farine, acqua e lievito fino a ottenere un impasto grezzo.', duration:'~ 10 min' },
     'Riposo 20 min coperto': { icon:'⏱️', short:'Copri e lascia riposare: l’impasto inizierà a rilassarsi.', duration:'20 min' },
     'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
-    '1ª piega leggera': { icon:'↪', short:'Fai una piega delicata per dare struttura senza sgonfiare.', duration:'~ 2 min' },
-    '2ª piega leggera': { icon:'↪', short:'Ripeti la piega con mani leggere e lascia poi riposare.', duration:'~ 2 min' },
+    'Controlla la struttura': { icon:'◎', short:'Guarda tenuta, tensione e continuità prima di decidere se serve un rinforzo.', duration:'Controllo' },
+    'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
     'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
     'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
-    'Frigo coperto dopo le pieghe': { icon:'❄', short:'Copri bene e trasferisci in frigo per la maturazione.', duration:'Riposo' },
+    'Frigo coperto': { icon:'❄', short:'Copri bene e trasferisci in frigo quando la struttura è sufficiente.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
     'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
   };
@@ -717,6 +729,7 @@
       total: data.total,
       bake: data.bake.toISOString(),
       tray: { width:data.width, height:data.height, pans:data.pans },
+      kneadMethod: data.kneadMethod || 'hand',
       timeline: data.timeline,
       ingredients: {
         flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
@@ -1023,14 +1036,15 @@
     const oilG = flour * oil / 100;
     const yeastG = flour * yeast / 100;
     const honeyG = flour * honey / 100;
-    const timeline = buildTimeline(start, bake, hours);
+    const kneadMethod = $('kneadMethod')?.value || 'hand';
+    const timeline = buildTimeline(start, bake, hours, kneadMethod);
     const flourBlend = activeFlours().map((item) => ({
       ...item,
       grams: flour * item.pct / 100
     }));
 
     renderRecipeResult({
-      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey,
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod,
       area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
