@@ -495,7 +495,8 @@
     } else {
       timeline.push(
         { label: 'Frigo coperto', date: addMinutes(start, 110).toISOString() },
-        { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
+        { label: 'Controlla l’impasto', date: addMinutes(bake, -150).toISOString(), action: 'check' },
+        { label: 'Preforma e appretto · se serve', date: addMinutes(bake, -135).toISOString() },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
@@ -714,6 +715,7 @@
     'Riposo finale in teglia · se serve': { icon:'◴', short:'Solo se l’impasto ha ancora tensione: copri e lascia rilassare brevemente prima del forno.', duration:'15–30 min' },
     'Frigo coperto': { icon:'❄', short:'Copri bene e trasferisci in frigo quando la struttura è sufficiente.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
+    'Preforma e appretto · se serve': { icon:'▭', short:'Se serve, forma un rettangolo morbido e lascialo rilassare coperto prima della stesura.', duration:'Riposo' },
     'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
   };
 
