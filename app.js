@@ -488,16 +488,16 @@
 
     if (hours <= 12) {
       timeline.push(
-        { label: 'Stesura', date: addMinutes(bake, -75).toISOString(), action: 'stretch' },
-        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
+        { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
+        { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     } else {
       timeline.push(
         { label: 'Frigo coperto', date: addMinutes(start, 110).toISOString() },
         { label: 'Controlla l’impasto', date: addMinutes(bake, -120).toISOString(), action: 'check' },
-        { label: 'Stesura', date: addMinutes(bake, -90).toISOString(), action: 'stretch' },
-        { label: 'Riposo in teglia coperto', date: addMinutes(bake, -60).toISOString() },
+        { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
+        { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     }
@@ -545,6 +545,9 @@
           migratedStructure = true;
           return { ...item, label:'Frigo coperto' };
         }
+        if (item.label === 'Riposo in teglia coperto') {
+          return { ...item, label:'Riposo finale in teglia · se serve' };
+        }
         return item;
       });
       if (migratedStructure && !plan.kneadMethod) plan.kneadMethod = 'hand';
@@ -556,7 +559,7 @@
         normalized.push(
           { label:'Controlla l’impasto', date:(oldControl?.date || addMinutes(bake,-120).toISOString()), action:'check' },
           { label:'Stesura', date:(oldDecision?.date || addMinutes(bake,-90).toISOString()) },
-          { label:'Riposo in teglia coperto', date:addMinutes(bake,-60).toISOString() }
+          { label:'Riposo finale in teglia · se serve', date:addMinutes(bake,-20).toISOString() }
         );
         plan.timeline = normalized.sort((a,b) => new Date(a.date) - new Date(b.date));
       }
@@ -653,6 +656,31 @@
     if(id==='cottura') renderCookPlanContext(fromTimeline ? plan : null);
   }
 
+  function renderStretchStateAdvice(state) {
+    const target=$('stretchStateAdvice');
+    if(!target) return;
+    const states={
+      ready:{
+        title:'Puoi stendere ora',
+        text:'Lavora con pressioni progressive e mani larghe. Mantieni volume anche al centro e fermati quando sei vicino alla misura della teglia.'
+      },
+      tight:{
+        title:'Aspetta 10–15 minuti',
+        text:'Copri l’impasto e lascialo rilassare. Se si ritira ancora, ripeti un secondo breve riposo: non compensare tirando più forte.'
+      },
+      fragile:{
+        title:'Manipola il minimo indispensabile',
+        text:'Sostieni la massa con più superficie possibile, fai pochi passaggi e trasferisci presto in teglia. Evita un appretto finale lungo se è già molto gonfia e debole.'
+      },
+      tear:{
+        title:'Stop: non continuare a tirare',
+        text:'Copri 10–15 minuti e riprendi con mani più larghe. Se continua a cedere, limita la manipolazione e trasferisci in teglia senza cercare la forma perfetta sul banco.'
+      }
+    };
+    const advice=states[state]||states.ready;
+    clear(target);
+    target.append(create('strong',{text:advice.title}),create('p',{text:advice.text}));
+  }
   function renderCookPlanContext(plan) {
     const box=$('cookPlanContext');
     const summary=planSummary(plan);
@@ -683,7 +711,7 @@
     'Controlla la struttura': { icon:'◎', short:'Guarda tenuta, tensione e continuità prima di decidere se serve un rinforzo.', duration:'Controllo' },
     'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
     'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
-    'Riposo in teglia coperto': { icon:'◴', short:'Copri la teglia e lascia rilassare l’impasto prima del forno.', duration:'~ 60 min' },
+    'Riposo finale in teglia · se serve': { icon:'◴', short:'Solo se l’impasto ha ancora tensione: copri e lascia rilassare brevemente prima del forno.', duration:'15–30 min' },
     'Frigo coperto': { icon:'❄', short:'Copri bene e trasferisci in frigo quando la struttura è sufficiente.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
     'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
@@ -1338,6 +1366,13 @@
     });
     document.querySelectorAll('[data-tech-back]').forEach((button) => {
       button.addEventListener('click', goBackFromTechnique);
+    });
+    document.querySelectorAll('[data-stretch-state]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-stretch-state]').forEach((item)=>item.classList.remove('selected'));
+        button.classList.add('selected');
+        renderStretchStateAdvice(button.dataset.stretchState);
+      });
     });
     document.querySelectorAll('[data-open-check]').forEach((button) => {
       button.addEventListener('click', () => openCheckTool('dough'));
