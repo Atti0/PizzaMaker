@@ -1144,8 +1144,8 @@
     bassaDura: ['Troppo poco impasto, poca fermentazione, stesura aggressiva o cottura troppo lunga.', 'Evita altra cottura; usa condimento umido o olio a crudo.', 'Aumenta leggermente carico impasto e non schiacciare tutta l’aria.'],
     fondoPallido: ['Forno non abbastanza preriscaldato, ripiano troppo alto, teglia poco conduttiva o troppa umidità.', 'Sposta in basso e prolunga la prima fase.', 'Preriscalda 40–45 minuti e limita acqua dei condimenti.'],
     fondoBruciato: ['Teglia molto conduttiva, ripiano troppo basso troppo a lungo o forno aggressivo sotto.', 'Sposta medio-alto e completa sopra.', 'Riduci minuti in basso o usa teglia meno aggressiva.'],
-    sopraBagnata: ['Pomodoro/mozzarella troppo acquosi, verdure non asciutte o mozzarella messa troppo presto.', 'Rifinisci brevemente ventilato/grill controllando a vista.', 'Scola mozzarella, usa pomodoro denso e aggiungi latticini alla fine.'],
-    mozzarellaAcqua: ['Mozzarella non scolata o messa troppo presto.', 'Rifinitura breve medio-alta; non prolungare troppo o secchi la base.', 'Taglia e scola 3–6 ore prima, usane meno.'],
+    sopraBagnata: ['Pomodoro/mozzarella troppo acquosi, verdure non asciutte o mozzarella messa troppo presto.', 'Se il fondo è già pronto, rifinisci medio-alto; ventilato solo brevemente negli ultimi minuti se il tuo forno lo richiede.', 'Scola mozzarella, usa pomodoro denso e aggiungi latticini nella seconda fase.'],
+    mozzarellaAcqua: ['Mozzarella non scolata o messa troppo presto.', 'Rifinitura breve medio-alta; non prolungare troppo o secchi la base.', 'Taglia 2–4 ore prima e scola coperta in frigorifero; aggiungila solo nella seconda fase.'],
     patateCrude: ['Taglio troppo spesso o patate non asciugate/pretrattate.', 'Prolunga medio-alto se la base lo permette.', 'Taglio 1–1,5 mm, asciuga bene; se spesse, sbollenta 2 minuti.'],
     noAlveoli: ['Impasto schiacciato in stesura, fermentazione scarsa, farina debole o troppa manipolazione.', 'Non puoi creare alveoli in cottura, ma puoi salvare croccantezza.', 'Meno pressione, più riposo, pieghe leggere e farina adatta.'],
     collassato: ['Lievitazione troppo avanti o gestione troppo aggressiva.', 'Se manca poco, stendi delicato e cuoci. Se manca molto, piega morbida e frigo.', 'Riduci lievito o tempo a temperatura ambiente.'],
@@ -1269,7 +1269,7 @@
 
     const phaseOneTexts=[];
     if(pizza==='margherita'||pizza==='rossa') phaseOneTexts.push(`Stendi uno strato sottile di pomodoro: per ${sizeLabel}, riferimento ${tomatoRange}.`);
-    else phaseOneTexts.push('Condisci leggermente con olio e sale. Evita topping molto umidi nella prima fase.');
+    else phaseOneTexts.push('Condisci leggermente con olio e sale. Per patate: fettine molto sottili, ben asciutte e in strato non spesso; il lardo arriverà solo alla fine.');
     phaseOneTexts.push(`Inforna sul livello basso. Non aprire inutilmente per i primi 8–10 minuti. Finestra esplorativa per questa teglia: ${firstWindow}.`);
     phaseOneTexts.push('Il passaggio di fase arriva quando il bordo comincia a colorire e, sollevando un angolo con una spatola, il fondo è asciutto con le prime zone dorate.');
     panel.append(guideStep(2,'Prima fase · costruisci il fondo',phaseOneTexts));
@@ -1307,7 +1307,7 @@
     if(pizza==='margherita') {
       finishTexts.push(`Aggiungi mozzarella ben scolata: riferimento ${mozzarellaRange}. Lavora rapidamente.`);
     } else if(pizza==='bianca') {
-      finishTexts.push('Aggiungi ora topping già asciutti o cotti; ingredienti freschissimi possono arrivare anche fuori forno.');
+      finishTexts.push('Completa la superficie; il lardo va fuori forno o negli ultimissimi secondi. Altri ingredienti freschi o molto umidi arrivano solo quando la base è pronta.');
     } else {
       finishTexts.push('Completa senza aggiungere umidità inutile: il pomodoro deve concentrarsi, non ribollire in superficie.');
     }
