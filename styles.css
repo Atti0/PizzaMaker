@@ -1235,3 +1235,144 @@ body{
   .stretchSignalGrid article{border:0;border-bottom:1px solid #ded8cc;border-radius:0;padding:13px 4px;background:transparent}
   .stretchSignalGrid article:last-child{border-bottom:0}
 }
+
+
+/* Cottura v2 — flusso guidato dal fondo */
+.cookFlowIntro{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#fffefa;
+}
+.cookFlowSteps{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+.cookFlowSteps article{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  gap:9px;
+  padding:13px 14px;
+  border:1px solid #ddd7ca;
+  border-radius:13px;
+  background:#fff;
+}
+.cookFlowSteps article>span{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#172036;
+  color:#fff;
+  font:900 12px/1 Arial,sans-serif;
+}
+.cookFlowSteps strong{display:block;color:#172036;font:900 13px/1.2 Arial,sans-serif}
+.cookFlowSteps p{margin:5px 0 0;color:#666861;font:600 11.5px/1.42 Arial,sans-serif}
+.cookSafetyNote{
+  margin-top:10px;
+  padding:12px 14px;
+  border-left:4px solid #a94332;
+  border-radius:10px;
+  background:#fbf1ed;
+}
+.cookSafetyNote strong{display:block;color:#172036;font:900 12px/1.2 Arial,sans-serif}
+.cookSafetyNote p{margin:4px 0 0;color:#65665f;font:600 11.5px/1.42 Arial,sans-serif}
+
+.cookGuideV2{display:grid;gap:12px}
+.cookRecipeSummary{
+  padding:14px 15px;
+  border:1px solid #d8ddcf;
+  border-radius:14px;
+  background:#eef2e8;
+}
+.cookRecipeSummary strong{display:block;color:#172036;font:900 15px/1.2 Arial,sans-serif}
+.cookRecipeSummary p{margin:5px 0 0;color:#60655d;font:600 12px/1.42 Arial,sans-serif}
+
+.cookBottomCheck{
+  padding:17px;
+  border:1px solid var(--tech-line);
+  border-radius:16px;
+  background:#f7f4ed;
+}
+.cookBottomChoices{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.cookBottomChoice{
+  min-height:92px;
+  padding:12px 13px;
+  border:1px solid #d9d3c8;
+  border-radius:12px;
+  background:#fff;
+  color:#172036;
+  text-align:left;
+  box-shadow:none;
+}
+.cookBottomChoice strong{display:block;font:900 12.5px/1.2 Arial,sans-serif}
+.cookBottomChoice small{display:block;margin-top:6px;color:#686a63;font:600 11px/1.38 Arial,sans-serif}
+.cookBottomChoice.selected{
+  border-color:#a94332;
+  background:#fbf2ed;
+  box-shadow:inset 0 0 0 1px #a94332;
+}
+.cookBottomChoice:focus-visible{outline:3px solid rgba(169,67,50,.22);outline-offset:2px}
+.cookBottomAdvice{
+  margin-top:9px;
+  padding:12px 13px;
+  border-radius:11px;
+  background:#fff;
+}
+.cookBottomAdvice strong{display:block;color:#172036;font:900 13px/1.2 Arial,sans-serif}
+.cookBottomAdvice p{margin:5px 0 0;color:#62645d;font:600 11.5px/1.42 Arial,sans-serif}
+
+.cookFinalChecks{
+  padding:17px;
+  border-top:1px solid #ded8cc;
+  border-bottom:1px solid #ded8cc;
+}
+.cookFinalGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.cookFinalGrid article{
+  padding:12px 13px;
+  border-left:4px solid #657d42;
+  background:#f7f8f3;
+  border-radius:10px;
+}
+.cookFinalGrid strong{display:block;color:#172036;font:900 12.5px/1.2 Arial,sans-serif}
+.cookFinalGrid p{margin:5px 0 0;color:#63655e;font:600 11.5px/1.4 Arial,sans-serif}
+
+@media(max-width:700px){
+  .cookFlowIntro{padding:16px;border-radius:15px}
+  .cookFlowSteps,.cookBottomChoices,.cookFinalGrid{grid-template-columns:1fr}
+  .cookFlowSteps{gap:0}
+  .cookFlowSteps article{
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    padding:12px 2px;
+    background:transparent;
+  }
+  .cookFlowSteps article:last-child{border-bottom:0}
+  .cookBottomCheck{padding:15px;border-radius:14px}
+  .cookBottomChoice{min-height:0}
+  .cookFinalChecks{padding:15px 0}
+  .cookFinalGrid{gap:0}
+  .cookFinalGrid article{
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    padding:12px 2px;
+    background:transparent;
+  }
+  .cookFinalGrid article:last-child{border-bottom:0}
+}
