@@ -274,16 +274,23 @@
             <div class="calculatorSection kneadEditor">
               <div class="calculatorSectionHeader">
                 <span>Metodo d’impasto</span>
-                <small>Cambia quanto sviluppo deve arrivare dalle pieghe successive.</small>
+                <small>Aiuta a capire quanto sviluppo può essere già arrivato dalla lavorazione iniziale.</small>
               </div>
               <div class="calculatorInset">
-                <label for="kneadMethod">Come impasti?</label>
-                <select id="kneadMethod">
-                  <option value="hand" selected>A mano</option>
-                  <option value="planetary">Planetaria</option>
-                  <option value="spiral">Impastatrice a spirale</option>
-                </select>
-                <small class="fieldHint">Non determina un numero fisso di pieghe: PizzaMaker ti farà controllare la struttura prima di decidere.</small>
+                <div class="basicField">
+                  <label for="kneadMethod">Come impasti?</label>
+                  <select id="kneadMethod">
+                    <option value="hand" selected>A mano</option>
+                    <option value="planetary">Planetaria</option>
+                    <option value="spiral">Impastatrice a spirale</option>
+                  </select>
+                  <small class="fieldHint">Non determina un numero fisso di pieghe: PizzaMaker ti farà controllare la struttura prima di decidere.</small>
+                </div>
+                <div class="basicField">
+                  <label for="doughTemp">Temperatura impasto a fine lavoro <span class="optionalLabel">opzionale</span></label>
+                  <input id="doughTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="es. 23">
+                  <small class="fieldHint">Se la misuri, 22–24 °C è un riferimento pratico; serve per capire quanto fidarsi dei tempi.</small>
+                </div>
               </div>
             </div>
 
