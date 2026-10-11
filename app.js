@@ -1191,6 +1191,41 @@
     return step;
   }
 
+  function cookQuantityRange(area, lowPerCm2, highPerCm2, step = 5) {
+    const low=Math.max(step,Math.round((area*lowPerCm2)/step)*step);
+    const high=Math.max(low,Math.round((area*highPerCm2)/step)*step);
+    return `${low}–${high} g`;
+  }
+
+  function renderCookBottomAdvice(state, pizza) {
+    const target=$('cookBottomAdvice');
+    if(!target) return;
+    const hasMozzarella=pizza==='margherita';
+    const states={
+      pale:{
+        title:'Resta sul livello basso',
+        text:hasMozzarella
+          ? 'Il fondo è ancora pallido o molle. Aggiungi rapidamente la mozzarella ben scolata e rimetti la teglia in basso; controlla presto perché ora la superficie inizierà comunque a cuocere.'
+          : 'Il fondo è ancora pallido o molle. Continua sul livello basso e ricontrolla a breve prima di spostare la teglia.'
+      },
+      ready:{
+        title:'Passa alla finitura',
+        text:hasMozzarella
+          ? 'Fondo asciutto con prime zone dorate: aggiungi la mozzarella ben scolata e sposta la teglia al livello medio o alto per 3–6 minuti, controllando superficie e bordo.'
+          : 'Fondo asciutto con prime zone dorate: sposta al livello medio o alto per completare superficie e bordo senza seccare la base.'
+      },
+      dark:{
+        title:'Proteggi subito il fondo',
+        text:hasMozzarella
+          ? 'Il fondo è già molto colorito. Aggiungi la mozzarella, sposta subito medio-alto e termina nel minor tempo possibile. Evita ventilato o grill se non strettamente necessario.'
+          : 'Il fondo è già molto colorito. Sposta subito medio-alto e termina rapidamente; evita altro calore dal basso.'
+      }
+    };
+    const advice=states[state]||states.ready;
+    clear(target);
+    target.append(create('strong',{text:advice.title}),create('p',{text:advice.text}));
+  }
+
   function renderCookGuide() {
     const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
     clear(target); closeCookTimer();
@@ -1198,62 +1233,107 @@
     const plan=techniqueOrigin.view==='impasto'?getLastPlan():null;
     const summary=planSummary(plan);
     const area=summary?.area || (37*26);
-    const tomato=Math.round(area*0.125/5)*5;
-    const mozzarella=Math.round(area*0.135/5)*5;
     const sizeLabel=summary?.area?`${round(summary.width,0)}×${round(summary.height,0)}`:'37×26';
+    const tomatoRange=cookQuantityRange(area,0.092,0.132,5);
+    const mozzarellaRange=cookQuantityRange(area,0.092,0.126,5);
+    const finishOilRange=cookQuantityRange(area,0.003,0.006,1);
+    const firstCheckMinutes=area >= 1400 ? 12 : 10;
+    const firstWindow=area >= 1400 ? '12–16 min' : '10–14 min';
 
-    const panel=card('Guida operativa','cookGuide');
-    const stretchLink=create('button',{type:'button',class:'timelineAction',text:'Serve aiuto con la stesura? Apri la guida →'});
-    stretchLink.addEventListener('click',()=>{
-      techniqueOrigin={view:techniqueOrigin.view,step:{label:'Stesura'},action:'stretch'};
-      openView('stesura');
-    });
-    panel.append(stretchLink);
+    const panel=card('Guida operativa','cookGuide cookGuideV2');
+
+    const summaryBox=create('div',{class:'cookRecipeSummary'});
+    summaryBox.append(
+      create('span',{class:'flowEyebrow',text:`${sizeLabel} · ${pan==='leccarda'?'leccarda':pan}`}),
+      create('strong',{text:pizza==='margherita'?'Margherita':pizza==='rossa'?'Rossa semplice':'Bianca patate e lardo'}),
+      create('p',{text:pizza==='margherita'
+        ? `Pomodoro ${tomatoRange} · mozzarella asciutta ${mozzarellaRange} · olio finale ${finishOilRange}`
+        : pizza==='rossa'
+          ? `Pomodoro ${tomatoRange} · olio finale ${finishOilRange}`
+          : `Poco olio e sale prima della cottura; topping asciutti o già cotti quando possibile.`})
+    );
+    panel.append(summaryBox);
 
     const panText=pan==='leccarda'
-      ? 'Leccarda: prima fase ben in basso; conduce meno di ferro e alluminio.'
+      ? 'Leccarda: comportamento molto variabile. Parti in basso e fidati del fondo reale più che del tempo.'
       : pan==='ferro'
-        ? 'Ferro blu: controlla presto il fondo, perché trasmette calore rapidamente.'
+        ? 'Ferro blu: favorisce la doratura. Controlla il fondo presto e sposta in alto appena è pronto.'
         : pan==='alluminio'
-          ? 'Alluminio: buona conduzione; controlla il fondo prima del timer se il forno spinge molto sotto.'
-          : 'Antiaderente: conduzione più moderata; privilegia un buon preriscaldo e il ripiano basso.';
-    panel.append(guideStep(1,'Preriscalda',[panText,'Forno statico a 250 °C per 40–45 minuti.']));
-    const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer preriscaldo · 40 min'});
-    preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo forno')); panel.lastElementChild.append(preheat);
+          ? 'Alluminio: buona conduzione e risposta rapida. Il fondo va controllato prima di prolungare la prima fase.'
+          : 'Antiaderente: conduzione spesso più moderata. Preriscaldo completo e livello basso diventano ancora più importanti.';
 
-    if(pizza==='margherita'){
-      panel.append(guideStep(2,'Prima cottura',[
-        `Per ${sizeLabel}: circa ${tomato} g di pomodoro denso. Parti sul ripiano basso.`,
-        'Non aspettare un numero esatto: controlla quando il fondo è asciutto e appena colorito.'
-      ]));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 8 min'});
-      first.addEventListener('click',()=>startCookTimer(8,'Controlla il fondo')); panel.lastElementChild.append(first);
-      panel.append(guideStep(3,'Completa',[
-        `Aggiungi circa ${mozzarella} g di mozzarella ben scolata.`,
-        'Sposta al centro o medio-alto e termina appena la superficie è asciutta e il bordo ben cotto.'
-      ]));
-      const finish=create('button',{type:'button',class:'stepTimer',text:'Controlla mozzarella · 2 min'});
-      finish.addEventListener('click',()=>startCookTimer(2,'Controlla la superficie')); panel.lastElementChild.append(finish);
-    }else if(pizza==='rossa'){
-      panel.append(guideStep(2,'Cottura',[
-        `Per ${sizeLabel}: circa ${tomato} g di pomodoro denso e olio moderato.`,
-        'Parti in basso e passa alla finitura solo quando il fondo è asciutto.'
-      ]));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 8 min'});
-      first.addEventListener('click',()=>startCookTimer(8,'Controlla il fondo')); panel.lastElementChild.append(first);
-    }else{
-      panel.append(guideStep(2,'Patate e cottura',[
-        'Patate sottilissime, sciacquate e asciugate bene. Condiscile prima e distribuiscile senza creare strati spessi.',
-        'Parti in basso e controlla insieme fondo e cottura delle patate.'
-      ]));
-      const first=create('button',{type:'button',class:'stepTimer',text:'Primo controllo · 9 min'});
-      first.addEventListener('click',()=>startCookTimer(9,'Controlla fondo e patate')); panel.lastElementChild.append(first);
-      panel.append(guideStep(3,'Completa',['Sposta medio-alto per finire. Lardo fuori forno o negli ultimi secondi.']));
-      const finish=create('button',{type:'button',class:'stepTimer',text:'Controlla finitura · 3 min'});
-      finish.addEventListener('click',()=>startCookTimer(3,'Controlla la finitura')); panel.lastElementChild.append(finish);
+    panel.append(guideStep(1,'Preriscalda davvero',[panText,'Forno statico a 250 °C per 40–50 minuti. La spia di temperatura non garantisce che pareti e camera siano già stabilizzate.']));
+    const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer minimo · 40 min'});
+    preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo minimo'));
+    panel.lastElementChild.append(preheat);
+
+    const phaseOneTexts=[];
+    if(pizza==='margherita'||pizza==='rossa') phaseOneTexts.push(`Stendi uno strato sottile di pomodoro: per ${sizeLabel}, riferimento ${tomatoRange}.`);
+    else phaseOneTexts.push('Condisci leggermente con olio e sale. Evita topping molto umidi nella prima fase.');
+    phaseOneTexts.push(`Inforna sul livello basso. Non aprire inutilmente per i primi 8–10 minuti. Finestra esplorativa per questa teglia: ${firstWindow}.`);
+    phaseOneTexts.push('Il passaggio di fase arriva quando il bordo comincia a colorire e, sollevando un angolo con una spatola, il fondo è asciutto con le prime zone dorate.');
+    panel.append(guideStep(2,'Prima fase · costruisci il fondo',phaseOneTexts));
+    const first=create('button',{type:'button',class:'stepTimer',text:`Primo controllo · ${firstCheckMinutes} min`});
+    first.addEventListener('click',()=>startCookTimer(firstCheckMinutes,'Controlla il fondo'));
+    panel.lastElementChild.append(first);
+
+    const bottomCheck=create('section',{class:'cookBottomCheck','aria-labelledby':'cookBottomTitle'});
+    bottomCheck.append(create('div',{class:'techniqueSectionHead'},[
+      create('span',{class:'flowEyebrow',text:'Bivio reale'}),
+      create('h3',{id:'cookBottomTitle',text:'Com’è il fondo?'})
+    ]));
+    const choices=create('div',{class:'cookBottomChoices'});
+    [
+      ['pale','Pallido / molle','Non ha ancora costruito crosta.'],
+      ['ready','Asciutto / prime zone dorate','È pronto per la seconda fase.'],
+      ['dark','Già molto colorito','Proteggilo dal calore sotto.']
+    ].forEach(([value,title,desc])=>{
+      const btn=create('button',{type:'button',class:'cookBottomChoice','data-bottom-state':value});
+      btn.append(create('strong',{text:title}),create('small',{text:desc}));
+      btn.addEventListener('click',()=>{
+        choices.querySelectorAll('.cookBottomChoice').forEach(item=>item.classList.remove('selected'));
+        btn.classList.add('selected');
+        renderCookBottomAdvice(value,pizza);
+      });
+      choices.append(btn);
+    });
+    bottomCheck.append(choices,create('div',{id:'cookBottomAdvice',class:'cookBottomAdvice'},[
+      create('strong',{text:'Sollevane un angolo'}),
+      create('p',{text:'Scegli lo stato del fondo: sarà lui a decidere posizione e seconda fase.'})
+    ]));
+    panel.append(bottomCheck);
+
+    const finishTexts=[];
+    if(pizza==='margherita') {
+      finishTexts.push(`Aggiungi mozzarella ben scolata: riferimento ${mozzarellaRange}. Lavora rapidamente.`);
+    } else if(pizza==='bianca') {
+      finishTexts.push('Aggiungi ora topping già asciutti o cotti; ingredienti freschissimi possono arrivare anche fuori forno.');
+    } else {
+      finishTexts.push('Completa senza aggiungere umidità inutile: il pomodoro deve concentrarsi, non ribollire in superficie.');
     }
-    const finalNo=pizza==='rossa'?3:4;
-    panel.append(guideStep(finalNo,'Sforna e asciuga',['Fondo dorato e superficie asciutta? Togli subito la pizza dalla teglia e appoggiala su griglia per 1–2 minuti.']));
+    finishTexts.push('Seconda fase: circa 3–6 minuti. Statico resta la scelta base; ventilato solo negli ultimi 2–4 minuti se serve davvero ad asciugare la superficie.');
+    finishTexts.push('Grill solo brevissimo, sorvegliato e solo se il manuale del forno lo consente.');
+    panel.append(guideStep(3,'Seconda fase · asciuga e completa',finishTexts));
+    const finishTimer=create('button',{type:'button',class:'stepTimer',text:'Controllo finitura · 3 min'});
+    finishTimer.addEventListener('click',()=>startCookTimer(3,'Controlla superficie e fondo'));
+    panel.lastElementChild.append(finishTimer);
+
+    const finalChecks=create('section',{class:'cookFinalChecks'});
+    finalChecks.append(create('div',{class:'techniqueSectionHead'},[
+      create('span',{class:'flowEyebrow',text:'Prima di sfornare'}),
+      create('h3',{text:'Tre controlli'})
+    ]));
+    const grid=create('div',{class:'cookFinalGrid'});
+    [
+      ['Fondo','Asciutto e dorato, non molle o bianco.'],
+      ['Centro','Premendo leggermente non deve sembrare vischioso, umido e schiacciato.'],
+      ['Superficie','Mozzarella fusa senza acqua libera; pomodoro concentrato; verdure senza pozze.']
+    ].forEach(([title,textValue])=>grid.append(create('article',{},[create('strong',{text:title}),create('p',{text:textValue})])));
+    finalChecks.append(grid);
+    panel.append(finalChecks);
+
+    panel.append(guideStep(4,'Fuori dal forno',['Togli subito la pizza dalla teglia e trasferiscila su una griglia per 2–4 minuti. Taglia dopo un breve assestamento: lasciarla nella teglia rovente favorisce condensa e perdita di croccantezza.']));
+
     target.append(panel);
   }
 
