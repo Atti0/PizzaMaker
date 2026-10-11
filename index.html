@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=51">
+  <link rel="stylesheet" href="styles.css?v=52">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -570,50 +570,35 @@
           <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
             <p class="eyebrow">Tecnica · Cottura</p>
-            <h2 id="cotturaTitle">Cuoci guardando i segnali giusti</h2>
+            <h2 id="cotturaTitle">Fondo prima, superficie dopo</h2>
           </div>
-        </div>
-
-        <div class="cookVisualGuide">
-          <div class="techniqueLeadCopy">
-            <span class="flowEyebrow">Forno domestico</span>
-            <h3>Prima costruisci il fondo, poi finisci sopra</h3>
-            <p>I minuti sono un riferimento. Il passaggio di fase si decide guardando base e superficie: il fondo deve asciugarsi senza bruciare, mentre mozzarella e finitura arrivano solo dopo.</p>
-            <div class="techniqueRule"><strong>Controllo reale</strong><span>Sollevare un angolo della pizza vale più di seguire il timer alla cieca.</span></div>
-          </div>
-          <div class="techniqueIllustration ovenIllustration">
-            <svg viewBox="0 0 420 300" role="img" aria-labelledby="ovenSvgTitle ovenSvgDesc">
-              <title id="ovenSvgTitle">Cottura in due fasi</title>
-              <desc id="ovenSvgDesc">La teglia parte sul ripiano basso e poi passa al centro per completare la superficie.</desc>
-              <rect x="70" y="22" width="280" height="255" rx="26" class="ovenBody"/>
-              <path d="M100 92h220M100 154h220M100 216h220" class="ovenRack"/>
-              <rect x="118" y="188" width="184" height="24" rx="6" class="pizzaBase"/>
-              <rect x="118" y="126" width="184" height="24" rx="6" class="pizzaGhost"/>
-              <path d="M210 180V142m-15 17 15-17 15 17" class="techArrow"/>
-              <text x="210" y="238" text-anchor="middle" class="svgLabel">Parti in basso</text>
-              <text x="210" y="258" text-anchor="middle" class="svgLabel mutedSvgLabel">poi sposta al centro</text>
-            </svg>
-          </div>
-        </div>
-
-        <div class="cookCheckpoints">
-          <article><span>Prima fase</span><strong>Base asciutta e appena colorita</strong><p>Sollevando un angolo non deve sembrare cruda o molle. La superficie può essere ancora indietro.</p></article>
-          <article><span>Seconda fase</span><strong>Superficie asciutta, bordo ben cotto</strong><p>Sposta al centro o medio-alto. Mozzarella scolata solo negli ultimi minuti.</p></article>
-          <article><span>Uscita</span><strong>Fuori dalla teglia</strong><p>Appoggia subito la pizza su griglia per 1–2 minuti: il vapore non deve ribagnare il fondo.</p></article>
         </div>
 
         <div id="cookPlanContext" class="cookPlanContext hidden" aria-live="polite"></div>
+
+        <section class="cookFlowIntro" aria-labelledby="cookFlowTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Forno domestico · 250 °C</span>
+            <h3 id="cookFlowTitle">Tre decisioni, non un tempo fisso</h3>
+          </div>
+          <div class="cookFlowSteps">
+            <article><span>1</span><div><strong>Costruisci il fondo</strong><p>Statico, griglia bassa, forno davvero preriscaldato.</p></div></article>
+            <article><span>2</span><div><strong>Guarda sotto</strong><p>Sollevare un angolo decide se restare in basso o salire.</p></div></article>
+            <article><span>3</span><div><strong>Asciuga e finisci</strong><p>Mozzarella e topping umidi arrivano solo quando la base è già partita.</p></div></article>
+          </div>
+          <div class="cookSafetyNote"><strong>Importante</strong><p>Usa la griglia al livello più basso disponibile. Non appoggiare la teglia direttamente sul fondo del forno salvo indicazione esplicita del produttore.</p></div>
+        </section>
 
         <div class="twoColumns cookWorkspace">
           <div class="card formCard flowForm cookSetup">
             <p class="flowEyebrow" id="cookSetupEyebrow">Due scelte</p>
             <h3 id="cookSetupTitle">Adatta la cottura</h3>
-            <p class="cookSetupHint" id="cookSetupHint">Scegli condimento e materiale della teglia. Se arrivi dalla tua timeline, dimensioni e quantità vengono recuperate dall’impasto.</p>
+            <p class="cookSetupHint" id="cookSetupHint">Scegli condimento e materiale della teglia. Se arrivi dalla timeline, dimensioni e peso impasto sono già recuperati.</p>
             <div class="row">
               <div><label for="pizzaType">Condimento</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
               <div><label for="panType">Materiale teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
             </div>
-            <button type="button" id="cookBtn" class="flowPrimary">Mostra i passaggi <span aria-hidden="true">→</span></button>
+            <button type="button" id="cookBtn" class="flowPrimary">Prepara la cottura <span aria-hidden="true">→</span></button>
           </div>
 
           <div class="resultStack" id="cook" aria-live="polite"></div>
@@ -636,6 +621,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=36" defer></script>
+  <script src="app.js?v=37" defer></script>
 </body>
 </html>
