@@ -1142,3 +1142,96 @@ body{
   .structureChoices{grid-template-columns:1fr}
   .processNote{margin:0 0 12px}
 }
+
+
+/* Stesura v2 — decisione prima del gesto */
+.stretchGate{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#fffefa;
+}
+.stretchStateChoices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.stretchStateChoice{
+  min-height:120px;
+  padding:14px 15px;
+  border:1px solid #ddd7ca;
+  border-radius:14px;
+  background:#fff;
+  color:#172036;
+  box-shadow:none;
+  text-align:left;
+}
+.stretchStateChoice span{
+  display:block;
+  margin-bottom:7px;
+  color:#77756e;
+  font:900 9.5px/1 Arial,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.stretchStateChoice strong{display:block;font:900 14px/1.2 Arial,sans-serif}
+.stretchStateChoice small{display:block;margin-top:7px;color:#676961;font:600 11.5px/1.4 Arial,sans-serif}
+.stretchStateChoice.selected{
+  border-color:#a94332;
+  background:#fbf2ed;
+  box-shadow:inset 0 0 0 1px #a94332;
+}
+.stretchStateChoice:focus-visible{outline:3px solid rgba(169,67,50,.25);outline-offset:2px}
+.stretchStateAdvice{
+  margin-top:10px;
+  padding:13px 14px;
+  border-radius:12px;
+  background:#f2f3ec;
+  border:1px solid #d8ddcf;
+}
+.stretchStateAdvice strong{display:block;color:#172036;font:900 14px/1.2 Arial,sans-serif}
+.stretchStateAdvice p{margin:5px 0 0;color:#60655d;font:600 12px/1.42 Arial,sans-serif}
+.compactTechniqueLead{grid-template-columns:1fr!important}
+.compactTechniqueLead .techniqueLeadCopy{max-width:none}
+.stretchStepsSix{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stretchSignals{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#f7f4ed;
+}
+.stretchSignalGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.stretchSignalGrid article{
+  padding:14px 15px;
+  border-left:4px solid #8c957a;
+  background:#fff;
+  border-radius:12px;
+}
+.stretchSignalGrid article:nth-child(2){border-left-color:#a94332}
+.stretchSignalGrid article:nth-child(3){border-left-color:#c78535}
+.stretchSignalGrid strong{display:block;color:#172036;font:900 13px/1.2 Arial,sans-serif}
+.stretchSignalGrid p{margin:5px 0 0;color:#666861;font:600 11.5px/1.42 Arial,sans-serif}
+.stretchTrayNote{
+  margin:0 0 14px;
+  padding:15px 16px;
+  border-left:4px solid #526b2d;
+  border-radius:12px;
+  background:#eef2e8;
+}
+.stretchTrayNote strong{display:block;color:#172036;font:900 14px/1.2 Arial,sans-serif}
+.stretchTrayNote p{margin:5px 0 0;color:#60655d;font:600 12px/1.44 Arial,sans-serif}
+
+@media(max-width:900px){
+  .stretchStepsSix{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .stretchGate,.stretchSignals{padding:16px;border-radius:15px}
+  .stretchStateChoices,.stretchSignalGrid,.stretchStepsSix{grid-template-columns:1fr}
+  .stretchStateChoice{min-height:0;padding:13px 14px}
+  .stretchSignals{background:transparent;border-left:0;border-right:0;padding-left:0;padding-right:0}
+  .stretchSignalGrid{gap:0}
+  .stretchSignalGrid article{border:0;border-bottom:1px solid #ded8cc;border-radius:0;padding:13px 4px;background:transparent}
+  .stretchSignalGrid article:last-child{border-bottom:0}
+}
