@@ -571,7 +571,7 @@
   }
 
   const TIMELINE_ACTIONS = {
-    fold: { label:'Controlla la struttura →', view:'pieghe' },
+    fold: { label:'Apri Struttura →', view:'pieghe' },
     stretch: { label:'Apri guida stesura →', view:'stesura' },
     check: { label:'Controlla lo stato →', view:'check' },
     cook: { label:'Apri guida cottura →', view:'cottura' }
@@ -657,6 +657,19 @@
     if(id==='cottura') renderCookPlanContext(fromTimeline ? plan : null);
   }
 
+  function renderStructureStateAdvice(state) {
+    const target=$('structureStateAdvice');
+    if(!target) return;
+    const states={
+      ready:{title:'Fermati qui',text:'La struttura è sufficiente. Copri e lascia proseguire fermentazione e riposo: una piega in più aggiungerebbe lavoro senza un beneficio evidente.'},
+      weak:{title:'Fai un solo ciclo leggero',text:'Se sei ancora all’inizio della fermentazione, fai un ciclo a quattro lembi, copri per circa 20 minuti e poi ricontrolla prima di decidere altro.'},
+      tight:{title:'Riposo, non forza',text:'Copri e aspetta 15–20 minuti. Se l’impasto fa resistenza o tende a lacerarsi, altra trazione rischia di peggiorarlo.'},
+      hot:{title:'Prima controlla temperatura e fermentazione',text:'Se cola, è caldo o si sfalda, non presumere che serva una piega. Riduci la manipolazione e valuta se è già molto avanti.'}
+    };
+    const advice=states[state]||states.ready;
+    clear(target);
+    target.append(create('strong',{text:advice.title}),create('p',{text:advice.text}));
+  }
   function renderStretchStateAdvice(state) {
     const target=$('stretchStateAdvice');
     if(!target) return;
@@ -1448,6 +1461,17 @@
     });
     document.querySelectorAll('[data-tech-back]').forEach((button) => {
       button.addEventListener('click', goBackFromTechnique);
+    });
+    document.querySelectorAll('[data-structure-state]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-structure-state]').forEach((item)=>{
+          item.classList.remove('selected');
+          item.setAttribute('aria-pressed','false');
+        });
+        button.classList.add('selected');
+        button.setAttribute('aria-pressed','true');
+        renderStructureStateAdvice(button.dataset.structureState);
+      });
     });
     document.querySelectorAll('[data-stretch-state]').forEach((button) => {
       button.addEventListener('click', () => {
