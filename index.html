@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=52">
+  <link rel="stylesheet" href="styles.css?v=53">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -57,7 +57,7 @@
                   <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
                 </button>
                 <button type="button" class="homeToolAction" data-open="pieghe">
-                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                  <span><strong>Struttura</strong><small>Controlla se serve davvero un rinforzo e quando fermarti.</small></span><b>→</b>
                 </button>
                 <button type="button" class="homeToolAction" data-open="stesura">
                   <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
@@ -87,7 +87,7 @@
                   <span><strong>Controlla o correggi</strong><small>Valuta crescita, consistenza o un problema dopo la cottura.</small></span><b>→</b>
                 </button>
                 <button type="button" class="homeToolAction" data-open="pieghe">
-                  <span><strong>Pieghe</strong><small>Dai struttura all’impasto e capisci quando fermarti.</small></span><b>→</b>
+                  <span><strong>Struttura</strong><small>Controlla se serve davvero un rinforzo e quando fermarti.</small></span><b>→</b>
                 </button>
                 <button type="button" class="homeToolAction" data-open="stesura">
                   <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
@@ -403,6 +403,12 @@
             <p class="eyebrow">Tecnica · Struttura</p>
             <h2 id="piegheTitle">Controlla la struttura, poi decidi</h2>
           </div>
+
+        <nav class="guideProgress" aria-label="Percorso tecnico">
+          <button type="button" data-open="pieghe" class="active" aria-current="step"><span>1</span>Struttura</button>
+          <button type="button" data-open="stesura"><span>2</span>Stesura</button>
+          <button type="button" data-open="cottura"><span>3</span>Cottura</button>
+        </nav>
         </div>
 
         <div id="foldContext" class="techContext hidden" aria-live="polite">
@@ -417,27 +423,31 @@
             <h3 id="structureGateTitle">Com’è la struttura adesso?</h3>
           </div>
           <p class="structureGateIntro">Non fare una piega solo perché è in calendario. Confronta il comportamento reale dell’impasto e scegli l’azione più prudente.</p>
-          <div class="structureChoices">
-            <article class="structureChoice good">
+          <div class="structureChoices" role="group" aria-label="Stato della struttura dell'impasto">
+            <button type="button" class="structureChoice good" data-structure-state="ready" aria-pressed="false">
               <span>Struttura sufficiente</span>
-              <h4>Mantiene forma e si solleva in blocco</h4>
-              <p><strong>Fermati.</strong> Passa al riposo e alla fermentazione.</p>
-            </article>
-            <article class="structureChoice warn">
+              <strong>Mantiene forma e si solleva in blocco</strong>
+              <small>La massa è morbida ma non cola.</small>
+            </button>
+            <button type="button" class="structureChoice warn" data-structure-state="weak" aria-pressed="false">
               <span>Può servire rinforzo</span>
-              <h4>Si allarga lentamente ma resta compatto</h4>
-              <p>Un altro ciclo leggero dopo circa 20 minuti può essere utile.</p>
-            </article>
-            <article class="structureChoice stop">
+              <strong>Si allarga lentamente ma resta compatto</strong>
+              <small>È continuo, ma perde sostegno.</small>
+            </button>
+            <button type="button" class="structureChoice stop" data-structure-state="tight" aria-pressed="false">
               <span>Troppa tensione</span>
-              <h4>Si lacera quando provi ad allungarlo</h4>
-              <p><strong>Non forzare.</strong> Copri e aspetta 15–20 minuti.</p>
-            </article>
-            <article class="structureChoice danger">
+              <strong>Fa resistenza o tende a lacerarsi</strong>
+              <small>Non serve altra forza adesso.</small>
+            </button>
+            <button type="button" class="structureChoice danger" data-structure-state="hot" aria-pressed="false">
               <span>Prima cerca la causa</span>
-              <h4>Cola, è caldo e si sfalda</h4>
-              <p>Controlla temperatura e fermentazione: altre pieghe da sole potrebbero non risolvere.</p>
-            </article>
+              <strong>Cola, è caldo e si sfalda</strong>
+              <small>Potrebbe essere fermentazione avanzata.</small>
+            </button>
+          </div>
+          <div id="structureStateAdvice" class="structureStateAdvice" aria-live="polite">
+            <strong>Scegli il comportamento più simile</strong>
+            <p>Ti dirò se fermarti, fare un solo ciclo di rinforzo o lasciare riposare.</p>
           </div>
         </section>
 
@@ -471,6 +481,12 @@
             <p class="eyebrow">Tecnica · Stesura</p>
             <h2 id="stesuraTitle">Allarga senza perdere struttura</h2>
           </div>
+
+        <nav class="guideProgress" aria-label="Percorso tecnico">
+          <button type="button" data-open="pieghe"><span>1</span>Struttura</button>
+          <button type="button" data-open="stesura" class="active" aria-current="step"><span>2</span>Stesura</button>
+          <button type="button" data-open="cottura"><span>3</span>Cottura</button>
+        </nav>
         </div>
 
         <div id="stretchContext" class="techContext hidden" aria-live="polite">
@@ -561,7 +577,7 @@
 
         <div class="techniqueFooterNav">
           <button type="button" class="secondary" data-open="cottura">Vai alla cottura →</button>
-          <button type="button" class="ghost" data-open="pieghe">← Rivedi le pieghe</button>
+          <button type="button" class="ghost" data-open="pieghe">← Rivedi la struttura</button>
         </div>
       </section>
 
@@ -572,6 +588,12 @@
             <p class="eyebrow">Tecnica · Cottura</p>
             <h2 id="cotturaTitle">Fondo prima, superficie dopo</h2>
           </div>
+
+        <nav class="guideProgress" aria-label="Percorso tecnico">
+          <button type="button" data-open="pieghe"><span>1</span>Struttura</button>
+          <button type="button" data-open="stesura"><span>2</span>Stesura</button>
+          <button type="button" data-open="cottura" class="active" aria-current="step"><span>3</span>Cottura</button>
+        </nav>
         </div>
 
         <div id="cookPlanContext" class="cookPlanContext hidden" aria-live="polite"></div>
@@ -621,6 +643,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=37" defer></script>
+  <script src="app.js?v=38" defer></script>
 </body>
 </html>
