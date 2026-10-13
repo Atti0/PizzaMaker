@@ -1223,11 +1223,33 @@
     });
   }
 
-  function doughAdviceText(place, state, time) {
+  function doughAdviceText(place, state, time, phase = 'initial') {
     const context = place === 'frigo' ? 'in frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
     const isSoon = time === 'less1';
     const isLong = time === 'over6';
     const isSeveralHours = time === '3to6' || isLong;
+
+    if (phase !== 'initial' && state === 'molle') {
+      return {
+        context,
+        doNow:phase === 'stretch'
+          ? 'Sostienilo con mani larghe e riduci al minimo i movimenti: ora la priorità è trasferire senza perdere altro gas.'
+          : 'Riduci la manipolazione e valuta volume, temperatura e tenuta prima di pensare a un rinforzo.',
+        avoid:'Non usare una piega di rinforzo come correzione automatica fuori dalla puntata iniziale.',
+        next:phase === 'proof'
+          ? 'Se è già molto gonfio, accorcia l’appretto e passa alla stesura.'
+          : 'Prosegui in base allo stato reale, non alla voglia di “stringerlo”.'
+      };
+    }
+
+    if ((phase === 'postcold' || phase === 'proof') && state === 'rigido') {
+      return {
+        context,
+        doNow:'Copri e lascia che il panetto si rilassi: dopo freddo e formatura la tensione deve scendere prima della stesura.',
+        avoid:'Non aggiungere altre pieghe e non pirlare ancora per vincere la resistenza.',
+        next:'Ricontrolla tra 15–30 minuti; quando si allarga con meno ritorno elastico, passa alla stesura.'
+      };
+    }
 
     if (state === 'indietro') {
       if (place === 'frigo' && isLong) {
@@ -1406,12 +1428,12 @@
     const panel = card('Indicazioni', 'compactResult');
 
     if ($('checkMode').value === 'dough') {
-      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
+      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value, $('doughPhase')?.value || 'initial');
       panel.append(
         adviceRow('Adesso', advice.doNow, 'primaryRow'),
         adviceRow('Evita', advice.avoid, 'badRow'),
         adviceRow('Poi', advice.next, 'okRow'),
-        adviceRow('Contesto', `Impasto ${advice.context} · ${$('doughTime').selectedOptions[0]?.textContent || ''}.`, 'contextRow')
+        adviceRow('Contesto', `Impasto ${advice.context} · ${doughPhaseLabel($('doughPhase')?.value)} · ${$('doughTime').selectedOptions[0]?.textContent || ''}.`, 'contextRow')
       );
     } else {
       const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
@@ -1686,7 +1708,7 @@
     document.querySelectorAll('[data-open]').forEach((button) => {
       button.addEventListener('click', () => {
         const target=button.dataset.open;
-        const isTechniqueTarget=target==='pieghe'||target==='stesura'||target==='cottura';
+        const isTechniqueTarget=target==='pieghe'||target==='formatura'||target==='stesura'||target==='cottura';
         const activeTechnique=document.querySelector('.techniqueView.active');
         if(isTechniqueTarget && activeTechnique) openView(target);
         else if(isTechniqueTarget) openTechniqueFromHome(target);
@@ -1705,6 +1727,17 @@
         button.classList.add('selected');
         button.setAttribute('aria-pressed','true');
         renderStructureStateAdvice(button.dataset.structureState);
+      });
+    });
+    document.querySelectorAll('[data-shape-process]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-shape-process]').forEach((item)=>{
+          item.classList.remove('selected');
+          item.setAttribute('aria-pressed','false');
+        });
+        button.classList.add('selected');
+        button.setAttribute('aria-pressed','true');
+        renderShapeProcessAdvice(button.dataset.shapeProcess);
       });
     });
     document.querySelectorAll('[data-stretch-state]').forEach((button) => {
@@ -1728,7 +1761,14 @@
     $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
-    ['doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
+    $('coldProcess')?.addEventListener('change', () => {
+      const bulk=$('coldProcess').value !== 'balls';
+      const hint=$('coldProcessHint');
+      if(hint) hint.textContent=bulk
+        ? 'Per programmi oltre 12 ore: maturazione in massa, poi staglio e formatura dopo il frigo.'
+        : 'Panetti già formati prima del frigo: utile se conosci bene volume, contenitori e temperatura del tuo frigorifero.';
+    });
+    ['doughPhase','doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
       $(id)?.addEventListener('change', refreshAdviceIfVisible);
     });
 
