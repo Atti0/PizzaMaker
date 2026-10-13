@@ -598,6 +598,12 @@
         return item;
       });
       if (migratedStructure && !plan.kneadMethod) plan.kneadMethod = 'hand';
+      if (!plan.coldProcess) plan.coldProcess = 'bulk';
+      plan.timeline = plan.timeline.map((item) => {
+        if (item.label === 'Frigo coperto') return { ...item, label:'Frigo in massa' };
+        if (item.label === 'Preforma e appretto · se serve') return { ...item, label:'Staglio + formatura', action:'shape' };
+        return item;
+      });
       const oldControl = plan.timeline.find((item) => item.label === 'Controllo volume');
       const oldDecision = plan.timeline.find((item) => item.label === 'Fuori frigo o stesura secondo stato impasto');
       if (oldControl || oldDecision) {
@@ -618,6 +624,7 @@
 
   const TIMELINE_ACTIONS = {
     fold: { label:'Apri Struttura →', view:'pieghe' },
+    shape: { label:'Apri Formatura →', view:'formatura' },
     stretch: { label:'Apri guida stesura →', view:'stesura' },
     check: { label:'Controlla lo stato →', view:'check' },
     cook: { label:'Apri guida cottura →', view:'cottura' }
@@ -627,6 +634,7 @@
     if (!item) return null;
     if (item.action) return item.action;
     if (/piega|struttura|ricontrolla/i.test(item.label || '')) return 'fold';
+    if (/formatura|staglio/i.test(item.label || '')) return 'shape';
     if (item.label === 'Stesura') return 'stretch';
     if (item.label === 'Controlla l’impasto' || item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto') return 'check';
     if (item.label === 'Cottura') return 'cook';
@@ -682,7 +690,16 @@
       if(fromTimeline){
         $('foldContextTitle').textContent=step.label;
         const hyd=plan.ingredients?.hydration;
-        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${kneadMethodLabel(plan.kneadMethod)} · ${plan.pizza}. Prima osserva la struttura: il rinforzo è un'opzione, non un passaggio obbligatorio.`;
+        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${kneadMethodLabel(plan.kneadMethod)} · ${coldProcessLabel(plan.coldProcess)} · ${plan.pizza}. Prima osserva la struttura: il rinforzo è un'opzione, non un passaggio obbligatorio.`;
+      }
+    }
+
+    if(id==='formatura'){
+      const box=$('shapeContext');
+      box?.classList.toggle('hidden',!fromTimeline);
+      if(fromTimeline){
+        $('shapeContextTitle').textContent=step.label;
+        $('shapeContextMeta').textContent=coldProcessLabel(plan.coldProcess) + ' · ' + round(plan.doughPer||0,0) + ' g per panetto. Forma il minimo necessario e poi lascia che sia l’appretto a rilassare la superficie.';
       }
     }
 
@@ -708,7 +725,7 @@
     if(!target) return;
     const states={
       ready:{title:'Fermati qui',text:'La struttura è sufficiente. Copri e lascia proseguire fermentazione e riposo: una piega in più aggiungerebbe lavoro senza un beneficio evidente.'},
-      weak:{title:'Fai un solo ciclo leggero',text:'Se sei ancora all’inizio della fermentazione, fai un ciclo a quattro lembi, copri per circa 20 minuti e poi ricontrolla prima di decidere altro.'},
+      weak:{title:'Fai un solo ciclo leggero',text:'Se sei ancora nella puntata iniziale, fai il ciclo descritto sotto. Nel metodo PizzaMaker, dopo i quattro lembi capovolgi una volta la massa, poi copri e ricontrolla dopo il riposo.'},
       tight:{title:'Riposo, non forza',text:'Copri e aspetta 15–20 minuti. Se l’impasto fa resistenza o tende a lacerarsi, altra trazione rischia di peggiorarlo.'},
       hot:{title:'Prima controlla temperatura e fermentazione',text:'Se cola, è caldo o si sfalda, non presumere che serva una piega. Riduci la manipolazione e valuta se è già molto avanti.'}
     };
@@ -716,6 +733,16 @@
     clear(target);
     target.append(create('strong',{text:advice.title}),create('p',{text:advice.text}));
   }
+  function renderShapeProcessAdvice(process) {
+    const target=$('shapeProcessAdvice');
+    if(!target) return;
+    const content=process==='balls'
+      ? {title:'Panetti prima del frigo',text:'Forma con delicatezza, chiusura sotto e tensione moderata. Il freddo rallenterà poi la fermentazione del panetto: non inseguire una pelle rigida.'}
+      : {title:'Dopo il frigo in massa',text:'Taglia la porzione con il tarocco, preserva una faccia continua e forma con il minimo numero di movimenti. L’appretto successivo deve restituire estensibilità e volume.'};
+    clear(target);
+    target.append(create('strong',{text:content.title}),create('p',{text:content.text}));
+  }
+
   function renderStretchStateAdvice(state) {
     const target=$('stretchStateAdvice');
     if(!target) return;
