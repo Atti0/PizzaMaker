@@ -97,6 +97,23 @@
     $('bake').value = fmtInputDate(bake);
   }
 
+  function resetViewScroll() {
+    const root=document.documentElement;
+    const previous=root.style.scrollBehavior;
+    root.style.scrollBehavior='auto';
+    window.scrollTo(0,0);
+    document.body.scrollTop=0;
+    root.scrollTop=0;
+    requestAnimationFrame(() => {
+      window.scrollTo(0,0);
+      document.body.scrollTop=0;
+      root.scrollTop=0;
+      requestAnimationFrame(() => {
+        root.style.scrollBehavior=previous;
+      });
+    });
+  }
+
   function openView(id, options = {}) {
     // Il calcolatore è una simulazione: rientrando si parte senza un risultato precedente.
     if (id === 'calc') clear($('result'));
@@ -111,7 +128,7 @@
       }
       if(id==='home') renderHomeSavedStep();
       if(id==='pieghe'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
-      if(!options.preserveScroll) window.scrollTo({top:0,left:0,behavior:'smooth'});
+      if(!options.preserveScroll) resetViewScroll();
       document.documentElement.scrollLeft=0;
       document.body.scrollLeft=0;
     }
@@ -1136,20 +1153,160 @@
   }
 
   function doughAdviceText(place, state, time) {
-    const context = place === 'frigo' ? 'dal frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
+    const context = place === 'frigo' ? 'in frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
+    const isSoon = time === 'less1';
+    const isLong = time === 'over6';
+    const isSeveralHours = time === '3to6' || isLong;
 
-    const rules = {
-      indietro: ['Portalo a temperatura ambiente e aspetta finché diventa più gonfio e rilassato.', 'Non forzare stesura o pieghe aggressive se è duro e poco sviluppato.', 'Ricontrolla tra 45–60 minuti.'],
-      giusto: ['Non toccarlo troppo. Stendi quando è rilassato, poi riposo in teglia coperto.', 'Non aggiungere pieghe “per sicurezza”.', time === 'less1' ? 'Stendi ora e fai un riposo breve.' : 'Prepara banco, semola e teglia.'],
-      triplicato: ['Niente pieghe. Stendi delicato e accorcia il riposo in teglia.', 'Non ristrutturare: se è bello e gonfio, va accompagnato.', time === 'over6' ? 'Se manca molto, rimettilo al fresco dopo una gestione minima.' : 'Fuori frigo 20–30 minuti, poi stesura delicata.'],
-      collasso: [time === 'less1' ? 'Stendi quasi subito, fai un riposo breve in teglia e cuoci.' : 'Riduci la manipolazione e riportalo al fresco se manca ancora molto.', 'Non cercare di ricostruirlo con pieghe ripetute: caldo, sovrafermentazione o struttura degradata possono essere la causa.', time === 'less1' ? 'Teglia e forno subito.' : 'Ricontrolla stato e temperatura prima di decidere altro.'],
-      rigido: ['Copri e aspetta. Se si ritira, è tensione: serve riposo, non forza.', 'Non tirarlo fino a strapparlo e non aggiungere farina sul banco a caso.', 'Riprova tra 10–20 minuti.'],
-      molle: [time === 'less1' ? 'Stendi con mani unte e movimenti minimi.' : 'Se è ancora all’inizio e non è molto gonfio, un rinforzo leggero può aiutare; se è caldo o molto fermentato, prima controlla quello.', 'Non sommergerlo di farina e non sommare pieghe senza capire la causa.', 'Valuta consistenza dopo 15–20 minuti di riposo.'],
-      strappa: ['Stop. Copri e lascia rilassare. Poi riprendi con tocchi leggeri.', 'Non insistere con pieghe aggressive: l’impasto è in tensione o indebolito.', 'Aspetta 15–20 minuti.']
+    if (state === 'indietro') {
+      if (place === 'frigo' && isLong) {
+        return {
+          context,
+          doNow:'Lascialo coperto in frigo: con più di 6 ore davanti non serve accelerarlo adesso.',
+          avoid:'Non portarlo a temperatura ambiente con così tanto anticipo e non aggiungere pieghe solo perché è poco cresciuto.',
+          next:'Ricontrollalo più vicino alla stesura; tiralo fuori solo quando serve davvero far ripartire la fermentazione.'
+        };
+      }
+      if (place === 'frigo') {
+        return {
+          context,
+          doNow:'Portalo fuori e lascialo riprendere temperatura, coperto.',
+          avoid:'Non forzare stesura o pieghe mentre è ancora freddo e contratto.',
+          next:isSoon?'Controllalo ogni 15–20 minuti: se si rilassa, passa alla stesura.':'Ricontrolla volume e morbidezza tra 30–45 minuti.'
+        };
+      }
+      if (place === 'teglia') {
+        return {
+          context,
+          doNow:'Tienilo coperto e dagli ancora tempo se il forno non è imminente.',
+          avoid:'Non schiacciarlo di nuovo per “farlo crescere”.',
+          next:isSoon?'Se resta molto indietro, cuoci quando mostra almeno un minimo di rilassamento e volume.':'Ricontrolla tra 20–30 minuti.'
+        };
+      }
+      return {
+        context,
+        doNow:'Lascialo coperto a temperatura ambiente e osserva se acquista volume e si rilassa.',
+        avoid:'Non aggiungere lavorazioni aggressive: poco volume non significa automaticamente poca struttura.',
+        next:isSeveralHours?'Ricontrolla tra 30–45 minuti; se l’ambiente è caldo e accelera troppo, spostalo al fresco.':'Ricontrolla tra 20–30 minuti.'
+      };
+    }
+
+    if (state === 'giusto') {
+      if (isLong) {
+        return {
+          context,
+          doNow:place === 'frigo' ? 'Tienilo coperto in frigo: è già in una buona condizione e deve solo conservarla.' : 'Se mancano ancora molte ore, rallentalo mettendolo al fresco.',
+          avoid:'Non aggiungere pieghe o lunghi periodi al caldo “per sicurezza”.',
+          next:'Ricontrollalo quando ti avvicini alla stesura.'
+        };
+      }
+      return {
+        context,
+        doNow:place === 'frigo' ? 'Portalo fuori con il solo anticipo necessario a farlo rilassare prima della stesura.' : 'Non lavorarlo più del necessario: è nella condizione che cerchi.',
+        avoid:'Non aggiungere pieghe “per sicurezza”.',
+        next:isSoon?'Quando è rilassato, stendi e passa alla cottura secondo la guida.':'Prepara banco e teglia e ricontrolla più vicino alla stesura.'
+      };
+    }
+
+    if (state === 'triplicato') {
+      if (isLong) {
+        return {
+          context,
+          doNow:place === 'frigo' ? 'Tienilo freddo e manipolalo il meno possibile.' : 'Raffreddalo ora per rallentare la fermentazione.',
+          avoid:'Non fare pieghe per ridargli forma: perderesti gas senza riportare indietro la fermentazione.',
+          next:'Ricontrolla più tardi; se continua a crescere rapidamente, valuta di anticipare la cottura.'
+        };
+      }
+      return {
+        context,
+        doNow:'Accompagnalo senza ristrutturarlo: stesura delicata e riposo finale breve o nullo se è già molto gonfio.',
+        avoid:'Niente pieghe e niente lunga attesa al caldo.',
+        next:'Cuoci appena è steso e stabile in teglia.'
+      };
+    }
+
+    if (state === 'collasso') {
+      if (place === 'teglia') {
+        return {
+          context,
+          doNow:'Non rimaneggiarlo: se riesce ancora a sostenersi, inforna appena il forno è pronto.',
+          avoid:'Non ripiegare o ristendere da capo un impasto che sta già perdendo struttura.',
+          next:'Per la prossima volta riduci la fase finale al caldo o anticipa la stesura/cottura.'
+        };
+      }
+      if (isSoon) {
+        return {
+          context,
+          doNow:'Manipolalo il minimo indispensabile, stendi con delicatezza e cuoci presto.',
+          avoid:'Non cercare di “salvarlo” con pieghe forti o ripetute.',
+          next:'Accorcia al minimo il riposo finale in teglia.'
+        };
+      }
+      return {
+        context,
+        doNow:place === 'frigo' ? 'Tienilo coperto e freddo. Se sta davvero perdendo volume anche in frigo, non aspettare passivamente tutte le ore previste.' : 'Rimettilo subito al fresco per rallentare la fermentazione.',
+        avoid:'Non sommare pieghe: un collasso può dipendere da fermentazione troppo avanzata o struttura già degradata.',
+        next:'Ricontrolla tra 30–45 minuti. Se continua a cedere, valuta di anticipare stesura e cottura rispetto al programma.'
+      };
+    }
+
+    if (state === 'rigido') {
+      if (place === 'frigo') {
+        return {
+          context,
+          doNow:'Lascialo coperto fuori dal frigo finché perde tensione e diventa più estensibile.',
+          avoid:'Non giudicarlo o stenderlo appena freddo: il freddo aumenta la resistenza.',
+          next:'Riprova delicatamente dopo 20–30 minuti.'
+        };
+      }
+      return {
+        context,
+        doNow:'Copri e lascialo rilassare senza toccarlo.',
+        avoid:'Non tirarlo più forte e non aggiungere altra farina per vincere la resistenza.',
+        next:place === 'teglia' ? 'Completa la stesura dopo 10–15 minuti.' : 'Riprova dopo 15–20 minuti.'
+      };
+    }
+
+    if (state === 'molle') {
+      if (isSoon) {
+        return {
+          context,
+          doNow:'Riduci al minimo i movimenti e sostienilo con mani larghe durante la stesura.',
+          avoid:'Non correggerlo aggiungendo molta farina o facendo pieghe all’ultimo momento.',
+          next:'Trasferiscilo in teglia e cuoci senza un lungo riposo finale.'
+        };
+      }
+      if (place === 'frigo') {
+        return {
+          context,
+          doNow:'Tienilo freddo e osserva se è ancora continuo e capace di mantenere una massa riconoscibile.',
+          avoid:'Non fare una piega solo perché è morbido: se è già molto gonfio, potresti sgonfiarlo senza risolvere la causa.',
+          next:'Se è ancora all’inizio, poco gonfio e continuo, valuta un solo rinforzo leggero; altrimenti limita la manipolazione.'
+        };
+      }
+      return {
+        context,
+        doNow:isSeveralHours?'Mettilo al fresco e riduci la manipolazione.':'Lascialo riposare coperto e valuta la tenuta, non solo quanto appiccica.',
+        avoid:'Non sommergerlo di farina e non concatenare pieghe senza capire se è semplicemente caldo o già molto fermentato.',
+        next:'Ricontrolla tra 15–20 minuti e scegli in base a tenuta, volume e temperatura.'
+      };
+    }
+
+    if (state === 'strappa') {
+      return {
+        context,
+        doNow:'Fermati e coprilo. La prima correzione è il riposo, non altra forza.',
+        avoid:'Non continuare a tirare e non cercare di chiudere gli strappi con altra lavorazione aggressiva.',
+        next:isSoon?'Dopo 10–15 minuti riprendi con mani larghe e movimenti minimi; se continua a cedere, trasferisci in teglia senza cercare la perfezione.':'Ricontrolla dopo 15–20 minuti e valuta se è teso oppure già indebolito.'
+      };
+    }
+
+    return {
+      context,
+      doNow:'Osserva volume, tenuta e temperatura prima di intervenire.',
+      avoid:'Non applicare una correzione automatica senza leggere lo stato reale dell’impasto.',
+      next:'Ricontrolla dopo un breve riposo.'
     };
-
-    const [doNow, avoid, next] = rules[state] ?? rules.giusto;
-    return { context, doNow, avoid, next };
   }
 
   const problemRules = {
@@ -1180,9 +1337,10 @@
     if ($('checkMode').value === 'dough') {
       const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
       panel.append(
-        adviceRow('Adesso', `${advice.doNow} Situazione: impasto ${advice.context}.`, 'primaryRow'),
+        adviceRow('Adesso', advice.doNow, 'primaryRow'),
         adviceRow('Evita', advice.avoid, 'badRow'),
-        adviceRow('Poi', advice.next, 'okRow')
+        adviceRow('Poi', advice.next, 'okRow'),
+        adviceRow('Contesto', `Impasto ${advice.context} · ${$('doughTime').selectedOptions[0]?.textContent || ''}.`, 'contextRow')
       );
     } else {
       const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
@@ -1193,6 +1351,11 @@
       );
     }
     target.append(panel);
+  }
+
+  function refreshAdviceIfVisible() {
+    const target=$('adviceOutput');
+    if(target?.childElementCount) renderAdvice();
   }
 
   function guideStep(number, title, texts) {
@@ -1494,6 +1657,9 @@
     $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
+    ['doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
+      $(id)?.addEventListener('change', refreshAdviceIfVisible);
+    });
 
     $('saltProfile')?.addEventListener('change', toggleCustoms);
     $('addFlourBtn')?.addEventListener('click', addFlour);
