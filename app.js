@@ -505,32 +505,44 @@
     return 'Più soffice';
   }
 
-  function buildTimeline(start, bake, hours, kneadMethod = 'hand') {
+  function buildTimeline(start, bake, hours, kneadMethod = 'hand', coldProcess = 'bulk', fridgeTemp = null) {
     const timeline = [
       { label: 'Impasto grezzo', date: start.toISOString() },
       { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
-      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() }
+      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
+      { label: 'Controlla la struttura', date: addMinutes(start, 60).toISOString(), action: 'fold' },
+      { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, 85).toISOString(), action: 'fold' }
     ];
-
-    const firstCheckMinutes = 60;
-    const secondCheckMinutes = 85;
-
-    timeline.push(
-      { label: 'Controlla la struttura', date: addMinutes(start, firstCheckMinutes).toISOString(), action: 'fold' },
-      { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, secondCheckMinutes).toISOString(), action: 'fold' }
-    );
 
     if (hours <= 12) {
       timeline.push(
+        { label: 'Formatura · solo se hai stagliato', date: addMinutes(bake, -120).toISOString(), action: 'shape' },
+        { label: 'Controlla l’appretto', date: addMinutes(bake, -60).toISOString(), action: 'check' },
+        { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
+        { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
+      );
+      return timeline;
+    }
+
+    const warmFridge = Number.isFinite(fridgeTemp) && fridgeTemp > 5;
+    const checkLead = warmFridge ? 210 : 180;
+
+    if (coldProcess === 'balls') {
+      timeline.push(
+        { label: 'Staglio + formatura', date: addMinutes(start, 110).toISOString(), action: 'shape' },
+        { label: 'Frigo in panetti', date: addMinutes(start, 130).toISOString() },
+        { label: 'Inizia il controllo dei panetti', date: addMinutes(bake, -checkLead).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     } else {
       timeline.push(
-        { label: 'Frigo coperto', date: addMinutes(start, 110).toISOString() },
-        { label: 'Controlla l’impasto', date: addMinutes(bake, -150).toISOString(), action: 'check' },
-        { label: 'Preforma e appretto · se serve', date: addMinutes(bake, -135).toISOString() },
+        { label: 'Frigo in massa', date: addMinutes(start, 110).toISOString() },
+        { label: 'Inizia il controllo per staglio', date: addMinutes(bake, -checkLead).toISOString(), action: 'check' },
+        { label: 'Staglio + formatura', date: addMinutes(bake, -150).toISOString(), action: 'shape' },
+        { label: 'Appretto · controlla lo stato', date: addMinutes(bake, -90).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
