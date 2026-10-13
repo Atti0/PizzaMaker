@@ -1451,3 +1451,149 @@ body{
   .guideProgress button span{width:20px;height:20px}
   .structureChoice{min-height:0;padding:13px 14px}
 }
+
+
+/* Formatura e percorso tecnico a quattro fasi */
+.guideProgressFour{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.shapeGate{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#fffefa;
+}
+.shapeProcessChoices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.shapeProcessChoice{
+  min-height:116px;
+  padding:14px 15px;
+  border:1px solid #ddd7ca;
+  border-radius:14px;
+  background:#fff;
+  color:#172036;
+  box-shadow:none;
+  text-align:left;
+}
+.shapeProcessChoice span{
+  display:block;
+  margin-bottom:7px;
+  color:#77756e;
+  font:900 9.5px/1 Arial,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.shapeProcessChoice strong{
+  display:block;
+  color:#172036;
+  font:900 14px/1.2 Arial,sans-serif;
+}
+.shapeProcessChoice small{
+  display:block;
+  margin-top:7px;
+  color:#676961;
+  font:600 11.5px/1.4 Arial,sans-serif;
+}
+.shapeProcessChoice.selected{
+  border-color:#a94332;
+  background:#fbf2ed;
+  box-shadow:inset 0 0 0 1px #a94332;
+}
+.shapeProcessChoice:focus-visible{
+  outline:3px solid rgba(169,67,50,.22);
+  outline-offset:2px;
+}
+.shapeSteps{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.shapeStopSignals{
+  margin:0 0 14px;
+  padding:20px;
+  border:1px solid var(--tech-line);
+  border-radius:18px;
+  background:#f7f4ed;
+}
+.shapeSignalGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+}
+.shapeSignalGrid article{
+  padding:14px 15px;
+  border-left:4px solid #657d42;
+  border-radius:12px;
+  background:#fff;
+}
+.shapeSignalGrid article:nth-child(2){border-left-color:#c78535}
+.shapeSignalGrid article:nth-child(3){border-left-color:#a94332}
+.shapeSignalGrid strong{
+  display:block;
+  color:#172036;
+  font:900 13px/1.2 Arial,sans-serif;
+}
+.shapeSignalGrid p{
+  margin:5px 0 0;
+  color:#666861;
+  font:600 11.5px/1.42 Arial,sans-serif;
+}
+.techniqueStepsFive{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+.coldProcessField{
+  margin-top:4px;
+}
+
+@media(max-width:1000px){
+  .techniqueStepsFive{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .shapeSteps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:640px){
+  .guideProgressFour{
+    gap:2px;
+    padding:3px;
+  }
+  .guideProgressFour button{
+    min-width:0;
+    min-height:42px;
+    gap:3px;
+    padding:6px 2px;
+    font-size:9.5px;
+  }
+  .guideProgressFour button span{
+    width:18px;
+    height:18px;
+    font-size:9px;
+  }
+  .shapeGate,.shapeStopSignals{
+    padding:16px;
+    border-radius:15px;
+  }
+  .shapeProcessChoices,.shapeSignalGrid,.shapeSteps,.techniqueStepsFive{
+    grid-template-columns:1fr;
+  }
+  .shapeProcessChoice{
+    min-height:0;
+    padding:13px 14px;
+  }
+  .shapeStopSignals{
+    background:transparent;
+    border-left:0;
+    border-right:0;
+    padding-left:0;
+    padding-right:0;
+  }
+  .shapeSignalGrid{gap:0}
+  .shapeSignalGrid article{
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    padding:13px 4px;
+    background:transparent;
+  }
+  .shapeSignalGrid article:last-child{border-bottom:0}
+}
