@@ -870,6 +870,8 @@
       bake: data.bake.toISOString(),
       tray: { width:data.width, height:data.height, pans:data.pans },
       kneadMethod: data.kneadMethod || 'hand',
+      coldProcess: data.coldProcess || 'bulk',
+      fridgeTemp: Number.isFinite(data.fridgeTemp) ? data.fridgeTemp : null,
       doughTemp: Number.isFinite(data.doughTemp) ? data.doughTemp : null,
       timeline: data.timeline,
       ingredients: {
@@ -887,7 +889,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)} · ${coldProcessLabel(data.coldProcess)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
@@ -953,7 +955,12 @@
       'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
       data.kneadMethod === 'hand'
         ? 'Lavora poco: dopo il riposo controllerai se serve un rinforzo.'
-        : 'Porta l’impasto a uno sviluppo ordinato, poi controlla la struttura prima di aggiungere altre pieghe.'
+        : 'Porta l’impasto a uno sviluppo ordinato, poi controlla la struttura prima di aggiungere altre pieghe.',
+      data.hours > 12
+        ? (data.coldProcess === 'balls'
+            ? 'Dopo la struttura: staglia e forma i panetti prima del frigo, senza creare una pelle rigida.'
+            : 'Dopo la struttura: frigo in massa; staglio e formatura arriveranno più vicino alla stesura.')
+        : 'Se stagli prima della stesura, separa la formatura dalle pieghe di rinforzo.'
     ].forEach((text,index)=>{
       const li=create('li');
       li.append(create('span',{text:String(index+1)}),create('p',{text}));
@@ -1195,15 +1202,17 @@
     const yeastG = flour * yeast / 100;
     const honeyG = flour * honey / 100;
     const kneadMethod = $('kneadMethod')?.value || 'hand';
+    const coldProcess = $('coldProcess')?.value || 'bulk';
+    const fridgeTemp = optionalNumber('fridgeTemp', 1, 12);
     const doughTemp = optionalNumber('doughTemp', 10, 40);
-    const timeline = buildTimeline(start, bake, hours, kneadMethod);
+    const timeline = buildTimeline(start, bake, hours, kneadMethod, coldProcess, fridgeTemp);
     const flourBlend = activeFlours().map((item) => ({
       ...item,
       grams: flour * item.pct / 100
     }));
 
     renderRecipeResult({
-      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, doughTemp,
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, coldProcess, fridgeTemp, doughTemp,
       area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
