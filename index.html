@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=53">
+  <link rel="stylesheet" href="styles.css?v=54">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -59,6 +59,9 @@
                 <button type="button" class="homeToolAction" data-open="pieghe">
                   <span><strong>Struttura</strong><small>Controlla se serve davvero un rinforzo e quando fermarti.</small></span><b>→</b>
                 </button>
+                <button type="button" class="homeToolAction" data-open="formatura">
+                  <span><strong>Formatura</strong><small>Staglio, cucitura, capovolgimento, pirlatura minima e appretto.</small></span><b>→</b>
+                </button>
                 <button type="button" class="homeToolAction" data-open="stesura">
                   <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
                 </button>
@@ -88,6 +91,9 @@
                 </button>
                 <button type="button" class="homeToolAction" data-open="pieghe">
                   <span><strong>Struttura</strong><small>Controlla se serve davvero un rinforzo e quando fermarti.</small></span><b>→</b>
+                </button>
+                <button type="button" class="homeToolAction" data-open="formatura">
+                  <span><strong>Formatura</strong><small>Staglio, cucitura, capovolgimento, pirlatura minima e appretto.</small></span><b>→</b>
                 </button>
                 <button type="button" class="homeToolAction" data-open="stesura">
                   <span><strong>Stesura</strong><small>Banco, polpastrelli, trasferimento e problemi durante l’apertura.</small></span><b>→</b>
@@ -289,7 +295,20 @@
                 <div class="basicField">
                   <label for="doughTemp">Temperatura impasto a fine lavoro <span class="optionalLabel">opzionale</span></label>
                   <input id="doughTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="es. 23">
-                  <small class="fieldHint">Se la misuri, 22–24 °C è un riferimento pratico; serve per capire quanto fidarsi dei tempi.</small>
+                  <small class="fieldHint">Se la misuri, PizzaMaker la userà come segnale orientativo: non esiste una soglia universale valida per ogni processo.</small>
+                </div>
+                <div class="basicField coldProcessField">
+                  <label for="coldProcess">Gestione del freddo</label>
+                  <select id="coldProcess">
+                    <option value="bulk" selected>In massa · consigliata per iniziare</option>
+                    <option value="balls">Panetti già formati · avanzata</option>
+                  </select>
+                  <small id="coldProcessHint" class="fieldHint">Per programmi oltre 12 ore: maturazione in massa, poi staglio e formatura dopo il frigo.</small>
+                </div>
+                <div class="basicField" id="fridgeTempWrap">
+                  <label for="fridgeTemp">Temperatura reale del frigo <span class="optionalLabel">opzionale</span></label>
+                  <input id="fridgeTemp" type="number" min="1" max="12" step="0.5" inputmode="decimal" placeholder="es. 4">
+                  <small class="fieldHint">Se supera circa 5 °C, il freddo rallenta meno del previsto e gli orari diventano più indicativi.</small>
                 </div>
               </div>
             </div>
@@ -355,6 +374,14 @@
             </select>
 
             <div id="doughFields">
+              <label for="doughPhase">In che fase sei?</label>
+              <select id="doughPhase">
+                <option value="initial" selected>Fine impasto / puntata iniziale</option>
+                <option value="cold">Durante il frigo</option>
+                <option value="postcold">Dopo frigo / staglio</option>
+                <option value="proof">Dopo formatura / appretto</option>
+                <option value="stretch">Durante la stesura</option>
+              </select>
               <div class="row">
                 <div><label for="doughPlace">Dove si trova?</label><select id="doughPlace"><option value="frigo">In frigo</option><option value="ta">A temperatura ambiente</option><option value="teglia">Già in teglia</option></select></div>
                 <div><label for="doughTime">Quanto manca?</label><select id="doughTime"><option value="less1">Meno di 1 ora</option><option value="1to3" selected>1–3 ore</option><option value="3to6">3–6 ore</option><option value="over6">Più di 6 ore</option></select></div>
@@ -401,16 +428,15 @@
           <button type="button" class="ghost" data-tech-back>← Indietro</button>
           <div>
             <p class="eyebrow">Tecnica · Struttura</p>
-            <h2 id="piegheTitle">Controlla la struttura, poi decidi</h2>
+            <h2 id="piegheTitle">Rinforza solo se serve</h2>
           </div>
-
-
         </div>
 
-        <nav class="guideProgress" aria-label="Percorso tecnico">
+        <nav class="guideProgress guideProgressFour" aria-label="Percorso tecnico">
           <button type="button" data-open="pieghe" class="active" aria-current="step"><span>1</span>Struttura</button>
-          <button type="button" data-open="stesura"><span>2</span>Stesura</button>
-          <button type="button" data-open="cottura"><span>3</span>Cottura</button>
+          <button type="button" data-open="formatura"><span>2</span>Formatura</button>
+          <button type="button" data-open="stesura"><span>3</span>Stesura</button>
+          <button type="button" data-open="cottura"><span>4</span>Cottura</button>
         </nav>
 
         <div id="foldContext" class="techContext hidden" aria-live="polite">
@@ -424,55 +450,142 @@
             <span class="flowEyebrow">Prima di piegare</span>
             <h3 id="structureGateTitle">Com’è la struttura adesso?</h3>
           </div>
-          <p class="structureGateIntro">Non fare una piega solo perché è in calendario. Confronta il comportamento reale dell’impasto e scegli l’azione più prudente.</p>
+          <p class="structureGateIntro">La piega serve a correggere una massa ancora debole nella puntata iniziale. Non è la formatura del panetto e non va fatta solo perché compare in una ricetta.</p>
           <div class="structureChoices" role="group" aria-label="Stato della struttura dell'impasto">
             <button type="button" class="structureChoice good" data-structure-state="ready" aria-pressed="false">
               <span>Struttura sufficiente</span>
-              <strong>Mantiene forma e si solleva in blocco</strong>
-              <small>La massa è morbida ma non cola.</small>
+              <strong>Mantiene una massa riconoscibile</strong>
+              <small>È morbido ma non si allarga subito come una crema.</small>
             </button>
             <button type="button" class="structureChoice warn" data-structure-state="weak" aria-pressed="false">
               <span>Può servire rinforzo</span>
-              <strong>Si allarga lentamente ma resta compatto</strong>
-              <small>È continuo, ma perde sostegno.</small>
+              <strong>Si spande rapidamente ma resta continuo</strong>
+              <small>È ancora all’inizio e non è caldo o molto fermentato.</small>
             </button>
             <button type="button" class="structureChoice stop" data-structure-state="tight" aria-pressed="false">
               <span>Troppa tensione</span>
-              <strong>Fa resistenza o tende a lacerarsi</strong>
-              <small>Non serve altra forza adesso.</small>
+              <strong>Fa forte resistenza o tende a lacerarsi</strong>
+              <small>Altra trazione adesso peggiora il comportamento.</small>
             </button>
             <button type="button" class="structureChoice danger" data-structure-state="hot" aria-pressed="false">
-              <span>Prima cerca la causa</span>
-              <strong>Cola, è caldo e si sfalda</strong>
-              <small>Potrebbe essere fermentazione avanzata.</small>
+              <span>Non sembra carenza di pieghe</span>
+              <strong>È molto gonfio, caldo, fragile o collassante</strong>
+              <small>Prima valuta fermentazione e temperatura.</small>
             </button>
           </div>
           <div id="structureStateAdvice" class="structureStateAdvice" aria-live="polite">
             <strong>Scegli il comportamento più simile</strong>
-            <p>Ti dirò se fermarti, fare un solo ciclo di rinforzo o lasciare riposare.</p>
+            <p>Ti dirò se fare un ciclo, fermarti oppure lasciare riposare.</p>
           </div>
         </section>
 
         <div class="techniqueLead foldHowToLead">
           <div class="techniqueLeadCopy">
-            <span class="flowEyebrow">Se serve rinforzo</span>
-            <h3>Un ciclo a quattro lembi</h3>
-            <p>Bagna leggermente le dita. Solleva un lembo dal bordo solo finché offre una resistenza elastica moderata, poi ripiegalo verso il centro. Ripeti sui quattro lati: quattro lembi fanno un solo ciclo.</p>
-            <div class="techniqueRule"><strong>Dopo il ciclo</strong><span>Copri, riposa circa 20 minuti e ricontrolla. Se la massa è già raccolta e stabile, fermati.</span></div>
+            <span class="flowEyebrow">Stretch-and-fold in contenitore</span>
+            <h3>Dal bordo e da sotto, non dal centro</h3>
+            <p>Fai scivolare le dita tra parete e impasto e sostieni da sotto una fascia periferica larga. Solleva solo fino alla prima resistenza elastica, poi accompagna quella fascia verso il centro.</p>
+            <div class="techniqueRule"><strong>Un ciclo</strong><span>Ripeti sui quattro lati. In questa tecnica i lembi finiscono sopra: al termine capovolgi delicatamente la massa una sola volta, così la zona delle pieghe resta sotto.</span></div>
           </div>
         </div>
 
-        <div class="techniqueSteps" aria-label="Come fare una piega">
-          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Inumidisci le mani</h3><p>Acqua o pochissimo olio sulle dita: evita di aggiungere farina dentro l’impasto.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva fino alla prima resistenza</h3><p>Prendi un lembo largo dal bordo. Sollevalo solo finché senti una resistenza elastica moderata, poi portalo verso il centro.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Completa i quattro lati</h3><p>Ruota contenitore o impasto e ripeti. Un giro completo basta: non impastare di nuovo.</p></div></article>
-          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Copri e osserva</h3><p>Aspetta 20–25 minuti. La struttura si valuta dopo il riposo, non mentre stai ancora tirando.</p></div></article>
+        <div class="techniqueSteps techniqueStepsFive" aria-label="Come fare una piega di rinforzo">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Entra dalla periferia</h3><p>Mani appena umide. Le dita passano sotto il bordo della massa; il centro resta appoggiato al contenitore.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Solleva poco</h3><p>Sostieni un lembo largo e spesso. Fermati alla prima resistenza: niente striscia sottile, niente lacerazioni.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Ripiega e completa il giro</h3><p>Accompagna il lembo al centro senza schiacciare. Ruota il contenitore e ripeti sui quattro lati.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Capovolgi una volta</h3><p>Quando il giro è finito, ribalta la massa come un blocco: le pieghe vanno sotto e la superficie continua resta sopra.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">5</span><div><h3>Copri e ricontrolla</h3><p>Lascia rilassare circa 15–30 minuti. Se mantiene meglio la forma, fermati: il riposo vale più di un’altra piega.</p></div></article>
         </div>
 
+        <aside class="processNote">
+          <strong>Prima del frigo non serve sempre una palla tesa</strong>
+          <p>Se hai scelto il freddo in massa, qui basta una massa ordinata e sufficientemente strutturata. Staglio, cucitura e pirlatura arriveranno dopo il frigo.</p>
+        </aside>
+
+        <div class="techniqueFooterNav">
+          <button type="button" class="secondary" data-open="formatura">Vai alla formatura →</button>
+          <button type="button" class="ghost" data-open-check>Ho un problema con l’impasto</button>
+        </div>
+      </section>
+
+      <section id="formatura" class="view premiumFlow techniqueView" aria-labelledby="formaturaTitle">
+        <div class="viewHeader">
+          <button type="button" class="ghost" data-tech-back>← Indietro</button>
+          <div>
+            <p class="eyebrow">Tecnica · Formatura</p>
+            <h2 id="formaturaTitle">Crea il panetto senza distruggere il gas</h2>
+          </div>
+        </div>
+
+        <nav class="guideProgress guideProgressFour" aria-label="Percorso tecnico">
+          <button type="button" data-open="pieghe"><span>1</span>Struttura</button>
+          <button type="button" data-open="formatura" class="active" aria-current="step"><span>2</span>Formatura</button>
+          <button type="button" data-open="stesura"><span>3</span>Stesura</button>
+          <button type="button" data-open="cottura"><span>4</span>Cottura</button>
+        </nav>
+
+        <div id="shapeContext" class="techContext hidden" aria-live="polite">
+          <span class="flowEyebrow">Dalla tua timeline</span>
+          <strong id="shapeContextTitle"></strong>
+          <p id="shapeContextMeta"></p>
+        </div>
+
+        <section class="shapeGate" aria-labelledby="shapeGateTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Prima scegli il processo</span>
+            <h3 id="shapeGateTitle">Quando stai formando il panetto?</h3>
+          </div>
+          <p class="structureGateIntro">Le mani fanno lo stesso lavoro geometrico, ma cambia il momento: dopo una maturazione in massa oppure prima del frigo nei panetti singoli.</p>
+          <div class="shapeProcessChoices" role="group" aria-label="Processo di formatura">
+            <button type="button" class="shapeProcessChoice selected" data-shape-process="bulk" aria-pressed="true">
+              <span>Default PizzaMaker</span>
+              <strong>Dopo il frigo in massa</strong>
+              <small>Staglio delicato → formatura minima → appretto.</small>
+            </button>
+            <button type="button" class="shapeProcessChoice" data-shape-process="balls" aria-pressed="false">
+              <span>Avanzato</span>
+              <strong>Prima del frigo</strong>
+              <small>Staglio → formatura → panetti singoli al freddo.</small>
+            </button>
+          </div>
+          <div id="shapeProcessAdvice" class="structureStateAdvice" aria-live="polite">
+            <strong>Dopo il frigo in massa</strong>
+            <p>Taglia e preleva solo la porzione necessaria, poi forma il panetto con il minimo numero di movimenti utili.</p>
+          </div>
+        </section>
+
+        <div class="techniqueLead compactTechniqueLead">
+          <div class="techniqueLeadCopy">
+            <span class="flowEyebrow">Geometria del gesto</span>
+            <h3>Una cucitura sotto, una superficie continua sopra</h3>
+            <p>La pirlatura non “crea glutine”: usa l’attrito con il banco per raccogliere massa sotto e mettere in moderata tensione la superficie esterna. L’obiettivo è <strong>liscia e raccolta, non rigida</strong>.</p>
+            <div class="techniqueRule"><strong>Orientamento</strong><span>Appoggia sul banco la faccia più continua della porzione. Raccogli i bordi tagliati verso un unico punto sopra; poi capovolgi una volta: quella chiusura finirà sotto.</span></div>
+          </div>
+        </div>
+
+        <div class="techniqueSteps shapeSteps" aria-label="Staglio e formatura del panetto">
+          <article class="techniqueStep"><span class="techniqueStepNo">1</span><div><h3>Taglia, non strappare</h3><p>Usa un tarocco quasi verticale e separa la porzione con un movimento netto. Evita di tirare due metà in direzioni opposte.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">2</span><div><h3>Preserva una faccia continua</h3><p>Porta la parte più integra a contatto con il banco. Le superfici tagliate restano sui lati o verso l’alto, pronte per essere raccolte.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">3</span><div><h3>Raccogli in un solo punto</h3><p>Porta 4–6 zone periferiche verso il centro con lembi larghi. Non schiacciare tutta la massa e non moltiplicare le pieghe.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">4</span><div><h3>Capovolgi una volta</h3><p>Sostieni il pezzo da lati e fondo e ribaltalo come un’unità. La cucitura va sotto; la faccia continua torna sopra.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">5</span><div><h3>Tendi il minimo necessario</h3><p>Banco quasi senza farina. Mani a coppa, piccolo trascinamento verso di te, lieve rotazione e al massimo un altro trascinamento se serve.</p></div></article>
+          <article class="techniqueStep"><span class="techniqueStepNo">6</span><div><h3>Stop e appretto</h3><p>Fermati appena la superficie è continua e il panetto mantiene forma senza lacerarsi. Copri: il riposo deve restituire estensibilità e volume.</p></div></article>
+        </div>
+
+        <section class="shapeStopSignals" aria-labelledby="shapeStopTitle">
+          <div class="techniqueSectionHead">
+            <span class="flowEyebrow">Il punto di stop</span>
+            <h3 id="shapeStopTitle">Non inseguire una palla perfetta</h3>
+          </div>
+          <div class="shapeSignalGrid">
+            <article><strong>Giusto</strong><p>Superficie continua, morbida e moderatamente tesa; il panetto resta raccolto.</p></article>
+            <article><strong>Serve riposo</strong><p>Ritorna subito indietro, oppone forte resistenza o diventa difficile da trascinare.</p></article>
+            <article><strong>Sei andato oltre</strong><p>La pelle si assottiglia, compaiono lacerazioni o stai espellendo gas per ottenere più tensione.</p></article>
+          </div>
+        </section>
 
         <div class="techniqueFooterNav">
           <button type="button" class="secondary" data-open="stesura">Vai alla stesura →</button>
-          <button type="button" class="ghost" data-open-check>Ho un problema con l’impasto</button>
+          <button type="button" class="ghost" data-open-check>Il panetto non si comporta bene</button>
         </div>
       </section>
 
@@ -487,10 +600,11 @@
 
         </div>
 
-        <nav class="guideProgress" aria-label="Percorso tecnico">
+        <nav class="guideProgress guideProgressFour" aria-label="Percorso tecnico">
           <button type="button" data-open="pieghe"><span>1</span>Struttura</button>
-          <button type="button" data-open="stesura" class="active" aria-current="step"><span>2</span>Stesura</button>
-          <button type="button" data-open="cottura"><span>3</span>Cottura</button>
+          <button type="button" data-open="formatura"><span>2</span>Formatura</button>
+          <button type="button" data-open="stesura" class="active" aria-current="step"><span>3</span>Stesura</button>
+          <button type="button" data-open="cottura"><span>4</span>Cottura</button>
         </nav>
 
         <div id="stretchContext" class="techContext hidden" aria-live="polite">
@@ -581,7 +695,7 @@
 
         <div class="techniqueFooterNav">
           <button type="button" class="secondary" data-open="cottura">Vai alla cottura →</button>
-          <button type="button" class="ghost" data-open="pieghe">← Rivedi la struttura</button>
+          <button type="button" class="ghost" data-open="formatura">← Rivedi la formatura</button>
         </div>
       </section>
 
@@ -596,10 +710,11 @@
 
         </div>
 
-        <nav class="guideProgress" aria-label="Percorso tecnico">
+        <nav class="guideProgress guideProgressFour" aria-label="Percorso tecnico">
           <button type="button" data-open="pieghe"><span>1</span>Struttura</button>
-          <button type="button" data-open="stesura"><span>2</span>Stesura</button>
-          <button type="button" data-open="cottura" class="active" aria-current="step"><span>3</span>Cottura</button>
+          <button type="button" data-open="formatura"><span>2</span>Formatura</button>
+          <button type="button" data-open="stesura"><span>3</span>Stesura</button>
+          <button type="button" data-open="cottura" class="active" aria-current="step"><span>4</span>Cottura</button>
         </nav>
 
         <div id="cookPlanContext" class="cookPlanContext hidden" aria-live="polite"></div>
@@ -649,6 +764,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=38" defer></script>
+  <script src="app.js?v=39" defer></script>
 </body>
 </html>

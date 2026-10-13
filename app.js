@@ -9,7 +9,7 @@
   const PREF_IDS = [
     'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
-    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod'
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod','coldProcess','fridgeTemp'
   ];
 
   let techniqueOrigin = { view:'home', step:null, action:null };
@@ -127,7 +127,7 @@
         $('checkTool')?.classList.add('hidden');
       }
       if(id==='home') renderHomeSavedStep();
-      if(id==='pieghe'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
+      if(id==='pieghe'||id==='formatura'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
       if(!options.preserveScroll) resetViewScroll();
       document.documentElement.scrollLeft=0;
       document.body.scrollLeft=0;
@@ -416,6 +416,8 @@
     $('saltProfile').value = '2.3';
     $('customSalt').value = '2.3';
     $('kneadMethod').value = 'hand';
+    $('coldProcess').value = 'bulk';
+    $('fridgeTemp').value = '';
     $('doughTemp').value = '';
     toggleCustoms();
     updateFlourUI();
@@ -480,6 +482,21 @@
     return 'a mano';
   }
 
+  function coldProcessLabel(value) {
+    return value === 'balls' ? 'frigo in panetti' : 'frigo in massa';
+  }
+
+  function doughPhaseLabel(value) {
+    const labels={
+      initial:'fine impasto / puntata iniziale',
+      cold:'durante il frigo',
+      postcold:'dopo frigo / staglio',
+      proof:'dopo formatura / appretto',
+      stretch:'durante la stesura'
+    };
+    return labels[value] || 'fase non specificata';
+  }
+
   function resultName(load) {
     if (load <= 0.49) return 'Extra croccante';
     if (load <= 0.51) return 'Romana classica';
@@ -488,32 +505,43 @@
     return 'Più soffice';
   }
 
-  function buildTimeline(start, bake, hours, kneadMethod = 'hand') {
+  function buildTimeline(start, bake, hours, kneadMethod = 'hand', coldProcess = 'bulk', fridgeTemp = null) {
     const timeline = [
       { label: 'Impasto grezzo', date: start.toISOString() },
       { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
-      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() }
+      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
+      { label: 'Controlla la struttura', date: addMinutes(start, 60).toISOString(), action: 'fold' },
+      { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, 85).toISOString(), action: 'fold' }
     ];
-
-    const firstCheckMinutes = 60;
-    const secondCheckMinutes = 85;
-
-    timeline.push(
-      { label: 'Controlla la struttura', date: addMinutes(start, firstCheckMinutes).toISOString(), action: 'fold' },
-      { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, secondCheckMinutes).toISOString(), action: 'fold' }
-    );
 
     if (hours <= 12) {
       timeline.push(
+        { label: 'Formatura · solo se hai stagliato', date: addMinutes(bake, -120).toISOString(), action: 'shape' },
+        { label: 'Controlla l’appretto', date: addMinutes(bake, -60).toISOString(), action: 'check' },
+        { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
+        { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
+        { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
+      );
+      return timeline;
+    }
+
+    const checkLead = 180;
+
+    if (coldProcess === 'balls') {
+      timeline.push(
+        { label: 'Staglio + formatura', date: addMinutes(start, 110).toISOString(), action: 'shape' },
+        { label: 'Frigo in panetti', date: addMinutes(start, 130).toISOString() },
+        { label: 'Inizia il controllo dei panetti', date: addMinutes(bake, -checkLead).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
       );
     } else {
       timeline.push(
-        { label: 'Frigo coperto', date: addMinutes(start, 110).toISOString() },
-        { label: 'Controlla l’impasto', date: addMinutes(bake, -150).toISOString(), action: 'check' },
-        { label: 'Preforma e appretto · se serve', date: addMinutes(bake, -135).toISOString() },
+        { label: 'Frigo in massa', date: addMinutes(start, 110).toISOString() },
+        { label: 'Inizia il controllo per staglio', date: addMinutes(bake, -checkLead).toISOString(), action: 'check' },
+        { label: 'Finestra di staglio + formatura', date: addMinutes(bake, -150).toISOString(), action: 'shape' },
+        { label: 'Appretto · controlla lo stato', date: addMinutes(bake, -90).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
         { label: 'Cottura', date: bake.toISOString(), action: 'cook' }
@@ -569,6 +597,12 @@
         return item;
       });
       if (migratedStructure && !plan.kneadMethod) plan.kneadMethod = 'hand';
+      if (!plan.coldProcess) plan.coldProcess = 'bulk';
+      plan.timeline = plan.timeline.map((item) => {
+        if (item.label === 'Frigo coperto') return { ...item, label:'Frigo in massa' };
+        if (item.label === 'Preforma e appretto · se serve') return { ...item, label:'Staglio + formatura', action:'shape' };
+        return item;
+      });
       const oldControl = plan.timeline.find((item) => item.label === 'Controllo volume');
       const oldDecision = plan.timeline.find((item) => item.label === 'Fuori frigo o stesura secondo stato impasto');
       if (oldControl || oldDecision) {
@@ -589,6 +623,7 @@
 
   const TIMELINE_ACTIONS = {
     fold: { label:'Apri Struttura →', view:'pieghe' },
+    shape: { label:'Apri Formatura →', view:'formatura' },
     stretch: { label:'Apri guida stesura →', view:'stesura' },
     check: { label:'Controlla lo stato →', view:'check' },
     cook: { label:'Apri guida cottura →', view:'cottura' }
@@ -598,6 +633,7 @@
     if (!item) return null;
     if (item.action) return item.action;
     if (/piega|struttura|ricontrolla/i.test(item.label || '')) return 'fold';
+    if (/formatura|staglio/i.test(item.label || '')) return 'shape';
     if (item.label === 'Stesura') return 'stretch';
     if (item.label === 'Controlla l’impasto' || item.label === 'Controllo volume' || item.label === 'Fuori frigo o stesura secondo stato impasto') return 'check';
     if (item.label === 'Cottura') return 'cook';
@@ -653,7 +689,17 @@
       if(fromTimeline){
         $('foldContextTitle').textContent=step.label;
         const hyd=plan.ingredients?.hydration;
-        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${kneadMethodLabel(plan.kneadMethod)} · ${plan.pizza}. Prima osserva la struttura: il rinforzo è un'opzione, non un passaggio obbligatorio.`;
+        $('foldContextMeta').textContent=`${Number.isFinite(hyd)?`${round(hyd,0)}% idratazione · `:''}${kneadMethodLabel(plan.kneadMethod)} · ${coldProcessLabel(plan.coldProcess)} · ${plan.pizza}. Prima osserva la struttura: il rinforzo è un'opzione, non un passaggio obbligatorio.`;
+      }
+    }
+
+    if(id==='formatura'){
+      const box=$('shapeContext');
+      selectShapeProcess(plan?.coldProcess || 'bulk');
+      box?.classList.toggle('hidden',!fromTimeline);
+      if(fromTimeline){
+        $('shapeContextTitle').textContent=step.label;
+        $('shapeContextMeta').textContent=coldProcessLabel(plan.coldProcess) + ' · ' + round(plan.doughPer||0,0) + ' g per panetto. Forma il minimo necessario e poi lascia che sia l’appretto a rilassare la superficie.';
       }
     }
 
@@ -679,7 +725,7 @@
     if(!target) return;
     const states={
       ready:{title:'Fermati qui',text:'La struttura è sufficiente. Copri e lascia proseguire fermentazione e riposo: una piega in più aggiungerebbe lavoro senza un beneficio evidente.'},
-      weak:{title:'Fai un solo ciclo leggero',text:'Se sei ancora all’inizio della fermentazione, fai un ciclo a quattro lembi, copri per circa 20 minuti e poi ricontrolla prima di decidere altro.'},
+      weak:{title:'Fai un solo ciclo leggero',text:'Se sei ancora nella puntata iniziale, fai il ciclo descritto sotto. Nel metodo PizzaMaker, dopo i quattro lembi capovolgi una volta la massa, poi copri e ricontrolla dopo il riposo.'},
       tight:{title:'Riposo, non forza',text:'Copri e aspetta 15–20 minuti. Se l’impasto fa resistenza o tende a lacerarsi, altra trazione rischia di peggiorarlo.'},
       hot:{title:'Prima controlla temperatura e fermentazione',text:'Se cola, è caldo o si sfalda, non presumere che serva una piega. Riduci la manipolazione e valuta se è già molto avanti.'}
     };
@@ -687,6 +733,25 @@
     clear(target);
     target.append(create('strong',{text:advice.title}),create('p',{text:advice.text}));
   }
+  function renderShapeProcessAdvice(process) {
+    const target=$('shapeProcessAdvice');
+    if(!target) return;
+    const content=process==='balls'
+      ? {title:'Panetti prima del frigo',text:'Forma con delicatezza, chiusura sotto e tensione moderata. Il freddo rallenterà poi la fermentazione del panetto: non inseguire una pelle rigida.'}
+      : {title:'Dopo il frigo in massa',text:'Taglia la porzione con il tarocco, preserva una faccia continua e forma con il minimo numero di movimenti. L’appretto successivo deve restituire estensibilità e volume.'};
+    clear(target);
+    target.append(create('strong',{text:content.title}),create('p',{text:content.text}));
+  }
+
+  function selectShapeProcess(process) {
+    document.querySelectorAll('[data-shape-process]').forEach((item)=>{
+      const active=item.dataset.shapeProcess===process;
+      item.classList.toggle('selected',active);
+      item.setAttribute('aria-pressed',active?'true':'false');
+    });
+    renderShapeProcessAdvice(process);
+  }
+
   function renderStretchStateAdvice(state) {
     const target=$('stretchStateAdvice');
     if(!target) return;
@@ -741,11 +806,18 @@
     'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
     'Controlla la struttura': { icon:'◎', short:'Guarda tenuta, tensione e continuità prima di decidere se serve un rinforzo.', duration:'Controllo' },
     'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
-    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
+    'Formatura · solo se hai stagliato': { icon:'◯', short:'Se hai diviso l’impasto, crea una sola cucitura sotto e una superficie moderatamente tesa.', duration:'Controllo' },
+    'Staglio + formatura': { icon:'◯', short:'Taglia netto, raccogli i bordi, capovolgi la cucitura sotto e tendi solo quanto basta.', duration:'~ 5 min' },
+    'Finestra di staglio + formatura': { icon:'◯', short:'È una finestra orientativa: se la massa è pronta, staglia e forma; se è ancora molto fredda o rigida, aspetta.', duration:'Controllo' },
+    'Frigo in massa': { icon:'❄', short:'Copri bene e matura la massa intera al freddo. La formatura arriverà dopo.', duration:'Riposo' },
+    'Frigo in panetti': { icon:'❄', short:'Conserva i panetti già formati, con chiusura sotto e spazio per l’espansione.', duration:'Riposo' },
+    'Inizia il controllo per staglio': { icon:'◎', short:'È una finestra di controllo, non un ordine: valuta freddo, volume e tenuta prima di stagliare.', duration:'Controllo' },
+    'Inizia il controllo dei panetti': { icon:'◎', short:'Valuta quanto sono rilassati e sviluppati prima di portarli verso la stesura.', duration:'Controllo' },
+    'Appretto · controlla lo stato': { icon:'◴', short:'Lascia che il panetto recuperi estensibilità e volume; il tempo reale dipende da temperatura e fermentazione.', duration:'Controllo' },
+    'Controlla l’appretto': { icon:'◴', short:'Il panetto deve essere rilassato e vivo, non rigido né collassante.', duration:'Controllo' },
+    'Stesura': { icon:'👐', short:'Distribuisci il gas con pressioni progressive e mani larghe; se si ritira, riposo invece di forza.', duration:'~ 10 min' },
     'Riposo finale in teglia · se serve': { icon:'◴', short:'Solo se l’impasto ha ancora tensione: copri e lascia rilassare brevemente prima del forno.', duration:'15–30 min' },
-    'Frigo coperto': { icon:'❄', short:'Copri bene e trasferisci in frigo quando la struttura è sufficiente.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
-    'Preforma e appretto · se serve': { icon:'▭', short:'Se serve, forma un rettangolo morbido e lascialo rilassare coperto prima della stesura.', duration:'Riposo' },
     'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
   };
 
@@ -814,6 +886,8 @@
       bake: data.bake.toISOString(),
       tray: { width:data.width, height:data.height, pans:data.pans },
       kneadMethod: data.kneadMethod || 'hand',
+      coldProcess: data.coldProcess || 'bulk',
+      fridgeTemp: Number.isFinite(data.fridgeTemp) ? data.fridgeTemp : null,
       doughTemp: Number.isFinite(data.doughTemp) ? data.doughTemp : null,
       timeline: data.timeline,
       ingredients: {
@@ -831,7 +905,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
@@ -854,6 +928,19 @@
         create('p',{text:tempStatus[1]})
       );
       shell.append(tempNote);
+    }
+
+    if (data.hours > 12 && Number.isFinite(data.fridgeTemp)) {
+      const fridgeWarm=data.fridgeTemp>5;
+      const fridgeNote=create('div',{class:'processNote'});
+      fridgeNote.append(
+        create('span',{class:'resultEyebrow',text:'Frigorifero misurato'}),
+        create('strong',{text:`${round(data.fridgeTemp,1)} °C · ${fridgeWarm?'controllo più attento':'freddo regolare'}`}),
+        create('p',{text:fridgeWarm
+          ? 'Un frigo sopra circa 5 °C rallenta meno la fermentazione: considera gli orari come finestre di controllo e osserva il volume più spesso.'
+          : 'La temperatura è compatibile con una gestione fredda domestica; stato reale e volume restano comunque prioritari rispetto all’orologio.'})
+      );
+      shell.append(fridgeNote);
     }
 
     const now = create('div', { class: 'nextAction' });
@@ -897,7 +984,12 @@
       'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
       data.kneadMethod === 'hand'
         ? 'Lavora poco: dopo il riposo controllerai se serve un rinforzo.'
-        : 'Porta l’impasto a uno sviluppo ordinato, poi controlla la struttura prima di aggiungere altre pieghe.'
+        : 'Porta l’impasto a uno sviluppo ordinato, poi controlla la struttura prima di aggiungere altre pieghe.',
+      data.hours > 12
+        ? (data.coldProcess === 'balls'
+            ? 'Dopo la struttura: staglia e forma i panetti prima del frigo, senza creare una pelle rigida.'
+            : 'Dopo la struttura: frigo in massa; staglio e formatura arriveranno più vicino alla stesura.')
+        : 'Se stagli prima della stesura, separa la formatura dalle pieghe di rinforzo.'
     ].forEach((text,index)=>{
       const li=create('li');
       li.append(create('span',{text:String(index+1)}),create('p',{text}));
@@ -1056,7 +1148,12 @@
       'Mescola farine, lievito e 85–90% dell’acqua.',
       'Copri e lascia riposare 20 minuti.',
       'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.',
-      'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.'
+      'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.',
+      plan.method && /frigo|maturazione|intermedio|lunga/i.test(plan.method)
+        ? (plan.coldProcess === 'balls'
+            ? 'Staglia e forma i panetti prima del frigo: chiusura sotto, tensione moderata.'
+            : 'Matura in massa al freddo; staglio e formatura arrivano più vicino alla stesura.')
+        : 'Se stagli, tieni separata la formatura dalle pieghe di rinforzo.'
     ].forEach((txt,i)=>method.append(create('div',{class:'printMethodStep'},[create('b',{text:String(i+1)}),create('p',{text:txt})])));
     sheet.append(method);
 
@@ -1139,24 +1236,48 @@
     const yeastG = flour * yeast / 100;
     const honeyG = flour * honey / 100;
     const kneadMethod = $('kneadMethod')?.value || 'hand';
+    const coldProcess = $('coldProcess')?.value || 'bulk';
+    const fridgeTemp = optionalNumber('fridgeTemp', 1, 12);
     const doughTemp = optionalNumber('doughTemp', 10, 40);
-    const timeline = buildTimeline(start, bake, hours, kneadMethod);
+    const timeline = buildTimeline(start, bake, hours, kneadMethod, coldProcess, fridgeTemp);
     const flourBlend = activeFlours().map((item) => ({
       ...item,
       grams: flour * item.pct / 100
     }));
 
     renderRecipeResult({
-      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, doughTemp,
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, coldProcess, fridgeTemp, doughTemp,
       area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
 
-  function doughAdviceText(place, state, time) {
+  function doughAdviceText(place, state, time, phase = 'initial') {
     const context = place === 'frigo' ? 'in frigo' : place === 'teglia' ? 'già in teglia' : 'a temperatura ambiente';
     const isSoon = time === 'less1';
     const isLong = time === 'over6';
     const isSeveralHours = time === '3to6' || isLong;
+
+    if (phase !== 'initial' && state === 'molle') {
+      return {
+        context,
+        doNow:phase === 'stretch'
+          ? 'Sostienilo con mani larghe e riduci al minimo i movimenti: ora la priorità è trasferire senza perdere altro gas.'
+          : 'Riduci la manipolazione e valuta volume, temperatura e tenuta prima di pensare a un rinforzo.',
+        avoid:'Non usare una piega di rinforzo come correzione automatica fuori dalla puntata iniziale.',
+        next:phase === 'proof'
+          ? 'Se è già molto gonfio, accorcia l’appretto e passa alla stesura.'
+          : 'Prosegui in base allo stato reale, non alla voglia di “stringerlo”.'
+      };
+    }
+
+    if ((phase === 'postcold' || phase === 'proof') && state === 'rigido') {
+      return {
+        context,
+        doNow:'Copri e lascia che il panetto si rilassi: dopo freddo e formatura la tensione deve scendere prima della stesura.',
+        avoid:'Non aggiungere altre pieghe e non pirlare ancora per vincere la resistenza.',
+        next:'Ricontrolla tra 15–30 minuti; quando si allarga con meno ritorno elastico, passa alla stesura.'
+      };
+    }
 
     if (state === 'indietro') {
       if (place === 'frigo' && isLong) {
@@ -1335,12 +1456,12 @@
     const panel = card('Indicazioni', 'compactResult');
 
     if ($('checkMode').value === 'dough') {
-      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value);
+      const advice = doughAdviceText($('doughPlace').value, $('doughState').value, $('doughTime').value, $('doughPhase')?.value || 'initial');
       panel.append(
         adviceRow('Adesso', advice.doNow, 'primaryRow'),
         adviceRow('Evita', advice.avoid, 'badRow'),
         adviceRow('Poi', advice.next, 'okRow'),
-        adviceRow('Contesto', `Impasto ${advice.context} · ${$('doughTime').selectedOptions[0]?.textContent || ''}.`, 'contextRow')
+        adviceRow('Contesto', `Impasto ${advice.context} · ${doughPhaseLabel($('doughPhase')?.value)} · ${$('doughTime').selectedOptions[0]?.textContent || ''}.`, 'contextRow')
       );
     } else {
       const [cause, now, next] = problemRules[$('problemType').value] ?? problemRules.alta;
@@ -1594,9 +1715,19 @@
       if (styleNode) styleNode.checked = true;
     }
     toggleCustoms();
+    updateColdProcessHint();
   }
 
   
+
+  function updateColdProcessHint() {
+    const field=$('coldProcess');
+    const hint=$('coldProcessHint');
+    if(!field||!hint) return;
+    hint.textContent=field.value==='balls'
+      ? 'Panetti già formati prima del frigo: utile se conosci bene volume, contenitori e temperatura del tuo frigorifero.'
+      : 'Per programmi oltre 12 ore: maturazione in massa, poi staglio e formatura dopo il frigo.';
+  }
 
   function showPrivacyNotice() {
     const overlay = $('privacyOverlay');
@@ -1615,7 +1746,7 @@
     document.querySelectorAll('[data-open]').forEach((button) => {
       button.addEventListener('click', () => {
         const target=button.dataset.open;
-        const isTechniqueTarget=target==='pieghe'||target==='stesura'||target==='cottura';
+        const isTechniqueTarget=target==='pieghe'||target==='formatura'||target==='stesura'||target==='cottura';
         const activeTechnique=document.querySelector('.techniqueView.active');
         if(isTechniqueTarget && activeTechnique) openView(target);
         else if(isTechniqueTarget) openTechniqueFromHome(target);
@@ -1634,6 +1765,17 @@
         button.classList.add('selected');
         button.setAttribute('aria-pressed','true');
         renderStructureStateAdvice(button.dataset.structureState);
+      });
+    });
+    document.querySelectorAll('[data-shape-process]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-shape-process]').forEach((item)=>{
+          item.classList.remove('selected');
+          item.setAttribute('aria-pressed','false');
+        });
+        button.classList.add('selected');
+        button.setAttribute('aria-pressed','true');
+        renderShapeProcessAdvice(button.dataset.shapeProcess);
       });
     });
     document.querySelectorAll('[data-stretch-state]').forEach((button) => {
@@ -1657,7 +1799,8 @@
     $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
-    ['doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
+    $('coldProcess')?.addEventListener('change', updateColdProcessHint);
+    ['doughPhase','doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
       $(id)?.addEventListener('change', refreshAdviceIfVisible);
     });
 

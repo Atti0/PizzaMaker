@@ -32,13 +32,51 @@ Prompt:
 Prompt:
 > Stessa scena. Il lembo largo sollevato dal bordo sinistro viene accompagnato sopra il centro della massa. La mano lo sostiene da sotto e lo lascia appoggiare delicatamente; non lo schiaccia. Il resto dell'impasto rimane nel contenitore e conserva volume. Nessuna pirlatura, torsione o rotolamento.
 
-### A4 — Fine di un ciclo
+### A4 — Fine dei quattro lembi
 Prompt:
-> Stessa scena. Dopo quattro ripiegamenti sui lati, l'impasto appare un po' più raccolto e con superficie leggermente più tesa, ma non perfettamente sferico, non liscio come una palla pirlata e non più gonfio per magia. Deve essere chiaramente lo stesso impasto del primo frame.
+> Stessa scena. Dopo quattro ripiegamenti sui lati, le sovrapposizioni sono visibili nella parte superiore centrale. L'impasto è un po' più raccolto ma non perfettamente sferico e non appare pirlato. Deve essere chiaramente lo stesso impasto del primo frame.
 
-### A5 — Errore: trazione eccessiva
+### A5 — Capovolgi la massa una volta
+Prompt:
+> Stessa scena e stesso impasto. Due mani sostengono la massa da lati e parte inferiore e la ribaltano come un blocco unico, senza torcerla e senza tirarla. La zona con le quattro sovrapposizioni finisce sotto; la faccia continua diventa la superficie superiore. Il capovolgimento avviene una sola volta al termine del ciclo, non dopo ogni lembo.
+
+Criterio di scarto: il modello gira solo un lembo, torce la massa, esegue una pirlatura oppure lascia chiaramente la cucitura principale sopra.
+
+### A6 — Errore: trazione eccessiva
 Prompt:
 > Stessa scena. Un lembo viene tirato troppo: diventa localmente sottile e semitrasparente, con una piccola zona che inizia a lacerarsi. La massa principale resta nel contenitore. L'immagine deve mostrare chiaramente l'errore senza trasformare l'intero impasto in una rete estrema.
+
+## Sequenza F — Staglio e formatura
+
+Questa sequenza è distinta dalle pieghe di rinforzo. Obiettivo: ottenere una sola cucitura sotto e una superficie continua, moderatamente tesa, senza degasare inutilmente.
+
+### F1 — Taglio netto
+Prompt:
+> Fotografia culinaria ultra-realistica verticale. Massa di impasto per pizza in teglia ad alta idratazione sul banco. Un tarocco metallico tenuto quasi verticale separa una porzione con un singolo taglio netto. Nessuna mano tira due metà in direzioni opposte. La struttura interna rimane visibilmente viva e non schiacciata.
+
+### F2 — Orienta la faccia continua
+Prompt:
+> Stessa porzione. La faccia più integra e continua è appoggiata al banco; superfici appena tagliate restano sui lati o rivolte verso l'alto. Le mani non comprimono il centro. Deve essere chiaro quale faccia diventerà la superficie esterna finale.
+
+### F3 — Raccogli i bordi in una sola cucitura
+Prompt:
+> Stessa porzione. Le mani portano 4–6 zone periferiche larghe verso un unico punto centrale superiore. Ogni lembo è corto e largo; non viene stirato fino a diventare sottile. Il centro non viene schiacciato. Si crea una sola zona di cucitura.
+
+### F4 — Capovolgi
+Prompt:
+> Stessa porzione. Le mani sostengono il pezzo da lati e fondo e lo ribaltano una sola volta. La cucitura centrale passa chiaramente sotto e la faccia continua diventa la parte superiore. Nessuna torsione.
+
+### F5 — Tensionamento minimo
+Prompt:
+> Panetto con cucitura sotto su banco quasi privo di farina. Due mani a coppa accompagnano un piccolo trascinamento verso il corpo con lieve rotazione, sfruttando l'attrito del banco. La superficie superiore diventa più liscia e moderatamente tesa, ma resta morbida. Nessuna palla lucida, durissima o eccessivamente compressa.
+
+### F6 — Punto di stop
+Prompt:
+> Stesso panetto dopo pochissimi movimenti di tensionamento. Superficie continua e liscia, forma raccolta ma non perfettamente sferica, nessuna lacerazione, nessuna zona trasparente. La massa conserva volume. Deve sembrare pronta per un periodo di appretto, non per ulteriori manipolazioni.
+
+### F7 — Errore: pirlatura eccessiva
+Prompt:
+> Stesso panetto, ma la superficie è tirata eccessivamente: una zona mostra assottigliamento o inizio di lacerazione e il panetto appare troppo rigido. Nessuna caricatura estrema. Deve comunicare chiaramente che continuare a trascinare sarebbe un errore.
 
 ## Sequenza B — Stesura
 
@@ -100,4 +138,4 @@ Generare e validare un frame alla volta. Per ogni immagine verificare:
 5. continuità con il frame precedente;
 6. utilità reale su uno schermo mobile.
 
-Solo dopo l'approvazione dei frame statici valutare micro-video di 4–8 secondi per: piega, comportamento elastico/teso, trasferimento in teglia e controllo del fondo.
+Solo dopo l'approvazione dei frame statici valutare micro-video di 4–8 secondi per: piega completa con capovolgimento finale, staglio/formatura, comportamento elastico/teso, trasferimento in teglia e controllo del fondo.
