@@ -127,7 +127,7 @@
         $('checkTool')?.classList.add('hidden');
       }
       if(id==='home') renderHomeSavedStep();
-      if(id==='pieghe'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
+      if(id==='pieghe'||id==='formatura'||id==='stesura'||id==='cottura') renderTechniqueContext(id);
       if(!options.preserveScroll) resetViewScroll();
       document.documentElement.scrollLeft=0;
       document.body.scrollLeft=0;
@@ -525,8 +525,7 @@
       return timeline;
     }
 
-    const warmFridge = Number.isFinite(fridgeTemp) && fridgeTemp > 5;
-    const checkLead = warmFridge ? 210 : 180;
+    const checkLead = 180;
 
     if (coldProcess === 'balls') {
       timeline.push(
@@ -541,7 +540,7 @@
       timeline.push(
         { label: 'Frigo in massa', date: addMinutes(start, 110).toISOString() },
         { label: 'Inizia il controllo per staglio', date: addMinutes(bake, -checkLead).toISOString(), action: 'check' },
-        { label: 'Staglio + formatura', date: addMinutes(bake, -150).toISOString(), action: 'shape' },
+        { label: 'Finestra di staglio + formatura', date: addMinutes(bake, -150).toISOString(), action: 'shape' },
         { label: 'Appretto · controlla lo stato', date: addMinutes(bake, -90).toISOString(), action: 'check' },
         { label: 'Stesura', date: addMinutes(bake, -30).toISOString(), action: 'stretch' },
         { label: 'Riposo finale in teglia · se serve', date: addMinutes(bake, -20).toISOString() },
