@@ -9,7 +9,7 @@
   const PREF_IDS = [
     'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
-    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod'
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod','coldProcess','fridgeTemp'
   ];
 
   let techniqueOrigin = { view:'home', step:null, action:null };
@@ -416,6 +416,8 @@
     $('saltProfile').value = '2.3';
     $('customSalt').value = '2.3';
     $('kneadMethod').value = 'hand';
+    $('coldProcess').value = 'bulk';
+    $('fridgeTemp').value = '';
     $('doughTemp').value = '';
     toggleCustoms();
     updateFlourUI();
@@ -478,6 +480,21 @@
     if (value === 'planetary') return 'planetaria';
     if (value === 'spiral') return 'spirale';
     return 'a mano';
+  }
+
+  function coldProcessLabel(value) {
+    return value === 'balls' ? 'frigo in panetti' : 'frigo in massa';
+  }
+
+  function doughPhaseLabel(value) {
+    const labels={
+      initial:'fine impasto / puntata iniziale',
+      cold:'durante il frigo',
+      postcold:'dopo frigo / staglio',
+      proof:'dopo formatura / appretto',
+      stretch:'durante la stesura'
+    };
+    return labels[value] || 'fase non specificata';
   }
 
   function resultName(load) {
