@@ -1597,3 +1597,47 @@ body{
   }
   .shapeSignalGrid article:last-child{border-bottom:0}
 }
+
+
+/* Struttura — orientamento delle superfici durante la piega */
+.foldOrientation{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin:14px 0;
+}
+.foldOrientation article{
+  padding:14px 15px;
+  border:1px solid #ddd7ca;
+  border-radius:13px;
+  background:#fff;
+}
+.foldOrientation article>span{
+  display:block;
+  margin-bottom:7px;
+  color:#77756e;
+  font:900 9.5px/1 Arial,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.foldOrientation strong{
+  display:block;
+  color:#172036;
+  font:900 13.5px/1.2 Arial,sans-serif;
+}
+.foldOrientation p{
+  margin:5px 0 0;
+  color:#666861;
+  font:600 11.5px/1.42 Arial,sans-serif;
+}
+@media(max-width:640px){
+  .foldOrientation{grid-template-columns:1fr;gap:0}
+  .foldOrientation article{
+    border:0;
+    border-bottom:1px solid #ded8cc;
+    border-radius:0;
+    padding:12px 2px;
+    background:transparent;
+  }
+  .foldOrientation article:last-child{border-bottom:0}
+}
