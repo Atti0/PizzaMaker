@@ -797,11 +797,17 @@
     'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
     'Controlla la struttura': { icon:'◎', short:'Guarda tenuta, tensione e continuità prima di decidere se serve un rinforzo.', duration:'Controllo' },
     'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
-    'Stesura': { icon:'👐', short:'Stendi con i polpastrelli dal centro verso i bordi senza schiacciare le bolle. Se si ritira, aspetta 5–10 minuti e riprendi.', duration:'~ 10 min' },
+    'Formatura · solo se hai stagliato': { icon:'◯', short:'Se hai diviso l’impasto, crea una sola cucitura sotto e una superficie moderatamente tesa.', duration:'Controllo' },
+    'Staglio + formatura': { icon:'◯', short:'Taglia netto, raccogli i bordi, capovolgi la cucitura sotto e tendi solo quanto basta.', duration:'~ 5 min' },
+    'Frigo in massa': { icon:'❄', short:'Copri bene e matura la massa intera al freddo. La formatura arriverà dopo.', duration:'Riposo' },
+    'Frigo in panetti': { icon:'❄', short:'Conserva i panetti già formati, con chiusura sotto e spazio per l’espansione.', duration:'Riposo' },
+    'Inizia il controllo per staglio': { icon:'◎', short:'È una finestra di controllo, non un ordine: valuta freddo, volume e tenuta prima di stagliare.', duration:'Controllo' },
+    'Inizia il controllo dei panetti': { icon:'◎', short:'Valuta quanto sono rilassati e sviluppati prima di portarli verso la stesura.', duration:'Controllo' },
+    'Appretto · controlla lo stato': { icon:'◴', short:'Lascia che il panetto recuperi estensibilità e volume; il tempo reale dipende da temperatura e fermentazione.', duration:'Controllo' },
+    'Controlla l’appretto': { icon:'◴', short:'Il panetto deve essere rilassato e vivo, non rigido né collassante.', duration:'Controllo' },
+    'Stesura': { icon:'👐', short:'Distribuisci il gas con pressioni progressive e mani larghe; se si ritira, riposo invece di forza.', duration:'~ 10 min' },
     'Riposo finale in teglia · se serve': { icon:'◴', short:'Solo se l’impasto ha ancora tensione: copri e lascia rilassare brevemente prima del forno.', duration:'15–30 min' },
-    'Frigo coperto': { icon:'❄', short:'Copri bene e trasferisci in frigo quando la struttura è sufficiente.', duration:'Riposo' },
     'Controlla l’impasto': { icon:'◎', short:'Verifica quanto è cresciuto e quanto è stabile prima di decidere come proseguire.', duration:'Controllo' },
-    'Preforma e appretto · se serve': { icon:'▭', short:'Se serve, forma un rettangolo morbido e lascialo rilassare coperto prima della stesura.', duration:'Riposo' },
     'Cottura': { icon:'♨', short:'Forno già caldo: procedi con condimento e cottura.', duration:'10–15 min' }
   };
 
