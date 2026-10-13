@@ -695,6 +695,7 @@
 
     if(id==='formatura'){
       const box=$('shapeContext');
+      selectShapeProcess(plan?.coldProcess || 'bulk');
       box?.classList.toggle('hidden',!fromTimeline);
       if(fromTimeline){
         $('shapeContextTitle').textContent=step.label;
@@ -740,6 +741,15 @@
       : {title:'Dopo il frigo in massa',text:'Taglia la porzione con il tarocco, preserva una faccia continua e forma con il minimo numero di movimenti. L’appretto successivo deve restituire estensibilità e volume.'};
     clear(target);
     target.append(create('strong',{text:content.title}),create('p',{text:content.text}));
+  }
+
+  function selectShapeProcess(process) {
+    document.querySelectorAll('[data-shape-process]').forEach((item)=>{
+      const active=item.dataset.shapeProcess===process;
+      item.classList.toggle('selected',active);
+      item.setAttribute('aria-pressed',active?'true':'false');
+    });
+    renderShapeProcessAdvice(process);
   }
 
   function renderStretchStateAdvice(state) {
@@ -798,6 +808,7 @@
     'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
     'Formatura · solo se hai stagliato': { icon:'◯', short:'Se hai diviso l’impasto, crea una sola cucitura sotto e una superficie moderatamente tesa.', duration:'Controllo' },
     'Staglio + formatura': { icon:'◯', short:'Taglia netto, raccogli i bordi, capovolgi la cucitura sotto e tendi solo quanto basta.', duration:'~ 5 min' },
+    'Finestra di staglio + formatura': { icon:'◯', short:'È una finestra orientativa: se la massa è pronta, staglia e forma; se è ancora molto fredda o rigida, aspetta.', duration:'Controllo' },
     'Frigo in massa': { icon:'❄', short:'Copri bene e matura la massa intera al freddo. La formatura arriverà dopo.', duration:'Riposo' },
     'Frigo in panetti': { icon:'❄', short:'Conserva i panetti già formati, con chiusura sotto e spazio per l’espansione.', duration:'Riposo' },
     'Inizia il controllo per staglio': { icon:'◎', short:'È una finestra di controllo, non un ordine: valuta freddo, volume e tenuta prima di stagliare.', duration:'Controllo' },
@@ -894,7 +905,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)} · ${coldProcessLabel(data.coldProcess)} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
@@ -917,6 +928,19 @@
         create('p',{text:tempStatus[1]})
       );
       shell.append(tempNote);
+    }
+
+    if (data.hours > 12 && Number.isFinite(data.fridgeTemp)) {
+      const fridgeWarm=data.fridgeTemp>5;
+      const fridgeNote=create('div',{class:'processNote'});
+      fridgeNote.append(
+        create('span',{class:'resultEyebrow',text:'Frigorifero misurato'}),
+        create('strong',{text:`${round(data.fridgeTemp,1)} °C · ${fridgeWarm?'controllo più attento':'freddo regolare'}`}),
+        create('p',{text:fridgeWarm
+          ? 'Un frigo sopra circa 5 °C rallenta meno la fermentazione: considera gli orari come finestre di controllo e osserva il volume più spesso.'
+          : 'La temperatura è compatibile con una gestione fredda domestica; stato reale e volume restano comunque prioritari rispetto all’orologio.'})
+      );
+      shell.append(fridgeNote);
     }
 
     const now = create('div', { class: 'nextAction' });
@@ -1124,7 +1148,12 @@
       'Mescola farine, lievito e 85–90% dell’acqua.',
       'Copri e lascia riposare 20 minuti.',
       'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.',
-      'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.'
+      'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.',
+      plan.method && /frigo|maturazione|intermedio|lunga/i.test(plan.method)
+        ? (plan.coldProcess === 'balls'
+            ? 'Staglia e forma i panetti prima del frigo: chiusura sotto, tensione moderata.'
+            : 'Matura in massa al freddo; staglio e formatura arrivano più vicino alla stesura.')
+        : 'Se stagli, tieni separata la formatura dalle pieghe di rinforzo.'
     ].forEach((txt,i)=>method.append(create('div',{class:'printMethodStep'},[create('b',{text:String(i+1)}),create('p',{text:txt})])));
     sheet.append(method);
 
@@ -1686,9 +1715,19 @@
       if (styleNode) styleNode.checked = true;
     }
     toggleCustoms();
+    updateColdProcessHint();
   }
 
   
+
+  function updateColdProcessHint() {
+    const field=$('coldProcess');
+    const hint=$('coldProcessHint');
+    if(!field||!hint) return;
+    hint.textContent=field.value==='balls'
+      ? 'Panetti già formati prima del frigo: utile se conosci bene volume, contenitori e temperatura del tuo frigorifero.'
+      : 'Per programmi oltre 12 ore: maturazione in massa, poi staglio e formatura dopo il frigo.';
+  }
 
   function showPrivacyNotice() {
     const overlay = $('privacyOverlay');
@@ -1760,13 +1799,7 @@
     $('timerReset')?.addEventListener('click', ()=>{timerState.remaining=timerState.initial; if(timerState.running)timerState.deadline=Date.now()+timerState.initial*1000; paintTimer();});
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
-    $('coldProcess')?.addEventListener('change', () => {
-      const bulk=$('coldProcess').value !== 'balls';
-      const hint=$('coldProcessHint');
-      if(hint) hint.textContent=bulk
-        ? 'Per programmi oltre 12 ore: maturazione in massa, poi staglio e formatura dopo il frigo.'
-        : 'Panetti già formati prima del frigo: utile se conosci bene volume, contenitori e temperatura del tuo frigorifero.';
-    });
+    $('coldProcess')?.addEventListener('change', updateColdProcessHint);
     ['doughPhase','doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
       $(id)?.addEventListener('change', refreshAdviceIfVisible);
     });
