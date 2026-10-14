@@ -9,7 +9,7 @@
   const PREF_IDS = [
     'w','h','n','saltProfile',
     'flourCatalog1','flourType','protein','flourW','lmMix','flour2Pct','flourCatalog2','flourType2','protein2','flourW2','lmMix2',
-    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod','coldProcess','fridgeTemp'
+    'flour3Pct','flourCatalog3','flourType3','protein3','flourW3','lmMix3','hydration','customHyd','customSalt','kneadMethod','coldProcess','fridgeTemp','yeastType','ovenMaxTemp'
   ];
 
   let techniqueOrigin = { view:'home', step:null, action:null };
@@ -418,6 +418,8 @@
     $('kneadMethod').value = 'hand';
     $('coldProcess').value = 'bulk';
     $('fridgeTemp').value = '';
+    $('yeastType').value = 'fresh';
+    $('ovenMaxTemp').value = '250';
     $('doughTemp').value = '';
     toggleCustoms();
     updateFlourUI();
@@ -465,6 +467,14 @@
     if (hours <= 30) return 0.22;
     if (hours <= 48) return 0.13;
     return 0.08;
+  }
+
+  function yeastTypeLabel(value) {
+    return value === 'dry' ? 'lievito secco istantaneo' : 'lievito fresco';
+  }
+
+  function yeastConversionFactor(value) {
+    return value === 'dry' ? (1/3) : 1;
   }
 
   function methodLabel(hours) {
@@ -598,6 +608,9 @@
       });
       if (migratedStructure && !plan.kneadMethod) plan.kneadMethod = 'hand';
       if (!plan.coldProcess) plan.coldProcess = 'bulk';
+      if (!plan.ingredients) plan.ingredients = {};
+      if (!plan.ingredients.yeastType) plan.ingredients.yeastType = 'fresh';
+      if (!Number.isFinite(plan.ovenMaxTemp)) plan.ovenMaxTemp = 250;
       plan.timeline = plan.timeline.map((item) => {
         if (item.label === 'Frigo coperto') return { ...item, label:'Frigo in massa' };
         if (item.label === 'Preforma e appretto · se serve') return { ...item, label:'Staglio + formatura', action:'shape' };
@@ -791,12 +804,13 @@
       );
       $('cookSetupEyebrow').textContent='Completa due dettagli';
       $('cookSetupTitle').textContent='Condimento e teglia';
-      $('cookSetupHint').textContent='Dimensioni e peso impasto sono già recuperati dalla tua ricetta.';
+      $('cookSetupHint').textContent='Dimensioni, peso impasto e temperatura massima forno sono già recuperati dalla tua ricetta.';
+      if($('cookOvenTemp')) $('cookOvenTemp').value=String(plan.ovenMaxTemp || 250);
       renderCookGuide();
     } else {
-      $('cookSetupEyebrow').textContent='Due scelte';
+      $('cookSetupEyebrow').textContent='Tre scelte';
       $('cookSetupTitle').textContent='Adatta la cottura';
-      $('cookSetupHint').textContent='Scegli condimento e materiale della teglia.';
+      $('cookSetupHint').textContent='Scegli condimento, materiale della teglia e temperatura massima reale del forno.';
     }
   }
 
@@ -889,10 +903,12 @@
       coldProcess: data.coldProcess || 'bulk',
       fridgeTemp: Number.isFinite(data.fridgeTemp) ? data.fridgeTemp : null,
       doughTemp: Number.isFinite(data.doughTemp) ? data.doughTemp : null,
+      ovenMaxTemp: Number.isFinite(data.ovenMaxTemp) ? data.ovenMaxTemp : 250,
       timeline: data.timeline,
       ingredients: {
         flour: data.flour, water: data.water, saltG: data.saltG, oilG: data.oilG,
-        yeastG: data.yeastG, honeyG: data.honeyG, hydration: data.hydration,
+        yeastG: data.yeastG, yeastType: data.yeastType || 'fresh', yeastFreshEquivalent: data.yeastFreshEquivalent,
+        honeyG: data.honeyG, hydration: data.hydration,
         salt: data.salt, flourBlend: data.flourBlend
       }
     };
@@ -905,7 +921,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · forno max ${round(data.ovenMaxTemp||250,0)} °C · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
@@ -964,7 +980,7 @@
       ['Acqua', `${round(data.water)} g`],
       ['Sale', `${round(data.saltG)} g`],
       ['Olio', `${round(data.oilG)} g`],
-      ['Lievito', `${round(data.yeastG, 1)} g`]
+      [data.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco', `${round(data.yeastG, 1)} g`]
     );
     if (data.honeyG > 0) rows.push(['Miele', `${round(data.honeyG, 1)} g`]);
     rows.forEach(([label,value]) => {
@@ -979,7 +995,7 @@
     firstSteps.append(create('h4', { text: 'Parti così' }));
     const steps=create('ol',{class:'compactSteps'});
     [
-      'Mescola farina, lievito e 85–90% dell’acqua.',
+      `Mescola farina, ${data.yeastType === 'dry' ? 'lievito secco istantaneo' : 'lievito fresco'} e 85–90% dell’acqua.`,
       'Copri e lascia riposare 20 minuti.',
       'Aggiungi sale sciolto nell’acqua rimasta, poi olio.',
       data.kneadMethod === 'hand'
@@ -1088,7 +1104,7 @@
     const list=create('div',{class:'savedDoseGrid'}),rows=[];
     if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
-    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],['Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
+    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],[plan.ingredients.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
     rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
     ingredientsSection.append(list); details.append(ingredientsSection);
     const timelineSection=create('div',{class:'savedPlanSection'}); timelineSection.append(create('h4',{text:'Timeline'}),renderPremiumTimeline(plan.timeline)); details.append(timelineSection);
@@ -1127,6 +1143,7 @@
       ['Impasto totale', plan.total ? `${round(plan.total,0)} g` : '—'],
       ['Per teglia', plan.doughPer ? `${round(plan.doughPer,0)} g` : '—'],
       ['Sale', plan.ingredients?.salt ? `${round(plan.ingredients.salt,1)}%` : '—'],
+      ['Forno max', `${round(plan.ovenMaxTemp || 250,0)} °C`],
       ['Cottura', fmtShortDate(new Date(plan.bake))]
     ].forEach(([label,value])=>facts.append(create('div',{},[create('span',{text:label}),create('strong',{text:value})])));
     sheet.append(facts);
@@ -1137,7 +1154,7 @@
     const ing=plan.ingredients||{};
     if(Array.isArray(ing.flourBlend)&&ing.flourBlend.length>1) ing.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(ing.flour)} g`]);
-    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],['Lievito fresco',`${round(ing.yeastG,1)} g`]);
+    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],[ing.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco',`${round(ing.yeastG,1)} g`]);
     if(ing.honeyG>0) rows.push(['Miele',`${round(ing.honeyG,1)} g`]);
     rows.forEach(([label,value])=>doseGrid.append(create('div',{class:'printDose'},[create('span',{text:label}),create('strong',{text:value})])));
     doses.append(doseGrid); sheet.append(doses);
@@ -1224,7 +1241,10 @@
     const hydration = hydrationValue();
     const salt = saltValue();
     const oil = 2.5;
-    const yeast = yeastPctByHours(hours);
+    const yeastType = $('yeastType')?.value || 'fresh';
+    const yeastFreshEquivalent = yeastPctByHours(hours);
+    const yeast = yeastFreshEquivalent * yeastConversionFactor(yeastType);
+    const ovenMaxTemp = Math.round(clampNumber('ovenMaxTemp', 250, 180, 350));
     const honey = hours > 0 && hours <= 12 ? 0.5 : 0;
     const area = width * height;
     const doughPer = area * load;
@@ -1246,7 +1266,7 @@
     }));
 
     renderRecipeResult({
-      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, honey, kneadMethod, coldProcess, fridgeTemp, doughTemp,
+      width, height, pans, load, start, bake, hours, hydration, salt, oil, yeast, yeastFreshEquivalent, yeastType, ovenMaxTemp, honey, kneadMethod, coldProcess, fridgeTemp, doughTemp,
       area, doughPer, total, flour, water, saltG, oilG, yeastG, honeyG, timeline, flourBlend
     });
   }
@@ -1525,6 +1545,8 @@
 
   function renderCookGuide() {
     const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
+    const ovenTemp=Math.round(clampNumber('cookOvenTemp',250,180,350));
+    if($('cookOvenEyebrow')) $('cookOvenEyebrow').textContent=`Forno domestico · max ${ovenTemp} °C`;
     clear(target); closeCookTimer();
 
     const plan=techniqueOrigin.view==='impasto'?getLastPlan():null;
@@ -1541,7 +1563,7 @@
 
     const summaryBox=create('div',{class:'cookRecipeSummary'});
     summaryBox.append(
-      create('span',{class:'flowEyebrow',text:`${sizeLabel} · ${pan==='leccarda'?'leccarda':pan}`}),
+      create('span',{class:'flowEyebrow',text:`${sizeLabel} · ${pan==='leccarda'?'leccarda':pan} · forno max ${ovenTemp} °C`}),
       create('strong',{text:pizza==='margherita'?'Margherita':pizza==='rossa'?'Rossa semplice':'Bianca patate e lardo'}),
       create('p',{text:pizza==='margherita'
         ? `Pomodoro ${tomatoRange} · mozzarella asciutta ${mozzarellaRange} · olio finale ${finishOilRange}`
@@ -1559,7 +1581,12 @@
           ? 'Alluminio: buona conduzione e risposta rapida. Il fondo va controllato prima di prolungare la prima fase.'
           : 'Antiaderente: conduzione spesso più moderata. Preriscaldo completo e livello basso diventano ancora più importanti.';
 
-    panel.append(guideStep(1,'Preriscalda davvero',[panText,'Forno statico a 250 °C per 40–50 minuti. La spia di temperatura non garantisce che pareti e camera siano già stabilizzate.']));
+    const ovenTempNote=ovenTemp < 230
+      ? 'È una temperatura relativamente bassa per la teglia: aspettati una prima fase più lunga e usa soprattutto il controllo del fondo.'
+      : ovenTemp >= 270
+        ? 'Con un forno molto caldo il fondo può colorire prima: inizia a controllarlo presto e non inseguire tempi fissi.'
+        : 'Usa questa temperatura come riferimento iniziale e lascia che il colore del fondo decida il passaggio di fase.';
+    panel.append(guideStep(1,'Preriscalda davvero',[panText,`Forno statico alla temperatura massima reale: ${ovenTemp} °C. Preriscalda 40–50 minuti; la spia non garantisce che la camera sia già stabilizzata.`,ovenTempNote]));
     const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer minimo · 40 min'});
     preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo minimo'));
     panel.lastElementChild.append(preheat);
@@ -1800,6 +1827,12 @@
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
     $('coldProcess')?.addEventListener('change', updateColdProcessHint);
+    $('ovenMaxTemp')?.addEventListener('change', () => {
+      if($('cookOvenTemp')) $('cookOvenTemp').value=$('ovenMaxTemp').value || '250';
+    });
+    $('cookOvenTemp')?.addEventListener('change', () => {
+      if($('cookOvenEyebrow')) $('cookOvenEyebrow').textContent='Forno domestico · max ' + Math.round(clampNumber('cookOvenTemp',250,180,350)) + ' °C';
+    });
     ['doughPhase','doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
       $(id)?.addEventListener('change', refreshAdviceIfVisible);
     });

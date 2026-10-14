@@ -1641,3 +1641,17 @@ body{
   }
   .foldOrientation article:last-child{border-bottom:0}
 }
+
+
+/* Campi numerici con unità */
+.inputWithUnit{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+}
+.inputWithUnit>span{
+  color:#676961;
+  font:800 12px/1 Arial,sans-serif;
+  min-width:28px;
+}
