@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#a92b25">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="styles.css?v=55">
+  <link rel="stylesheet" href="styles.css?v=56">
   <link rel="stylesheet" href="hero.css?v=4">
 </head>
 <body>
@@ -359,14 +359,22 @@
                   </select>
                   <small class="fieldHint">Non determina un numero fisso di pieghe: PizzaMaker ti farà controllare la struttura prima di decidere.</small>
                 </div>
-                <div class="basicField">
-                  <label for="roomTemp">Temperatura ambiente <span class="optionalLabel">opzionale</span></label>
-                  <div class="inputWithUnit">
-                    <input id="roomTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="es. 22">
-                    <span>°C</span>
+                <details class="optionalTuning">
+                  <summary>
+                    <span><strong>Temperatura ambiente</strong><small>Opzionale · riferimento automatico 22 °C</small></span>
+                    <b aria-hidden="true">⌄</b>
+                  </summary>
+                  <div class="optionalTuningBody">
+                    <div class="basicField">
+                      <label for="roomTemp">Temperatura reale della stanza <span class="optionalLabel">opzionale</span></label>
+                      <div class="inputWithUnit">
+                        <input id="roomTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="22">
+                        <span>°C</span>
+                      </div>
+                      <small class="fieldHint">Lascia vuoto: PizzaMaker considera circa 22 °C come ambiente domestico moderato. Modifica solo se la cucina è chiaramente più fredda o più calda.</small>
+                    </div>
                   </div>
-                  <small class="fieldHint">Serve a interpretare meglio lievitazione e appretto. Per ora non modifica automaticamente i grammi di lievito.</small>
-                </div>
+                </details>
                 <div class="basicField">
                   <label for="doughTemp">Temperatura impasto a fine lavoro <span class="optionalLabel">opzionale</span></label>
                   <input id="doughTemp" type="number" min="10" max="40" step="0.5" inputmode="decimal" placeholder="es. 23">
@@ -866,6 +874,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=41" defer></script>
+  <script src="app.js?v=42" defer></script>
 </body>
 </html>
