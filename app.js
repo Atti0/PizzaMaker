@@ -921,7 +921,7 @@
     title.append(
       create('span', { class: 'resultEyebrow', text: 'Il tuo impasto' }),
       create('h3', { text: resultName(data.load) }),
-      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
+      create('p', { class: 'resultMeta', text: `${methodLabel(data.hours)} · ${kneadMethodLabel(data.kneadMethod)}${data.hours>12?` · ${coldProcessLabel(data.coldProcess)}`:''} · forno max ${round(data.ovenMaxTemp||250,0)} °C · ${round(data.hours, 1)} h · ${round(data.doughPer, 0)} g per teglia` })
     );
     const hydrationBadge = create('div', { class: 'hydrationBadge' });
     hydrationBadge.append(
