@@ -277,6 +277,32 @@
                 <div id="customHydWrap" class="hidden"><label for="customHyd">Idratazione personalizzata %</label><input id="customHyd" type="number" value="69" min="55" max="85" step="0.5" inputmode="decimal"></div>
               </div>
             </div>
+            <div class="calculatorSection">
+              <div class="calculatorSectionHeader">
+                <span>Lievito e forno</span>
+                <small>Due dati che cambiano dose e guida di cottura.</small>
+              </div>
+              <div class="calculatorInset">
+                <div class="row">
+                  <div class="basicField">
+                    <label for="yeastType">Tipo di lievito</label>
+                    <select id="yeastType">
+                      <option value="fresh" selected>Fresco</option>
+                      <option value="dry">Secco istantaneo</option>
+                    </select>
+                    <small class="fieldHint">Per il secco istantaneo PizzaMaker usa circa 1/3 della dose equivalente di fresco. Se la confezione indica un rapporto diverso, segui l’etichetta.</small>
+                  </div>
+                  <div class="basicField">
+                    <label for="ovenMaxTemp">Temperatura massima forno</label>
+                    <div class="inputWithUnit">
+                      <input id="ovenMaxTemp" type="number" min="180" max="350" step="5" value="250" inputmode="decimal">
+                      <span>°C</span>
+                    </div>
+                    <small class="fieldHint">Inserisci il massimo reale del tuo forno: verrà usato nella guida Cottura.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="calculatorSection kneadEditor">
               <div class="calculatorSectionHeader">
                 <span>Metodo d’impasto</span>
@@ -740,7 +766,7 @@
 
         <section class="cookFlowIntro" aria-labelledby="cookFlowTitle">
           <div class="techniqueSectionHead">
-            <span class="flowEyebrow">Forno domestico · 250 °C</span>
+            <span class="flowEyebrow" id="cookOvenEyebrow">Forno domestico · temperatura massima reale</span>
             <h3 id="cookFlowTitle">Tre decisioni, non un tempo fisso</h3>
           </div>
           <div class="cookFlowSteps">
@@ -753,12 +779,20 @@
 
         <div class="twoColumns cookWorkspace">
           <div class="card formCard flowForm cookSetup">
-            <p class="flowEyebrow" id="cookSetupEyebrow">Due scelte</p>
+            <p class="flowEyebrow" id="cookSetupEyebrow">Tre scelte</p>
             <h3 id="cookSetupTitle">Adatta la cottura</h3>
-            <p class="cookSetupHint" id="cookSetupHint">Scegli condimento e materiale della teglia. Se arrivi dalla timeline, dimensioni e peso impasto sono già recuperati.</p>
+            <p class="cookSetupHint" id="cookSetupHint">Scegli condimento, teglia e temperatura massima reale del forno. Se arrivi dalla timeline, i dati già noti vengono recuperati.</p>
             <div class="row">
               <div><label for="pizzaType">Condimento</label><select id="pizzaType"><option value="margherita">Margherita</option><option value="rossa">Rossa semplice</option><option value="bianca">Bianca patate e lardo</option></select></div>
               <div><label for="panType">Materiale teglia</label><select id="panType"><option value="leccarda">Leccarda forno</option><option value="alluminio">Alluminio</option><option value="ferro">Ferro blu</option><option value="antiaderente">Antiaderente</option></select></div>
+            </div>
+            <div class="basicField">
+              <label for="cookOvenTemp">Temperatura massima forno</label>
+              <div class="inputWithUnit">
+                <input id="cookOvenTemp" type="number" min="180" max="350" step="5" value="250" inputmode="decimal">
+                <span>°C</span>
+              </div>
+              <small class="fieldHint">Usa il valore massimo reale, non quello teorico del selettore se il forno non lo raggiunge.</small>
             </div>
             <button type="button" id="cookBtn" class="flowPrimary">Prepara la cottura <span aria-hidden="true">→</span></button>
           </div>
@@ -783,6 +817,6 @@
     <section id="printSheet" class="printSheet" aria-hidden="true"></section>
   </div>
 
-  <script src="app.js?v=39" defer></script>
+  <script src="app.js?v=40" defer></script>
 </body>
 </html>
