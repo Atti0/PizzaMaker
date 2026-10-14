@@ -538,7 +538,7 @@
     const timeline = [
       { label: 'Impasto grezzo', date: start.toISOString() },
       { label: 'Riposo 20 min coperto', date: addMinutes(start, 20).toISOString() },
-      { label: 'Sale + olio', date: addMinutes(start, 40).toISOString() },
+      { label: 'Sale + eventuale olio', date: addMinutes(start, 40).toISOString() },
       { label: 'Controlla la struttura', date: addMinutes(start, 60).toISOString(), action: 'fold' },
       { label: 'Ricontrolla dopo il riposo', date: addMinutes(start, 85).toISOString(), action: 'fold' }
     ];
@@ -622,6 +622,9 @@
         }
         if (item.label === 'Riposo in teglia coperto') {
           return { ...item, label:'Riposo finale in teglia · se serve' };
+        }
+        if (item.label === 'Sale + olio') {
+          return { ...item, label:'Sale + eventuale olio' };
         }
         return item;
       });
@@ -838,7 +841,7 @@
   const TIMELINE_VISUALS = {
     'Impasto grezzo': { icon:'🥣', short:'Unisci farine, acqua e lievito fino a ottenere un impasto grezzo.', duration:'~ 10 min' },
     'Riposo 20 min coperto': { icon:'⏱️', short:'Copri e lascia riposare: l’impasto inizierà a rilassarsi.', duration:'20 min' },
-    'Sale + olio': { icon:'🫒', short:'Aggiungi il sale, poi incorpora l’olio senza forzare l’impasto.', duration:'~ 5 min' },
+    'Sale + eventuale olio': { icon:'🫒', short:'Aggiungi il sale; incorpora l’olio solo se previsto dalla tua ricetta.', duration:'~ 5 min' },
     'Controlla la struttura': { icon:'◎', short:'Guarda tenuta, tensione e continuità prima di decidere se serve un rinforzo.', duration:'Controllo' },
     'Ricontrolla dopo il riposo': { icon:'↪', short:'Dopo il riposo verifica se la massa è più raccolta. Un altro ciclo serve solo se resta debole.', duration:'Controllo' },
     'Formatura · solo se hai stagliato': { icon:'◯', short:'Se hai diviso l’impasto, crea una sola cucitura sotto e una superficie moderatamente tesa.', duration:'Controllo' },
@@ -1017,7 +1020,7 @@
       ['Acqua', `${round(data.water)} g`],
       ['Sale', `${round(data.saltG)} g`],
       ['Olio', `${round(data.oilG)} g`],
-      [data.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco', `${round(data.yeastG, 1)} g`]
+      [data.yeastType === 'dry' ? 'Lievito secco istantaneo · stima' : 'Lievito fresco · stima', `${round(data.yeastG, 1)} g`]
     );
     if (data.honeyG > 0) rows.push(['Miele / malto', `${round(data.honeyG, 1)} g`]);
     rows.forEach(([label,value]) => {
@@ -1032,7 +1035,7 @@
     firstSteps.append(create('h4', { text: 'Parti così' }));
     const steps=create('ol',{class:'compactSteps'});
     [
-      `Mescola farina, ${data.yeastType === 'dry' ? 'lievito secco istantaneo' : 'lievito fresco'} e 85–90% dell’acqua.`,
+      `Mescola farina, ${data.yeastType === 'dry' ? 'lievito secco istantaneo' : 'lievito fresco'}${data.honey > 0 ? ', miele/malto' : ''} e 85–90% dell’acqua.`,
       'Copri e lascia riposare 20 minuti.',
       data.oil > 0 ? 'Aggiungi sale sciolto nell’acqua rimasta, poi incorpora l’olio.' : 'Aggiungi il sale sciolto nell’acqua rimasta; in questa ricetta non hai previsto olio nell’impasto.',
       data.kneadMethod === 'hand'
@@ -1141,7 +1144,7 @@
     const list=create('div',{class:'savedDoseGrid'}),rows=[];
     if(Array.isArray(plan.ingredients.flourBlend)&&plan.ingredients.flourBlend.length>1) plan.ingredients.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(plan.ingredients.flour)} g`]);
-    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],[plan.ingredients.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco',`${round(plan.ingredients.yeastG,1)} g`]);
+    rows.push(['Acqua',`${round(plan.ingredients.water)} g`],['Sale',`${round(plan.ingredients.saltG)} g`],['Olio',`${round(plan.ingredients.oilG)} g`],[plan.ingredients.yeastType === 'dry' ? 'Lievito secco istantaneo · stima' : 'Lievito fresco · stima',`${round(plan.ingredients.yeastG,1)} g`]);
     if(Number(plan.ingredients.honeyG)>0) rows.push(['Miele / malto',`${round(plan.ingredients.honeyG,1)} g`]);
     rows.forEach(([label,value])=>list.append(create('div',{class:'savedDose'},[create('span',{text:label}),create('strong',{text:value})])));
     ingredientsSection.append(list); details.append(ingredientsSection);
@@ -1193,7 +1196,7 @@
     const ing=plan.ingredients||{};
     if(Array.isArray(ing.flourBlend)&&ing.flourBlend.length>1) ing.flourBlend.forEach(item=>rows.push([`Farina ${item.index} · ${round(item.pct,0)}%`,`${round(item.grams)} g`]));
     else rows.push(['Farina',`${round(ing.flour)} g`]);
-    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],[ing.yeastType === 'dry' ? 'Lievito secco istantaneo' : 'Lievito fresco',`${round(ing.yeastG,1)} g`]);
+    rows.push(['Acqua',`${round(ing.water)} g`],['Sale',`${round(ing.saltG)} g`],['Olio',`${round(ing.oilG)} g`],[ing.yeastType === 'dry' ? 'Lievito secco istantaneo · stima' : 'Lievito fresco · stima',`${round(ing.yeastG,1)} g`]);
     if(ing.honeyG>0) rows.push(['Miele / malto',`${round(ing.honeyG,1)} g`]);
     rows.forEach(([label,value])=>doseGrid.append(create('div',{class:'printDose'},[create('span',{text:label}),create('strong',{text:value})])));
     doses.append(doseGrid); sheet.append(doses);
@@ -1201,7 +1204,7 @@
     const method=create('section',{class:'printSection printMethod'});
     method.append(create('h2',{text:'Metodo'}));
     [
-      'Mescola farine, lievito e 85–90% dell’acqua.',
+      `Mescola farine, ${ing.yeastType === 'dry' ? 'lievito secco istantaneo' : 'lievito fresco'}${Number(ing.honeyG)>0 ? ', miele/malto' : ''} e 85–90% dell’acqua.`,
       'Copri e lascia riposare 20 minuti.',
       Number(ing.oilG)>0 ? 'Aggiungi il sale sciolto nell’acqua rimasta, poi incorpora l’olio.' : 'Aggiungi il sale sciolto nell’acqua rimasta; nessun olio nell’impasto.',
       'Dopo il riposo controlla la struttura: fai un rinforzo solo se la massa ne ha bisogno.',
