@@ -804,12 +804,13 @@
       );
       $('cookSetupEyebrow').textContent='Completa due dettagli';
       $('cookSetupTitle').textContent='Condimento e teglia';
-      $('cookSetupHint').textContent='Dimensioni e peso impasto sono già recuperati dalla tua ricetta.';
+      $('cookSetupHint').textContent='Dimensioni, peso impasto e temperatura massima forno sono già recuperati dalla tua ricetta.';
+      if($('cookOvenTemp')) $('cookOvenTemp').value=String(plan.ovenMaxTemp || 250);
       renderCookGuide();
     } else {
-      $('cookSetupEyebrow').textContent='Due scelte';
+      $('cookSetupEyebrow').textContent='Tre scelte';
       $('cookSetupTitle').textContent='Adatta la cottura';
-      $('cookSetupHint').textContent='Scegli condimento e materiale della teglia.';
+      $('cookSetupHint').textContent='Scegli condimento, materiale della teglia e temperatura massima reale del forno.';
     }
   }
 
@@ -1544,6 +1545,8 @@
 
   function renderCookGuide() {
     const pizza=$('pizzaType').value, pan=$('panType').value, target=$('cook');
+    const ovenTemp=Math.round(clampNumber('cookOvenTemp',250,180,350));
+    if($('cookOvenEyebrow')) $('cookOvenEyebrow').textContent=`Forno domestico · max ${ovenTemp} °C`;
     clear(target); closeCookTimer();
 
     const plan=techniqueOrigin.view==='impasto'?getLastPlan():null;
@@ -1560,7 +1563,7 @@
 
     const summaryBox=create('div',{class:'cookRecipeSummary'});
     summaryBox.append(
-      create('span',{class:'flowEyebrow',text:`${sizeLabel} · ${pan==='leccarda'?'leccarda':pan}`}),
+      create('span',{class:'flowEyebrow',text:`${sizeLabel} · ${pan==='leccarda'?'leccarda':pan} · forno max ${ovenTemp} °C`}),
       create('strong',{text:pizza==='margherita'?'Margherita':pizza==='rossa'?'Rossa semplice':'Bianca patate e lardo'}),
       create('p',{text:pizza==='margherita'
         ? `Pomodoro ${tomatoRange} · mozzarella asciutta ${mozzarellaRange} · olio finale ${finishOilRange}`
@@ -1578,7 +1581,12 @@
           ? 'Alluminio: buona conduzione e risposta rapida. Il fondo va controllato prima di prolungare la prima fase.'
           : 'Antiaderente: conduzione spesso più moderata. Preriscaldo completo e livello basso diventano ancora più importanti.';
 
-    panel.append(guideStep(1,'Preriscalda davvero',[panText,'Forno statico a 250 °C per 40–50 minuti. La spia di temperatura non garantisce che pareti e camera siano già stabilizzate.']));
+    const ovenTempNote=ovenTemp < 230
+      ? 'È una temperatura relativamente bassa per la teglia: aspettati una prima fase più lunga e usa soprattutto il controllo del fondo.'
+      : ovenTemp >= 270
+        ? 'Con un forno molto caldo il fondo può colorire prima: inizia a controllarlo presto e non inseguire tempi fissi.'
+        : 'Usa questa temperatura come riferimento iniziale e lascia che il colore del fondo decida il passaggio di fase.';
+    panel.append(guideStep(1,'Preriscalda davvero',[panText,`Forno statico alla temperatura massima reale: ${ovenTemp} °C. Preriscalda 40–50 minuti; la spia non garantisce che la camera sia già stabilizzata.`,ovenTempNote]));
     const preheat=create('button',{type:'button',class:'stepTimer',text:'Timer minimo · 40 min'});
     preheat.addEventListener('click',()=>startCookTimer(40,'Preriscaldo minimo'));
     panel.lastElementChild.append(preheat);
@@ -1819,6 +1827,12 @@
     $('timerClose')?.addEventListener('click', closeCookTimer);
     $('checkMode')?.addEventListener('change', toggleCheckMode);
     $('coldProcess')?.addEventListener('change', updateColdProcessHint);
+    $('ovenMaxTemp')?.addEventListener('change', () => {
+      if($('cookOvenTemp')) $('cookOvenTemp').value=$('ovenMaxTemp').value || '250';
+    });
+    $('cookOvenTemp')?.addEventListener('change', () => {
+      if($('cookOvenEyebrow')) $('cookOvenEyebrow').textContent='Forno domestico · max ' + Math.round(clampNumber('cookOvenTemp',250,180,350)) + ' °C';
+    });
     ['doughPhase','doughPlace','doughTime','doughState','problemType'].forEach((id)=>{
       $(id)?.addEventListener('change', refreshAdviceIfVisible);
     });
