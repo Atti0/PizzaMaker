@@ -24,6 +24,6 @@ Il sito sarà disponibile all'indirizzo:
 
 ## Note sul modello di calcolo
 
-PizzaMaker distingue tra valori inseriti dall'utente, default modificabili ed euristiche. Olio, miele/malto, tipo di lievito, temperatura ambiente, frigorifero e forno non sono trattati come costanti universali.
+PizzaMaker distingue tra valori inseriti dall'utente, default modificabili ed euristiche. Per la temperatura ambiente usa 22 °C come riferimento neutro e offre una correzione manuale facoltativa; non usa posizione, meteo o data per stimare la stanza.
 
 Le assunzioni ancora aperte e il backlog di validazione sono documentati in `docs/assumption-audit.md`.

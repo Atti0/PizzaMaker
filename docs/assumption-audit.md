@@ -10,7 +10,7 @@ Obiettivo: evitare che valori impliciti o costanti tecniche vengano presentati c
 |---|---|---|
 | Olio sempre 2,5% | Valore nascosto e non universalmente necessario | Diventa scelta esplicita: 0 / 2 / 2,5 / 3% / personalizzato |
 | Miele 0,5% automatico negli impasti <=12 h | Ingrediente aggiunto senza decisione dell'utente | Nessuno di default; opzionale 0,5% o personalizzato |
-| Nessuna temperatura ambiente | Fermentazione e appretto venivano interpretati solo con ore e luogo | Aggiunta come input opzionale e segnale diagnostico |
+| Nessuna temperatura ambiente | Fermentazione e appretto venivano interpretati solo con ore e luogo | Riferimento neutro 22 °C; correzione manuale facoltativa, senza posizione o meteo |
 | Idratazione “consigliata” | La stima da proteine/tipo/W poteva sembrare prescrittiva | Rinominata “stima automatica / di partenza” |
 | Dose lievito presentata come valore secco | Il modello dipende soprattutto dalle ore e non integra ancora tutte le temperature | Etichettata esplicitamente come stima |
 | Timeline “Sale + olio” | Restava falsa se l'utente sceglieva 0% olio | Diventa “Sale + eventuale olio” |
@@ -27,7 +27,7 @@ Obiettivo: evitare che valori impliciti o costanti tecniche vengano presentati c
 - Temperatura finale impasto opzionale.
 - Gestione del freddo: massa o panetti.
 - Temperatura reale del frigorifero opzionale.
-- Temperatura ambiente opzionale.
+- Temperatura ambiente: riferimento interno 22 °C, con override manuale opzionale nascosto nel flusso base.
 - Temperatura massima reale del forno.
 - Materiale della teglia nella guida Cottura.
 
@@ -37,7 +37,7 @@ Obiettivo: evitare che valori impliciti o costanti tecniche vengano presentati c
 La funzione attuale stima la percentuale a partire dalla durata totale. Tipo di lievito modifica la quantità con una conversione fresco/secco.
 
 Limiti:
-- non modella quantitativamente temperatura ambiente;
+- non modella quantitativamente temperatura ambiente; 22 °C è solo il riferimento neutro quando l'utente non indica altro;
 - non modella quantitativamente temperatura finale impasto;
 - non modella quantitativamente temperatura frigorifero;
 - non conosce attività reale del lievito, marca o data di apertura;
@@ -113,7 +113,7 @@ La temperatura massima non descrive distribuzione del calore, potenza resistenze
 Il flag attuale è troppo semplice per descrivere mix con starter, enzimi, malto o miglioratori. Non usarlo per calcoli fermentativi quantitativi senza dati specifici.
 
 ### P3 — Ambiente domestico
-Umidità relativa, temperatura acqua e temperatura del banco possono influenzare il processo, ma aggiungerle oggi aumenterebbe attrito senza un modello che le sappia usare bene. Non chiedere dati inutili.
+La temperatura ambiente non viene ricavata da posizione, meteo o data: sarebbe una proxy poco affidabile e introdurrebbe attrito/privacy senza un beneficio proporzionato. Il prodotto assume 22 °C come riferimento neutro e permette una correzione manuale solo a chi la conosce. Umidità relativa, temperatura acqua e temperatura del banco possono influenzare il processo, ma non vanno richieste finché non esiste un modello che le sappia usare bene.
 
 ## 6. Regola di prodotto per nuovi parametri
 
