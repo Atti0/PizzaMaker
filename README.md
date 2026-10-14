@@ -20,3 +20,10 @@ Calcolatore pratico per pizza in teglia fatta in casa.
 Il sito sarà disponibile all'indirizzo:
 
 `https://atti0.github.io/PizzaMaker/`
+
+
+## Note sul modello di calcolo
+
+PizzaMaker distingue tra valori inseriti dall'utente, default modificabili ed euristiche. Olio, miele/malto, tipo di lievito, temperatura ambiente, frigorifero e forno non sono trattati come costanti universali.
+
+Le assunzioni ancora aperte e il backlog di validazione sono documentati in `docs/assumption-audit.md`.
