@@ -5,9 +5,9 @@ Calcolatore pratico per pizza in teglia fatta in casa.
 ## Cosa fa
 
 - Calcola il peso impasto in base alla teglia e al numero di teglie.
-- Stima idratazione, sale, olio e lievito fresco.
+- Stima idratazione, sale, olio e lievito, con scelta tra fresco e secco istantaneo.
 - Usa data e ora di inizio impasto e inizio cottura per generare una timeline.
-- Include indicazioni pratiche per stesura, condimento e cottura nel forno domestico.
+- Include indicazioni pratiche per stesura, condimento e cottura nel forno domestico, adattate alla temperatura massima dichiarata.
 
 ## Pubblicazione con GitHub Pages
 
